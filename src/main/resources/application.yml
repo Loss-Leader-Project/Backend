@@ -17,5 +17,6 @@ spring:
       # update : 변경될 스키마 적용
       # create : 서버 실행 할때마다 생성된 데이터베이스를 다 삭제하고 새로 create
       ddl-auto: create
+
     generate-ddl: true
 
