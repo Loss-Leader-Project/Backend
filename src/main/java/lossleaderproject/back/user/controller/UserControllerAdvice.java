@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-
 public class UserControllerAdvice {
-
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -20,7 +18,7 @@ public class UserControllerAdvice {
         Map<String, String> errors = new HashMap<>();
         me.getBindingResult().getAllErrors()
                 .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
-        return  ResponseEntity.badRequest().body(errors);
+        return ResponseEntity.badRequest().body(errors);
     }
 
 }

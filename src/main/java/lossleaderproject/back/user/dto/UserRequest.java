@@ -45,12 +45,9 @@ public class UserRequest {
 
     private int mileage;
 
-    public void initMileage() {
-        mileage = 3000;
-    }
 
     public User toEntity() {
-        return new User(this.loginId, this.password,this.userName,this.phoneNumber,this.email,this.address,this.birthDate,this.recommendedPerson);
+        return new User(this.loginId, this.password, this.userName, this.phoneNumber, this.email, this.address, this.birthDate, this.recommendedPerson);
     }
 
 }

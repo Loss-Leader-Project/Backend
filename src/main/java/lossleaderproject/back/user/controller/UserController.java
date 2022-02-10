@@ -2,29 +2,19 @@ package lossleaderproject.back.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.dto.UserRequest;
-import lossleaderproject.back.user.entity.User;
-import lossleaderproject.back.user.exception.UserLoginIdCheckValidator;
 import lossleaderproject.back.user.service.UserService;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-    private final UserLoginIdCheckValidator userLoginIdCheckValidator;
 
 
     @PostMapping("/lossleader-member")
@@ -32,11 +22,11 @@ public class UserController {
 
         // 인터셉터에 위치
         // 아이디 중복시 409 에러와 아이디 중복 리턴
-        if(userService.checkLoginId(userRequest.getLoginId())) {
+        if (userService.checkLoginId(userRequest.getLoginId())) {
             return ResponseEntity.badRequest().body("이미 존재하는 아이디입니다.");
         }
 
-        if(!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
+        if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
         }
 

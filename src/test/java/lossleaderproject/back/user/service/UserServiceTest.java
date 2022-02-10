@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-
 class UserServiceTest {
     @Autowired
     UserRepository userRepository;
@@ -26,7 +25,7 @@ class UserServiceTest {
     public void 회원가입() throws Exception {
         // given
         Address address = new Address("1234-12", "어딘가", "자세히");
-        UserRequest userRequest = new UserRequest("test1", "test1!","test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
+        UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
 
         // when
         User saveUser = userRepository.save(userRequest.toEntity());
@@ -40,8 +39,7 @@ class UserServiceTest {
     public void 회원가입_마일리지() throws Exception {
         // given
         Address address = new Address("1234-12", "어딘가", "자세히");
-        UserRequest userRequest = new UserRequest("test1", "test1!","test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
-
+        UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
 
 
         // when
@@ -57,7 +55,7 @@ class UserServiceTest {
         // given
         Address address = new Address("1234-12", "어딘가", "자세히");
 
-        UserRequest userRequest = new UserRequest("test1", "test1!","test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
+        UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
 
 
         // when
@@ -75,13 +73,13 @@ class UserServiceTest {
         String loginId = "회원가입";
         Address address = new Address("1234-12", "어딘가", "자세히");
 
-        UserRequest userRequest1 = new UserRequest("test1", "test1!","test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
+        UserRequest userRequest1 = new UserRequest("test1", "test1!", "test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
         userRepository.save(userRequest1.toEntity());
-        UserRequest userRequest2 = new UserRequest("test1", "test1!","test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
+        UserRequest userRequest2 = new UserRequest("test1", "test1!", "test1!", "테스터", "01012341234", "abc@naver.com", address, LocalDateTime.now(), null, 1000);
         User saveUser2 = userRepository.save(userRequest2.toEntity());
         // when
 
-        if(userRepository.existsByLoginId(saveUser2.getLoginId())) {
+        if (userRepository.existsByLoginId(saveUser2.getLoginId())) {
             loginId = "아이디 중복";
         }
 

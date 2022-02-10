@@ -15,7 +15,6 @@ public class UserService {
 
     // userId로 반환
     public Long save(UserRequest userRequest) {
-        userRequest.initMileage();
         User newUser = userRepository.save(userRequest.toEntity());
         return newUser.getId();
 
