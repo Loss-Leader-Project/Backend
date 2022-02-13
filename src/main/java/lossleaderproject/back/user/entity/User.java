@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.dto.UserRequest;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class User extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(updatable = false)
@@ -24,8 +25,9 @@ public class User extends BaseEntity {
 
     private String phoneNumber;
     private String email;
-    @Embedded // 임베디드 타입을 사용하는곳에 사용(생략 가능)
-    private Address address;
+    private String postalCode; // 우편번호
+    private String briefAddress; // 간략주소
+    private String detailAddress; // 상세주소
 
     @Column(updatable = false)
     private LocalDateTime birthDate;
@@ -35,15 +37,25 @@ public class User extends BaseEntity {
 
     private int mileage;
 
+    public void restMileage(int usedMileage) {
+        this.mileage -= usedMileage;
+    }
+
+    public void recommendedMileage() {
+        this.mileage += 500;
+    }
+
     // 3레이어
     // entity 가장 상위
-    public User(String loginId, String password, String userName, String phoneNumber, String email, Address address, LocalDateTime birthDate, String recommendedPerson) {
+    public User(String loginId, String password, String userName, String phoneNumber, String email, String postalCode, String briefAddress, String detailAddress, LocalDateTime birthDate, String recommendedPerson) {
         this.loginId = loginId;
         this.password = password;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.address = address;
+        this.postalCode = postalCode;
+        this.briefAddress = briefAddress;
+        this.detailAddress = detailAddress;
         this.birthDate = birthDate;
         this.recommendedPerson = recommendedPerson;
         this.mileage = 3000;

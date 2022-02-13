@@ -15,13 +15,28 @@ public class UserService {
 
     // userId로 반환
     public Long save(UserRequest userRequest) {
-        User newUser = userRepository.save(userRequest.toEntity());
+        User newUser = userRequest.toEntity();
+        if (newUser.getRecommendedPerson() != null) {
+            newUser.recommendedMileage();
+            User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
+            findRecommendLoginId.recommendedMileage();
+        }
+        userRepository.save(newUser);
         return newUser.getId();
 
     }
 
+    @Transactional(readOnly = true)
     public boolean checkLoginId(String loginId) {
         return userRepository.existsByLoginId(loginId);
+    }
+
+    @Transactional(readOnly = true) // 추천인 검사
+    public boolean checkRecommendedPerson(String recommendedPerson) {
+        if (recommendedPerson != null) {
+            return userRepository.existsByLoginId(recommendedPerson);
+        }
+        return true;
     }
 
 
