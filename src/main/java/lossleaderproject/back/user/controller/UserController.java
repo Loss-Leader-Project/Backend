@@ -26,13 +26,18 @@ public class UserController {
             return ResponseEntity.badRequest().body("이미 존재하는 아이디입니다.");
         }
 
+        if(userService.checkRecommendedPerson(userRequest.getRecommendedPerson()) == false) {
+            return ResponseEntity.badRequest().body("추천인 아이디가 존재하지 않습니다");
+        }
+
         if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
         }
 
+
         // 아이디 중복 안했을시 회원 저장
 
-        Long savedId = userService.save(userRequest);
+        userService.save(userRequest);
         return ResponseEntity.ok("회원가입 성공");
         // { body: { id:5, message: '회원가입 성공' } }
     }
