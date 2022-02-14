@@ -34,7 +34,6 @@ public class User extends BaseEntity {
 
     private String recommendedPerson;
 
-
     private int mileage;
 
     public void restMileage(int usedMileage) {
