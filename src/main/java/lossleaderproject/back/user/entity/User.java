@@ -32,7 +32,6 @@ public class User extends BaseEntity {
 
     private String recommendedPerson;
 
-
     private int mileage;
 
     // 3레이어
