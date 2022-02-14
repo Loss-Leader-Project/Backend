@@ -3,8 +3,6 @@ package lossleaderproject.back.user.entity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.dto.UserRequest;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,9 +30,7 @@ public class User extends BaseEntity {
     @Column(updatable = false)
     private LocalDateTime birthDate;
 
-
     private String recommendedPerson;
-
 
     private int mileage;
 
