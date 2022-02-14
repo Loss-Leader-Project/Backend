@@ -28,6 +28,7 @@ public class UserRequest {
     @NotNull(message = "이름을 필수로 입력하셔야됩니다.")
     private String userName;
 
+    @NotNull(message = "핸드폰 번호를 필수로 입력하셔야됩니다.")
     private String phoneNumber;
 
     @Email(message = "이메일 형식에 맞게 입력하셔야 됩니다.")
