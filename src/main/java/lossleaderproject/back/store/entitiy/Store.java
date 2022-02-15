@@ -2,13 +2,10 @@ package lossleaderproject.back.store.entitiy;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.user.entity.Address;
 import lossleaderproject.back.user.entity.BaseEntity;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 
 @Entity
@@ -43,14 +40,14 @@ public class Store extends BaseEntity {
     private Coupon coupon;
 
     @Embedded // 임베디드 타입을 사용하는곳에 사용(생략 가능)
-    private  ServiceMethod serviceMethod;
+    private ServiceMethod serviceMethod;
 //    private Coupon coupon;
 
     public void savedCoupon(Coupon coupon) {
         this.coupon = coupon;
     }
 
-    public Store( String briefAddress, String storeName,String thumbnailImageUrl,ServiceMethod serviceMethod) {
+    public Store(String briefAddress, String storeName, String thumbnailImageUrl, ServiceMethod serviceMethod) {
         this.briefAddress = briefAddress;
         this.storeName = storeName;
         this.thumbnailImageUrl = thumbnailImageUrl;
