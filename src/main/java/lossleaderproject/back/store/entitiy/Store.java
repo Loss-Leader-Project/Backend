@@ -2,13 +2,10 @@ package lossleaderproject.back.store.entitiy;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.user.entity.Address;
 import lossleaderproject.back.user.entity.BaseEntity;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 
 @Entity
@@ -50,7 +47,7 @@ public class Store extends BaseEntity {
         this.coupon = coupon;
     }
 
-    public Store( String briefAddress, String storeName,String thumbnailImageUrl,ServiceMethod serviceMethod) {
+    public Store(String briefAddress, String storeName,String thumbnailImageUrl,ServiceMethod serviceMethod) {
         this.briefAddress = briefAddress;
         this.storeName = storeName;
         this.thumbnailImageUrl = thumbnailImageUrl;
