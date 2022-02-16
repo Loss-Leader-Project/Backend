@@ -8,6 +8,7 @@ import lossleaderproject.back.user.entity.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,6 +19,8 @@ public class UserRequest {
     private String loginId;
 
     @NotNull(message = "비밀번호를 필수로 입력하셔야됩니다.")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,15}",
+            message = "비밀번호는 영문 대,소문자와 숫자, 특수기호가 적어도 1개 이상씩 포함된 8자 ~ 15자의 비밀번호여야 합니다.")
     private String password;
 
     @NotNull(message = "비밀번호를 확인해야합니다.")
@@ -48,7 +51,7 @@ public class UserRequest {
 
 
     public User toEntity() {
-        return new User(this.loginId, this.password, this.userName, this.phoneNumber, this.email, this.postalCode,this.briefAddress ,this.detailAddress,this.birthDate, this.recommendedPerson);
+        return new User(this.loginId, this.password, this.userName, this.phoneNumber, this.email, this.postalCode, this.briefAddress, this.detailAddress, this.birthDate, this.recommendedPerson);
     }
 
 }

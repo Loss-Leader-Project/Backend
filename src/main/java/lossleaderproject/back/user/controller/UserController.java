@@ -3,6 +3,8 @@ package lossleaderproject.back.user.controller;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.dto.UserRequest;
 import lossleaderproject.back.user.dto.UserResponse;
+import lossleaderproject.back.user.exception.ErrorCode;
+import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +22,17 @@ public class UserController {
     @PostMapping("/lossleader-user")
     public ResponseEntity<String> newMember(@Valid @RequestBody UserRequest userRequest) {
 
-        // 인터셉터에 위치
-        // 아이디 중복시 409 에러와 아이디 중복 리턴
+
         if (userService.checkLoginId(userRequest.getLoginId())) {
-            return ResponseEntity.badRequest().body("이미 존재하는 아이디입니다.");
+            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
 
         if (userService.checkRecommendedPerson(userRequest.getRecommendedPerson()) == false) {
-            return ResponseEntity.badRequest().body("추천인 아이디가 존재하지 않습니다");
+            throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
         }
 
         if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
-            return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
+            throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
         }
         // 아이디 중복 안했을시 회원 저장
 
@@ -48,14 +49,20 @@ public class UserController {
 
 
     @PostMapping("/userinfo/{userId}")
-    public ResponseEntity<String> userInfo(@PathVariable("userId") Long userId,@RequestBody UserResponse userResponse) {
+    public ResponseEntity<String> userInfo(@PathVariable("userId") Long userId, @RequestBody UserResponse userResponse) {
         if (userService.checkRecommendedPerson(userResponse.getRecommendedPerson()) == false) {
-            return ResponseEntity.badRequest().body("추천인 아이디가 존재하지 않습니다");
+            throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
         }
+        if (userService.userInfoRePasswordOldCheck(userId, userResponse.getOldPassword()) == false
+                || userService.userInfoRePasswordNewCheck(userId, userResponse) == false) {
+            throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
+        }
+
 
         userService.userInfoEdit(userId, userResponse);
 
         return ResponseEntity.ok("회원수정완료");
     }
+
 
 }

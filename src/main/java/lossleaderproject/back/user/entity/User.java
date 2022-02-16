@@ -47,7 +47,6 @@ public class User extends BaseEntity {
     }
 
 
-
     public void userInfoEditUserName(String userName) {
         this.userName = userName;
     }
@@ -59,12 +58,18 @@ public class User extends BaseEntity {
     public void userInfoEditPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
     public void userInfoEditBirthDate(LocalDateTime birthDate) {
         this.birthDate = birthDate;
     }
+
     public void userInfoRecommendPerson(String recommendedPerson) {
         this.recommendedPerson = recommendedPerson;
 
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
     }
 
     // 3레이어
