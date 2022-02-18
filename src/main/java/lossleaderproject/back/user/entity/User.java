@@ -1,11 +1,13 @@
 package lossleaderproject.back.user.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.dto.UserRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -42,6 +44,32 @@ public class User extends BaseEntity {
 
     public void recommendedMileage() {
         this.mileage += 500;
+    }
+
+
+    public void userInfoEditUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void userInfoEditEmail(String email) {
+        this.email = email;
+    }
+
+    public void userInfoEditPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void userInfoEditBirthDate(LocalDateTime birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void userInfoRecommendPerson(String recommendedPerson) {
+        this.recommendedPerson = recommendedPerson;
+
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
     }
 
     // 3레이어
