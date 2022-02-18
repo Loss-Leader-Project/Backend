@@ -20,6 +20,8 @@ public class UserService {
             newUser.recommendedMileage();
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
+            System.out.println("findRecommendLoginId = " + findRecommendLoginId);
+            System.out.println("커밋 2");
         }
         userRepository.save(newUser);
         return newUser.getId();
