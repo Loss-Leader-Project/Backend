@@ -37,7 +37,6 @@ public class StoreRequest {
 
     private Float avgStar;
 
-    private Coupon coupon;
 
     @NotNull(message = "쿠폰 가격을 필수로 입력하셔야됩니다.")
     private Integer priceOfCoupon;
