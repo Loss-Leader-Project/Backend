@@ -14,10 +14,10 @@ import java.time.LocalTime;
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ORDER_ID")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private StoreOrder storeOrder; // 상품 주문
+
 
     private int orderNumber; // 주문번호
     private LocalTime visitTime; // 방문시간*/
@@ -31,9 +31,6 @@ public class Orders {
 
 
 
-    public void storeOrder(StoreOrder storeOrder) {
-        this.storeOrder = storeOrder;
-    }
 
     public Orders(int orderNumber, LocalTime visitTime, int visitCount, int payPrice, int usedMileage, int lastPrice, boolean allUseMileage, boolean orderAgree) {
         this.orderNumber = orderNumber;
