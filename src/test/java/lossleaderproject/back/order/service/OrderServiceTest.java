@@ -1,11 +1,8 @@
 package lossleaderproject.back.order.service;
 
 import lossleaderproject.back.order.dto.OrderRequest;
-import lossleaderproject.back.store.dto.CouponRequest;
 import lossleaderproject.back.store.dto.StoreRequest;
 import lossleaderproject.back.store.entitiy.ServiceMethod;
-import lossleaderproject.back.store.entitiy.Store;
-import lossleaderproject.back.store.repository.StoreRepository;
 import lossleaderproject.back.store.service.StoreService;
 import lossleaderproject.back.user.dto.UserRequest;
 import lossleaderproject.back.user.entity.User;

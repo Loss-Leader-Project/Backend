@@ -1,19 +1,18 @@
 package lossleaderproject.back.store.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lossleaderproject.back.store.entitiy.ServiceMethod;
 import lossleaderproject.back.store.entitiy.Store;
 
-
 import javax.persistence.Embedded;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class StoreRequest {
+public class StoreResponse {
+    @NotNull(message = "아이디를 필수로 입력 하셔야 합니다.")
+    private Long id;
 
     @NotNull(message = "간략한 주소를 필수로 입력하셔야됩니다.")
     private String briefAddress;
@@ -28,12 +27,10 @@ public class StoreRequest {
     @Embedded // 임베디드 타입을 사용하는곳에 사용(생략 가능)
     private ServiceMethod serviceMethod;
 
-
+    @NotNull(message = "리뷰 개수를 필수로 입력하셔야됩니다.")
     private Integer reviewCount;
-
+    @NotNull(message = "평균 별점을 필수로 입력하셔야됩니다.")
     private Float avgStar;
-
-    private StoreDetailRequest storeDetailRequest;
 
     @NotNull(message = "쿠폰 가격을 필수로 입력하셔야됩니다.")
     private Integer priceOfCoupon;
@@ -56,19 +53,23 @@ public class StoreRequest {
     @NotNull(message = "쿠폰 등급 이름을 필수로 입력하셔야 됩니다.")
     private String couponGradeName;
 
-    public Store storeRequestToEntity() {
-        return new Store(
-                this.briefAddress,
-                this.storeName,
-                this.thumbnailImage,
-                this.serviceMethod,
-                this.priceOfCoupon,
-                this.benefitCondition,
-                this.couponContent,
-                this.leftCoupon,
-                this.totalCoupon,
-                this.couponGrade,
-                this.couponGradeName);
-    }
+    private StoreDetailResponse storeDetailResponse;
 
+    public StoreResponse(Store store, StoreDetailResponse storeDetailResponse) {
+        this.id = store.getId();
+        this.briefAddress = store.getBriefAddress();
+        this.storeName = store.getStoreName();
+        this.thumbnailImage = store.getThumbnailImage();
+        this.serviceMethod = store.getServiceMethod();
+        this.reviewCount = store.getReviewCount();
+        this.avgStar =store.getAvgStar();
+        this.priceOfCoupon = store.getPriceOfCoupon();
+        this.benefitCondition = store.getBenefitCondition();
+        this.couponContent = store.getCouponContent();
+        this.leftCoupon = store.getLeftCoupon();
+        this.totalCoupon = store.getTotalCoupon();
+        this.couponGrade = store.getCouponGrade();
+        this.couponGradeName = store.getCouponGradeName();
+        this.storeDetailResponse = storeDetailResponse;
+    }
 }

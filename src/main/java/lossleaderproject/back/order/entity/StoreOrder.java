@@ -1,6 +1,5 @@
 package lossleaderproject.back.order.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lossleaderproject.back.store.entitiy.Store;
