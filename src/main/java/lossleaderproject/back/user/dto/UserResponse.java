@@ -19,10 +19,10 @@ public class UserResponse {
     private String newPasswordConfirm;
     private String email;
     private String phoneNumber;
-    private LocalDateTime birthDate;
+    private String birthDate;
     private String recommendedPerson;
 
-    public UserResponse(String loginId, String userName, String email, String phoneNumber, LocalDateTime birthDate, String recommendedPerson) {
+    public UserResponse(String loginId, String userName, String email, String phoneNumber, String birthDate, String recommendedPerson) {
         this.loginId = loginId;
         this.userName = userName;
         this.email = email;

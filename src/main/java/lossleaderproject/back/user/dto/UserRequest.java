@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lossleaderproject.back.user.entity.User;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -43,7 +44,8 @@ public class UserRequest {
     private String detailAddress; // 상세주소
 
     @NotNull(message = "생년월일을 필수로 입력하셔야됩니다.")
-    private LocalDateTime birthDate;
+    @Length(message = "생년월일은 ")
+    private String birthDate;
 
     private String recommendedPerson;
 

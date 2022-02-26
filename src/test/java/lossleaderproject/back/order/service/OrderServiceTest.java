@@ -35,9 +35,9 @@ class OrderServiceTest {
     @Transactional
     public void 주문() throws Exception {
         // given
-        UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "test1", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", LocalDateTime.now(), null, 1000);
+        UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "test1", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", "9810151", null, 1000);
         User saveUser = userRepository.save(userRequest.toEntity());
-        UserRequest userRequest2 = new UserRequest("hoe", "test1!", "test1!", "hoe", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", LocalDateTime.now(), null, 1000);
+        UserRequest userRequest2 = new UserRequest("hoe", "test1!", "test1!", "hoe", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", "9705021", null, 1000);
         User saveUser2 = userRepository.save(userRequest2.toEntity());
         OrderRequest orderRequest1 = new OrderRequest("test1", "01012341234", 20220213, LocalTime.now(), 3,  0, true, true);
         OrderRequest orderRequest2 = new OrderRequest("hoe", "01012341234", 20220214, LocalTime.now(), 3,  0, true, true);
@@ -62,8 +62,8 @@ class OrderServiceTest {
     @Transactional
     public void 전액사용_true() throws Exception {
         // given
-        UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "test1", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", LocalDateTime.now(), null, 1000);
-        UserRequest userRequest2 = new UserRequest("hoe", "test1!", "test1!", "hoe", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", LocalDateTime.now(), null, 1000);
+        UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "test1", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", "9810151", null, 1000);
+        UserRequest userRequest2 = new UserRequest("hoe", "test1!", "test1!", "hoe", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", "1011301", null, 1000);
         User saveUser = userRepository.save(userRequest.toEntity());
         User saveUser2 = userRepository.save(userRequest2.toEntity());
 
