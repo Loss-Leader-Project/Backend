@@ -12,6 +12,7 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor // 빈생성자
 @AllArgsConstructor // 멤버변수를 다 포함한 생성자
 public class ServiceMethod {
+    private String  content; // 매장에서 식사
     private Boolean storeMeal; // 매장에서 식사
     private Boolean packaging; // 포장
     private Boolean delivery; // 배달

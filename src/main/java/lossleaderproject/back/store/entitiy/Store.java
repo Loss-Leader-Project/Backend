@@ -21,11 +21,7 @@ public class Store extends BaseEntity {
     @Column(updatable = false)
     private String briefAddress;
     private String storeName;
-    private String thumbnailImageUrl;
-
-//    @ColumnDefault("0") //default 0
-//    private Integer reviewCount;
-//    private Float avgStar;
+    private String thumbnailImage;
 
     @Column(columnDefinition = "integer default 0")
     private Integer reviewCount;
@@ -33,24 +29,34 @@ public class Store extends BaseEntity {
     @Column(columnDefinition = "Float default 0")
     private Float avgStar;
 
-//    @ColumnDefault()
-
-    @OneToOne()  // 지연 로딩 안하면 업체와 관련된 쿠폰도 select됨
-    @JoinColumn(name = "couponId")  // jpa에서 연관관계가 있으면 연관관계 주인 한테 joincolumn 필요
-    private Coupon coupon;
-
     @Embedded // 임베디드 타입을 사용하는곳에 사용(생략 가능)
     private ServiceMethod serviceMethod;
 //    private Coupon coupon;
 
-    public void savedCoupon(Coupon coupon) {
-        this.coupon = coupon;
-    }
+    //public void setStoreCoupon(Coupon coupon) {
+//        this.coupon = coupon;
+//    }
 
-    public Store(String briefAddress, String storeName, String thumbnailImageUrl, ServiceMethod serviceMethod) {
+    private Integer priceOfCoupon; // 쿠폰 가격
+    private String couponContent; // 쿠폰 설명
+    private String benefitCondition; // 혜택 조건
+    private Integer leftCoupon; // 남은 쿠폰
+    private Integer totalCoupon; // 전체 쿠폰
+    private Integer couponGrade; // 쿠폰 등급
+    private String couponGradeName;
+
+
+    public Store(String briefAddress, String storeName, String thumbnailImage, ServiceMethod serviceMethod, Integer priceOfCoupon, String couponContent, String benefitCondition, Integer leftCoupon, Integer totalCoupon, Integer couponGrade, String couponGradeName) {
         this.briefAddress = briefAddress;
         this.storeName = storeName;
-        this.thumbnailImageUrl = thumbnailImageUrl;
+        this.thumbnailImage = thumbnailImage;
         this.serviceMethod = serviceMethod;
+        this.priceOfCoupon = priceOfCoupon;
+        this.couponContent = couponContent;
+        this.benefitCondition = benefitCondition;
+        this.leftCoupon = leftCoupon;
+        this.totalCoupon = totalCoupon;
+        this.couponGrade = couponGrade;
+        this.couponGradeName = couponGradeName;
     }
 }

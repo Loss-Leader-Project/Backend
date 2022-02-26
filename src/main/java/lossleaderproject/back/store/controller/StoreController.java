@@ -1,13 +1,12 @@
 package lossleaderproject.back.store.controller;
 
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.store.dto.StoreRequest;
+import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.Store;
-import lossleaderproject.back.store.service.StoreService;
-import lossleaderproject.back.user.service.UserService;
+import lossleaderproject.back.store.entitiy.StoreDetail;
+import lossleaderproject.back.store.service.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,64 +20,110 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
+    private final StoreDetailService storeDetailService;
+    private final StoreFoodImageService storeFoodImageService;
+    private final StoreHashTagService storeHashTagService;
+    private final StoreMenuService storeMenuService;
 
-    @PostMapping()
-    public ResponseEntity<String> newMember(@Valid @RequestBody StoreRequest storeRequest) {
+    @PostMapping("/")
+    public ResponseEntity<StoreResponse> newMember(@Valid @RequestBody StoreRequest storeRequest) {
+        Store store = storeService.save(storeRequest);
+        //Long couponId = couponService.save(store.getId(),storeRequest.getCouponRequest());
+        StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
 
-        Long store = storeService.save(storeRequest);
-        return ResponseEntity.ok("업체 가입 성공");
+        StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
+                storeDetail.getId(),
+                storeDetail.getStorePhoneNumber(),
+                storeDetail.getOperatingTime(),
+                storeDetail.getOperatingPeriod(),
+                storeDetail.getRoadAddress(),
+                storeDetail.getLatitude(),
+                storeDetail.getLongitude(),
+                storeDetail.getStoreMenuImage(),
+                storeFoodImageService.save(storeDetail.getId(),storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList()),
+                storeMenuService.save(storeDetail.getId(),storeRequest.getStoreDetailRequest().getStoreMenuRequestList()),
+                storeHashTagService.save(storeDetail.getId(),storeRequest.getStoreDetailRequest().getStoreHashTagRequestList())
+        );
+        StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
+        return ResponseEntity.ok(storeResponse);
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<StoreResponse> test(@RequestParam("storeId") Long storeId) {
+        Store store= storeService.findById(storeId);
+        StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
+        Long storeDetailId = storeDetail.getId();
+        List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findOneByDetailId(storeDetailId);
+        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findOneByDetailId(storeDetailId);
+        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findOneByDetailId(storeDetailId);
+        StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
+                storeDetail.getId(),
+                storeDetail.getStorePhoneNumber(),
+                storeDetail.getOperatingTime(),
+                storeDetail.getOperatingPeriod(),
+                storeDetail.getRoadAddress(),
+                storeDetail.getLatitude(),
+                storeDetail.getLongitude(),
+                storeDetail.getStoreMenuImage(),
+                storeFoodImageResponseList,
+                storeMenuResponseList,
+                storeHashTagResponseList
+        );
+        StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
+
+        //storeDetailResponse.setStoreFoodImageResponseList(storeFoodImageService.findOneByDetailId(storeDetailId));
+        return ResponseEntity.ok(storeResponse);
     }
 
     @GetMapping("list/silver/date")
-    public ResponseEntity<Page<Store>> findAllSilverDate(@PageableDefault(page = 0,size=10) Pageable pageable) {
+    public ResponseEntity<Page<StoreListingResponse>> findAllSilverDate(@PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-        Page<Store> stores = storeService.findAllSilverDate(pageable);
-        return ResponseEntity.ok(stores);
+        Page<StoreListingResponse> storeListingResponses = storeService.findAllSilverDate(pageable);
+        return ResponseEntity.ok(storeListingResponses);
+        //return ResponseEntity.ok(stores);
     }
 
     @GetMapping("list/silver/star")
-    public ResponseEntity<Page<Store>> findAllSilverStar(@PageableDefault(page = 0,size=10) Pageable pageable) {
+    public ResponseEntity<Page<StoreListingResponse>> findAllSilverStar(@PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-        Page<Store> stores = storeService.findAllSilverStar(pageable);
-        return ResponseEntity.ok(stores);
+        Page<StoreListingResponse> storeListingResponses = storeService.findAllSilverStar(pageable);
+        return ResponseEntity.ok(storeListingResponses);
     }
 
     @GetMapping("list/silver/price")
-    public ResponseEntity<Page<Store>> findAllSilverPrice(@Valid @RequestParam("sorting") String sorting,@PageableDefault(page = 0,size=10) Pageable pageable) {
-        Page<Store> stores;
-        if(sorting.equals("DESC")) {
-            stores = storeService.findAllSilverPriceDESC(pageable);
+    public ResponseEntity<Page<StoreListingResponse>> findAllSilverPrice(@RequestParam("sorting") String sorting, @PageableDefault(page = 0, size = 20) Pageable pageable) {
+        Page<StoreListingResponse> storeListingResponses;
+        if (sorting.equals("DESC")) {
+            storeListingResponses = storeService.findAllSilverPriceDESC(pageable);
+        } else {
+            storeListingResponses = storeService.findAllSilverPriceASC(pageable);
         }
-        else{
-            stores = storeService.findAllSilverPriceASC(pageable);
-        }
-        return ResponseEntity.ok(stores);
+        return ResponseEntity.ok(storeListingResponses);
     }
 
     @GetMapping("list/gold/date")
-    public ResponseEntity<Page<Store>> findAllGoldDate(@PageableDefault(page = 0,size=10) Pageable pageable) {
+    public ResponseEntity<Page<StoreListingResponse>> findAllGoldDate(@PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-        Page<Store> stores = storeService.findAllGoldDate(pageable);
-        return ResponseEntity.ok(stores);
+        Page<StoreListingResponse> storeListingResponses = storeService.findAllGoldDate(pageable);
+        return ResponseEntity.ok(storeListingResponses);
     }
 
     @GetMapping("list/gold/star")
-    public ResponseEntity<Page<Store>> findAllGoldStar(@PageableDefault(page = 0,size=10) Pageable pageable) {
+    public ResponseEntity<Page<StoreListingResponse>> findAllGoldStar(@PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-        Page<Store> stores = storeService.findAllGoldStar(pageable);
-        return ResponseEntity.ok(stores);
+        Page<StoreListingResponse> storeListingResponses = storeService.findAllGoldStar(pageable);
+        return ResponseEntity.ok(storeListingResponses);
     }
 
     @GetMapping("list/gold/price")
-    public ResponseEntity<Page<Store>> findAllGoldPrice(@Valid @RequestParam("sorting") String sorting,@PageableDefault(page = 0,size=10) Pageable pageable) {
-        Page<Store> stores;
-        if(sorting.equals("DESC")) {
-            stores = storeService.findAllGoldPriceASC(pageable);
+    public ResponseEntity<Page<StoreListingResponse>> findAllGoldPrice(@RequestParam("sorting") String sorting, @PageableDefault(page = 0, size = 20) Pageable pageable) {
+        Page<StoreListingResponse> storeListingResponses;
+        if (sorting.equals("DESC")) {
+            storeListingResponses = storeService.findAllGoldPriceASC(pageable);
+        } else {
+            storeListingResponses = storeService.findAllGoldPriceDESC(pageable);
         }
-        else{
-            stores = storeService.findAllGoldPriceDESC(pageable);
-        }
-        return ResponseEntity.ok(stores);
+        return ResponseEntity.ok(storeListingResponses);
     }
 
 }
