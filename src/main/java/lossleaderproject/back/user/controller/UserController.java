@@ -1,6 +1,8 @@
 package lossleaderproject.back.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.user.dto.UserLoginIdFindRequest;
+import lossleaderproject.back.user.dto.UserLoginIdResponse;
 import lossleaderproject.back.user.dto.UserRequest;
 import lossleaderproject.back.user.dto.UserResponse;
 import lossleaderproject.back.user.exception.ErrorCode;
@@ -44,7 +46,7 @@ public class UserController {
     @GetMapping("/userinfo/{userId}")
     public ResponseEntity<UserResponse> userInfoDetail(@PathVariable("userId") Long userId) {
 
-        return new ResponseEntity<UserResponse>(userService.userInfoDetail(userId), HttpStatus.OK);
+        return new ResponseEntity<>(userService.userInfoDetail(userId), HttpStatus.OK);
     }
 
 
@@ -62,6 +64,11 @@ public class UserController {
         userService.userInfoEdit(userId, userResponse);
 
         return ResponseEntity.ok("회원수정완료");
+    }
+
+    @PostMapping("/user/login-id")
+    public ResponseEntity<UserLoginIdResponse> userLoginIdFind(@RequestBody UserLoginIdFindRequest userLoginIdFindRequest) {
+        return new ResponseEntity<>(userService.findLoginId(userLoginIdFindRequest), HttpStatus.OK);
     }
 
 
