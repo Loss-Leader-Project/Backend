@@ -1,9 +1,13 @@
 package lossleaderproject.back.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.user.dto.UserLoginIdFindRequest;
+import lossleaderproject.back.user.dto.UserLoginIdResponse;
 import lossleaderproject.back.user.dto.UserRequest;
 import lossleaderproject.back.user.dto.UserResponse;
 import lossleaderproject.back.user.entity.User;
+import lossleaderproject.back.user.exception.ErrorCode;
+import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,5 +100,17 @@ public class UserService {
         return true;
     }
 
+    public UserLoginIdResponse findLoginId(UserLoginIdFindRequest userLoginIdFindRequest) {
+
+        if (userRepository.existsByUserNameAndBirthDateAndEmail(userLoginIdFindRequest.getUserName()
+                , userLoginIdFindRequest.getBirthDate(),
+                userLoginIdFindRequest.getEmail()) == false) {
+            throw new UserCustomException(ErrorCode.NO_EXIST_USERNAME_BIRTHDATE_EMAIL);
+        }
+        String loginId = userRepository.findLoginId(userLoginIdFindRequest.getUserName(), userLoginIdFindRequest.getBirthDate(), userLoginIdFindRequest.getEmail());
+        System.out.println("loginId = " + loginId);
+        String replaceLoginId = loginId.replace(loginId.substring(loginId.length() - 3), "***");
+        return new UserLoginIdResponse(replaceLoginId);
+    }
 
 }

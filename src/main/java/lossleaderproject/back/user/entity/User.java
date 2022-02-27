@@ -1,14 +1,9 @@
 package lossleaderproject.back.user.entity;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.user.dto.UserRequest;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -32,7 +27,7 @@ public class User extends BaseEntity {
     private String detailAddress; // 상세주소
 
     @Column(updatable = false)
-    private LocalDateTime birthDate;
+    private String birthDate;
 
     private String recommendedPerson;
 
@@ -59,7 +54,7 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public void userInfoEditBirthDate(LocalDateTime birthDate) {
+    public void userInfoEditBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -74,7 +69,7 @@ public class User extends BaseEntity {
 
     // 3레이어
     // entity 가장 상위
-    public User(String loginId, String password, String userName, String phoneNumber, String email, String postalCode, String briefAddress, String detailAddress, LocalDateTime birthDate, String recommendedPerson) {
+    public User(String loginId, String password, String userName, String phoneNumber, String email, String postalCode, String briefAddress, String detailAddress, String birthDate, String recommendedPerson) {
         this.loginId = loginId;
         this.password = password;
         this.userName = userName;
