@@ -22,24 +22,25 @@ public class UserController {
     private final UserService userService;
     private final MailService mailService;
 
+    @GetMapping("/lossleader-user")
+    public ResponseEntity<String> duplicateLoginId(@RequestParam String loginId) {
+        return new ResponseEntity<>(userService.checkLoginId(loginId),HttpStatus.OK);
+    }
+
     @PatchMapping("/lossleader-user")
-    public String mail(HttpSession session, @Valid @RequestBody SendEmail eMail) {
+    public ResponseEntity<String> mail(HttpSession session, @Valid @RequestBody SendEmail eMail) {
         mailService.sendMail(session, eMail.getEmail());
-        return "메일 발송성공";
+        return new ResponseEntity<>("메일 발송성공",HttpStatus.OK);
     }
 
 
     @PutMapping("/lossleader-user")
-    public String emailVerification(HttpSession session,@RequestBody EmailVerificationNumber inputCode) {
-        return mailService.emailVerification(session, inputCode.getNumber());
+    public ResponseEntity<String> emailVerification(HttpSession session,@RequestBody EmailVerificationNumber inputCode) {
+        return new ResponseEntity<>(mailService.emailVerification(session, inputCode.getNumber()),HttpStatus.OK);
     }
 
     @PostMapping("/lossleader-user")
     public ResponseEntity<String> newMember(@Valid @RequestBody UserRequest userRequest) {
-
-        if (userService.checkLoginId(userRequest.getLoginId())) {
-            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
-        }
 
         if (userService.checkRecommendedPerson(userRequest.getRecommendedPerson()) == false) {
             throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);

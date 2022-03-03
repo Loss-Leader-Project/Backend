@@ -20,6 +20,9 @@ public class UserService {
     @Transactional
     public Long save(UserRequest userRequest) {
         User newUser = userRequest.toEntity();
+        if(userRepository.existsByLoginId(userRequest.getLoginId())) {
+            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
+        }
         if (newUser.getRecommendedPerson() != null) {
             newUser.recommendedMileage();
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
@@ -31,8 +34,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public boolean checkLoginId(String loginId) {
-        return userRepository.existsByLoginId(loginId);
+    public String checkLoginId(String loginId) {
+        if (userRepository.existsByLoginId(loginId)) {
+            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
+        }
+        return "사용가능한 아이디입니다.";
     }
 
     @Transactional(readOnly = true) // 추천인 검사
