@@ -1,4 +1,4 @@
-package lossleaderproject.back.user.service;
+package lossleaderproject.back.user.mail.service;
 
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.exception.ErrorCode;
