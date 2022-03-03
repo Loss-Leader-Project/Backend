@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.exception.ErrorCode;
 import lossleaderproject.back.user.exception.UserCustomException;
-import lossleaderproject.back.user.service.MailService;
+import lossleaderproject.back.user.mail.dto.EmailVerificationNumber;
+import lossleaderproject.back.user.mail.dto.SendEmail;
+import lossleaderproject.back.user.mail.service.MailService;
 import lossleaderproject.back.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,8 +79,13 @@ public class UserController {
     }
 
     @PostMapping("/user/login-id")
-    public ResponseEntity<UserLoginIdResponse> userLoginIdFind(@RequestBody UserLoginIdFindRequest userLoginIdFindRequest) {
+    public ResponseEntity<UserLoginIdResponse> userLoginIdFind(@Valid @RequestBody UserLoginIdFindRequest userLoginIdFindRequest) {
         return new ResponseEntity<>(userService.findLoginId(userLoginIdFindRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/user/login-password")
+    public ResponseEntity<String> userLoginPasswordFind(@Valid @RequestBody UserFindPassword userFindPassword) {
+        return new ResponseEntity<>(userService.findPassword(userFindPassword),HttpStatus.OK);
     }
 
 

@@ -1,4 +1,4 @@
-package lossleaderproject.back.user.dto;
+package lossleaderproject.back.user.mail.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
