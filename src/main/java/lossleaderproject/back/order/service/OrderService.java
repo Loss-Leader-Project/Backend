@@ -8,7 +8,6 @@ import lossleaderproject.back.order.entity.Orders;
 import lossleaderproject.back.order.entity.StoreOrder;
 import lossleaderproject.back.order.repository.OrderRepository;
 import lossleaderproject.back.order.repository.StoreOrderRepository;
-import lossleaderproject.back.store.entitiy.Coupon;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.repository.StoreRepository;
 import lossleaderproject.back.user.entity.User;
@@ -30,7 +29,7 @@ public class OrderService {
     public Long productOrder(Long storeId, OrderRequest orderRequest) {
         User loginUser = userRepository.findByUserName(orderRequest.getUserName());
         Store store = storeRepository.findById(storeId).get();
-        orderRequest.payPriceofCoupon(store.getCoupon().getPriceOfCoupon());
+        orderRequest.payPriceofCoupon(store.getPriceOfCoupon());
         if (orderRequest.isAllUseMileage() == true) {
             if (orderRequest.getPayPrice() > loginUser.getMileage()) {
                 orderRequest.setUsedMileage(loginUser.getMileage());
@@ -53,8 +52,7 @@ public class OrderService {
     public OrderRequest order(Long userId, Long storeId, OrderRequest orderRequest) {
         User user = userRepository.findById(userId).get();
         Store store = storeRepository.findById(storeId).get();
-        Coupon coupon = store.getCoupon();
-        orderRequest.order(store.getBriefAddress(), store.getStoreName(), coupon.getCouponContent(), coupon.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
+        orderRequest.order(store.getBriefAddress(), store.getStoreName(), store.getCouponContent(), store.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
 
         return orderRequest;
 
@@ -68,8 +66,8 @@ public class OrderService {
         return pageStoreOrder.map(storeOrder -> new OrderHistory(
                 storeOrder.getUser().getUserName(), storeOrder.getUser().getMileage(), storeOrder.getStore().getCreateDate(),
                 storeOrder.getOrders().getOrderNumber(), storeOrder.getStore().getBriefAddress(),
-                storeOrder.getStore().getStoreName(), storeOrder.getStore().getCoupon().getCouponContent(),
-                storeOrder.getStore().getCoupon().getPriceOfCoupon()
+                storeOrder.getStore().getStoreName(), storeOrder.getStore().getCouponContent(),
+                storeOrder.getStore().getPriceOfCoupon()
         ));
 
     }

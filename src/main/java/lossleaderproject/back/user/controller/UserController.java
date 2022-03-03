@@ -1,17 +1,16 @@
 package lossleaderproject.back.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.user.dto.UserLoginIdFindRequest;
-import lossleaderproject.back.user.dto.UserLoginIdResponse;
-import lossleaderproject.back.user.dto.UserRequest;
-import lossleaderproject.back.user.dto.UserResponse;
+import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.exception.ErrorCode;
 import lossleaderproject.back.user.exception.UserCustomException;
+import lossleaderproject.back.user.service.MailService;
 import lossleaderproject.back.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @RestController
@@ -19,11 +18,22 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+    private final MailService mailService;
 
+    @PatchMapping("/lossleader-user")
+    public String mail(HttpSession session, @Valid @RequestBody SendEmail eMail) {
+        mailService.sendMail(session, eMail.getEmail());
+        return "메일 발송성공";
+    }
+
+
+    @PutMapping("/lossleader-user")
+    public String emailVerification(HttpSession session,@RequestBody EmailVerificationNumber inputCode) {
+        return mailService.emailVerification(session, inputCode.getNumber());
+    }
 
     @PostMapping("/lossleader-user")
     public ResponseEntity<String> newMember(@Valid @RequestBody UserRequest userRequest) {
-
 
         if (userService.checkLoginId(userRequest.getLoginId())) {
             throw new UserCustomException(ErrorCode.DUPLICATE_ID);
@@ -46,7 +56,7 @@ public class UserController {
     @GetMapping("/userinfo/{userId}")
     public ResponseEntity<UserResponse> userInfoDetail(@PathVariable("userId") Long userId) {
 
-        return new ResponseEntity<>(userService.userInfoDetail(userId), HttpStatus.OK);
+        return new ResponseEntity<UserResponse>(userService.userInfoDetail(userId), HttpStatus.OK);
     }
 
 

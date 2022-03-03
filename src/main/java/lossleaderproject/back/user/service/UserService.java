@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private String newPassword;
 
     @Transactional
     public Long save(UserRequest userRequest) {

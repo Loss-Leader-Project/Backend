@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -35,6 +34,9 @@ public class UserRequest {
 
     @Email(message = "이메일 형식에 맞게 입력하셔야 됩니다.")
     private String email;
+
+    @NotNull(message = "인증 번호를 입력해주셔야 됩니다.")
+    private int emailCertification;
 
     @NotNull(message = "우편번호를 입력하셔야 됩니다.")
     private String postalCode; // 우편번호
