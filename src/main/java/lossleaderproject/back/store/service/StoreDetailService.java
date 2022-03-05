@@ -30,7 +30,7 @@ public class StoreDetailService {
         String storeMenuImageIdentify = UUID.randomUUID().toString()+".jpg";
         storeDetailRequest.setStoreMenuImageIdentify(storeMenuImageIdentify);
         minioService.imageUpload(
-                "lossleader",
+                "store",
                 storeMenuImageIdentify,
                 storeDetailRequest.getStoreMenuImage().getInputStream());
         StoreDetail storedetail = storeDetailRequest.storeDetailRequestToEntity();

@@ -17,8 +17,6 @@ public class Orders {
     @Column(name = "ORDER_ID")
     private Long id;
 
-
-
     private int orderNumber; // 주문번호
     private LocalTime visitTime; // 방문시간*/
     private Integer visitCount; // 방문 인원

@@ -1,25 +1,18 @@
 package lossleaderproject.back.store.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.minio.MinioClient;
+
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.minio.MinioService;
 import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.entitiy.StoreDetail;
 import lossleaderproject.back.store.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-//import java.io.IOException;
-//import java.security.InvalidKeyException;
-//import java.security.NoSuchAlgorithmException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -68,9 +61,9 @@ public class StoreController {
         StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
         Long storeDetailId = storeDetail.getId();
     
-        List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findOneByDetailId(storeDetailId);
-        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findOneByDetailId(storeDetailId);
-        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findOneByDetailId(storeDetailId);
+        List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findAllByStoreDetailId(storeDetailId);
+        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findAllByStoreDetailId(storeDetailId);
+        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findAllByStoreDetailId(storeDetailId);
         StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
                 storeDetail.getId(),
                 storeDetail.getStorePhoneNumber(),

@@ -4,6 +4,7 @@ package lossleaderproject.back.store.entitiy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lossleaderproject.back.user.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,10 +14,9 @@ import java.util.List;
 @Entity
 @Getter
 @RequiredArgsConstructor
-public class StoreDetail  {
+public class StoreDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "storeDetailId")
     private Long id;
 
     @Column(updatable = false)

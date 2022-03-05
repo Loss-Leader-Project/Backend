@@ -35,7 +35,7 @@ public class StoreFoodImageService {
               String imageIdentify = UUID.randomUUID().toString()+".jpg";
               storeFoodImageRequest.setImageIdentify(imageIdentify);
               minioService.imageUpload(
-                      "lossleader",
+                      "store",
                       imageIdentify,
                       storeFoodImageRequest.getImage().getInputStream());
             StoreFoodImage storeFoodImage = storeFoodImageRequest.storeFoodImageRequestToEntity();
@@ -46,8 +46,8 @@ public class StoreFoodImageService {
         return storeFoodImageResponseList;
     }
 
-    public List<StoreFoodImageResponse> findOneByDetailId(Long storeDetailId) {
-        List<StoreFoodImage> storeFoodImageList = storeFoodImageRepository.findOneByDetailId(storeDetailId);
+    public List<StoreFoodImageResponse> findAllByStoreDetailId(Long storeDetailId) {
+        List<StoreFoodImage> storeFoodImageList = storeFoodImageRepository.findAllByStoreDetailId(storeDetailId);
         List<StoreFoodImageResponse> storeFoodImageResponseList = new ArrayList<>();
         for (StoreFoodImage storeFoodImage : storeFoodImageList) {
             storeFoodImageResponseList.add(new StoreFoodImageResponse(storeFoodImage.getId(),storeFoodImage.getImage(),storeFoodImage.getName()));

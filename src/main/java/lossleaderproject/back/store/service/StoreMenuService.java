@@ -35,8 +35,8 @@ public class StoreMenuService {
     }
 
 
-    public List<StoreMenuResponse> findOneByDetailId(Long storeDetailId) {
-        List<StoreMenu> storeMenuList = storeMenuRepository.findOneByDetailId(storeDetailId);
+    public List<StoreMenuResponse> findAllByStoreDetailId(Long storeDetailId) {
+        List<StoreMenu> storeMenuList = storeMenuRepository.findAllByStoreDetailId(storeDetailId);
         List<StoreMenuResponse> storeMenuResponseList = new ArrayList<>();
         for (StoreMenu storeMenu : storeMenuList) {
             storeMenuResponseList.add(new StoreMenuResponse(storeMenu.getId(),storeMenu.getName(),storeMenu.getPrice()));
