@@ -34,3 +34,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### my ignore ###
+src/mail/resources/application.yml
