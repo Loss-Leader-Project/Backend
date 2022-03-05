@@ -1,17 +1,28 @@
 package lossleaderproject.back.store.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.minio.MinioService;
 import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.entitiy.StoreDetail;
 import lossleaderproject.back.store.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+//import java.io.IOException;
+//import java.security.InvalidKeyException;
+//import java.security.NoSuchAlgorithmException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -19,18 +30,21 @@ import java.util.List;
 @RequestMapping("/store")
 public class StoreController {
 
+
     private final StoreService storeService;
     private final StoreDetailService storeDetailService;
     private final StoreFoodImageService storeFoodImageService;
     private final StoreHashTagService storeHashTagService;
     private final StoreMenuService storeMenuService;
 
-    @PostMapping("/")
-    public ResponseEntity<StoreResponse> newMember(@Valid @RequestBody StoreRequest storeRequest) {
+    @PostMapping()
+    public ResponseEntity<StoreResponse> newMember(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+        System.out.println(" --------------------------------------");
+        System.out.println("storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList().get(0).getName() = " + storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList().get(0).getName());
+        System.out.println("storeRequest.getStoreDetailRequest().getStoreMenuRequestList().get(0).getName() = " + storeRequest.getStoreDetailRequest().getStoreMenuRequestList().get(0).getName());
+        System.out.println(" --------------------------------------999999999999");
         Store store = storeService.save(storeRequest);
-        //Long couponId = couponService.save(store.getId(),storeRequest.getCouponRequest());
         StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
-
         StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
                 storeDetail.getId(),
                 storeDetail.getStorePhoneNumber(),
@@ -53,6 +67,7 @@ public class StoreController {
         Store store= storeService.findById(storeId);
         StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
         Long storeDetailId = storeDetail.getId();
+    
         List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findOneByDetailId(storeDetailId);
         List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findOneByDetailId(storeDetailId);
         List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findOneByDetailId(storeDetailId);

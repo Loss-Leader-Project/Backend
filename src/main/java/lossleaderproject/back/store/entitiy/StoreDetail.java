@@ -3,6 +3,7 @@ package lossleaderproject.back.store.entitiy;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 public class StoreDetail  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "storeDetailId")
     private Long id;
 
     @Column(updatable = false)

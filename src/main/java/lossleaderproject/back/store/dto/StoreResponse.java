@@ -2,10 +2,8 @@ package lossleaderproject.back.store.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lossleaderproject.back.store.entitiy.ServiceMethod;
 import lossleaderproject.back.store.entitiy.Store;
 
-import javax.persistence.Embedded;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -24,8 +22,10 @@ public class StoreResponse {
     private String thumbnailImage;
 
     @NotNull(message = "서비스 방법들을 필수로 입력하셔야됩니다.")
-    @Embedded // 임베디드 타입을 사용하는곳에 사용(생략 가능)
-    private ServiceMethod serviceMethod;
+    private String  content; // 매장에서 식사
+    private Boolean storeMeal; // 매장에서 식사
+    private Boolean packaging; // 포장
+    private Boolean delivery; // 배달
 
     @NotNull(message = "리뷰 개수를 필수로 입력하셔야됩니다.")
     private Integer reviewCount;
@@ -60,7 +60,10 @@ public class StoreResponse {
         this.briefAddress = store.getBriefAddress();
         this.storeName = store.getStoreName();
         this.thumbnailImage = store.getThumbnailImage();
-        this.serviceMethod = store.getServiceMethod();
+        this.content = store.getContent();
+        this.storeMeal = store.getStoreMeal();
+        this.packaging = store.getPackaging();
+        this.delivery = store.getDelivery();
         this.reviewCount = store.getReviewCount();
         this.avgStar =store.getAvgStar();
         this.priceOfCoupon = store.getPriceOfCoupon();
