@@ -29,8 +29,10 @@ public class Store extends BaseEntity {
     @Column(columnDefinition = "Float default 0")
     private Float avgStar;
 
-    @Embedded // 임베디드 타입을 사용하는곳에 사용(생략 가능)
-    private ServiceMethod serviceMethod;
+    private String  content; // 매장에서 식사
+    private Boolean storeMeal; // 매장에서 식사
+    private Boolean packaging; // 포장
+    private Boolean delivery; // 배달
 //    private Coupon coupon;
 
     //public void setStoreCoupon(Coupon coupon) {
@@ -46,11 +48,14 @@ public class Store extends BaseEntity {
     private String couponGradeName;
 
 
-    public Store(String briefAddress, String storeName, String thumbnailImage, ServiceMethod serviceMethod, Integer priceOfCoupon, String couponContent, String benefitCondition, Integer leftCoupon, Integer totalCoupon, Integer couponGrade, String couponGradeName) {
+    public Store(String briefAddress, String storeName, String thumbnailImage, String content, Boolean storeMeal,Boolean packaging,Boolean delivery, Integer priceOfCoupon, String couponContent, String benefitCondition, Integer leftCoupon, Integer totalCoupon, Integer couponGrade, String couponGradeName) {
         this.briefAddress = briefAddress;
         this.storeName = storeName;
         this.thumbnailImage = thumbnailImage;
-        this.serviceMethod = serviceMethod;
+        this.content = content;
+        this.storeMeal = storeMeal;
+        this.packaging = packaging;
+        this.delivery = delivery;
         this.priceOfCoupon = priceOfCoupon;
         this.couponContent = couponContent;
         this.benefitCondition = benefitCondition;

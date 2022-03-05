@@ -3,13 +3,14 @@ package lossleaderproject.back.store.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lossleaderproject.back.store.entitiy.ServiceMethod;
+import lombok.Setter;
 import lossleaderproject.back.store.entitiy.Store;
+import org.springframework.web.multipart.MultipartFile;
 
 
-import javax.persistence.Embedded;
 import javax.validation.constraints.NotNull;
 
+@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,12 +22,16 @@ public class StoreRequest {
     @NotNull(message = "가게 명을 필수로 입력 하셔야 합니다.")
     private String storeName;
 
-    @NotNull(message = "썸네일 이미지 url 정보를 필수로 입력 하셔야 합니다.")
-    private String thumbnailImage;
+    @NotNull(message = "썸네일 이미지 정보를 필수로 입력 하셔야 합니다.")
+    private MultipartFile thumbnailImage;
+
+    private String thumbnailImageIdentify;
 
     @NotNull(message = "서비스 방법들을 필수로 입력하셔야됩니다.")
-    @Embedded // 임베디드 타입을 사용하는곳에 사용(생략 가능)
-    private ServiceMethod serviceMethod;
+    private String  content; // 매장에서 식사
+    private Boolean storeMeal; // 매장에서 식사
+    private Boolean packaging; // 포장
+    private Boolean delivery; // 배달
 
 
     private Integer reviewCount;
@@ -60,8 +65,11 @@ public class StoreRequest {
         return new Store(
                 this.briefAddress,
                 this.storeName,
-                this.thumbnailImage,
-                this.serviceMethod,
+                this.thumbnailImageIdentify,
+                this.content,
+                this.storeMeal,
+                this.packaging,
+                this.delivery,
                 this.priceOfCoupon,
                 this.benefitCondition,
                 this.couponContent,

@@ -4,11 +4,14 @@ package lossleaderproject.back.store.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lossleaderproject.back.store.entitiy.StoreDetail;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
-
+@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,15 +30,16 @@ public class StoreDetailRequest {
     @NotNull(message = "경도를 주소를 필수로 입력하셔야됩니다.")
     private Float longitude;
     @NotNull(message = "메뉴 이미지를 필수로 입력하셔야됩니다.")
-    private String storeMenuImage;
-
+    private MultipartFile storeMenuImage;
+    private String storeMenuImageIdentify;
     private List<StoreFoodImageRequest> storeFoodImageRequestList;
     private List<StoreHashTagRequest> storeHashTagRequestList;
     private List<StoreMenuRequest> storeMenuRequestList;
 
 
+
     public StoreDetail storeDetailRequestToEntity() {
-        return new StoreDetail(this.storePhoneNumber, this.operatingTime, this.operatingPeriod, this.roadAddress, this.latitude, this.longitude,this.storeMenuImage);
+        return new StoreDetail(this.storePhoneNumber, this.operatingTime, this.operatingPeriod, this.roadAddress, this.latitude, this.longitude,this.storeMenuImageIdentify);
     }
 
 }

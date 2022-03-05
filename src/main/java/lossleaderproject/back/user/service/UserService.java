@@ -1,10 +1,13 @@
 package lossleaderproject.back.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.user.dto.UserRequest;
-import lossleaderproject.back.user.dto.UserResponse;
+import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.entity.User;
+import lossleaderproject.back.user.exception.ErrorCode;
+import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private String newPassword;
+    private final JavaMailSender javaMailSender;
 
     @Transactional
     public Long save(UserRequest userRequest) {
         User newUser = userRequest.toEntity();
+        if(userRepository.existsByLoginId(userRequest.getLoginId())) {
+            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
+        }
         if (newUser.getRecommendedPerson() != null) {
             newUser.recommendedMileage();
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
@@ -28,8 +34,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public boolean checkLoginId(String loginId) {
-        return userRepository.existsByLoginId(loginId);
+    public String checkLoginId(String loginId) {
+        if (userRepository.existsByLoginId(loginId)) {
+            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
+        }
+        return "사용가능한 아이디입니다.";
     }
 
     @Transactional(readOnly = true) // 추천인 검사
@@ -94,6 +103,60 @@ public class UserService {
         }
 
         return true;
+    }
+
+    public UserLoginIdResponse findLoginId(UserLoginIdFindRequest userLoginIdFindRequest) {
+
+        if (userRepository.existsByUserNameAndBirthDateAndEmail(userLoginIdFindRequest.getUserName()
+                , userLoginIdFindRequest.getBirthDate(),
+                userLoginIdFindRequest.getEmail()) == false) {
+            throw new UserCustomException(ErrorCode.NO_EXIST_USERNAME_BIRTHDATE_EMAIL);
+        }
+        String loginId = userRepository.findLoginId(userLoginIdFindRequest.getUserName(), userLoginIdFindRequest.getBirthDate(), userLoginIdFindRequest.getEmail());
+        System.out.println("loginId = " + loginId);
+        String replaceLoginId = loginId.replace(loginId.substring(loginId.length() - 3), "***");
+        return new UserLoginIdResponse(replaceLoginId);
+    }
+
+    @Transactional
+    public String findPassword(UserFindPassword userFindPassword) {
+
+        if(userRepository.existsByLoginIdAndBirthDateAndEmail(userFindPassword.getLoginId(), userFindPassword.getBirthDate(), userFindPassword.getEmail())== false) {
+            throw new UserCustomException(ErrorCode.NOT_EXIST_USER);
+        }
+        String password = randomPassword();
+        User user = userRepository.findByLoginIdAndBirthDateAndEmail(userFindPassword.getLoginId(), userFindPassword.getBirthDate(), userFindPassword.getEmail());
+        sendMail(userFindPassword.getEmail(),password);
+        user.changePassword(password);
+        return "임시 비밀번호 발송 완료";
+    }
+
+    public void sendMail(String email,String password) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setFrom("cousim55@gmail.com");
+        message.setSubject("[LossLeader 비밀번호 찾기]");
+        message.setText("[임시 비밀번호] :" + password);
+        javaMailSender.send(message);
+
+    }
+
+    public String randomPassword() {
+        String password = "";
+        int randomNum = (int)(Math.random() * 200) + 1;
+        for(int i = 0; i < 11; i++) {
+            password += (char)((int)(Math.random() * 97)+40) ;
+        }
+        if(randomNum >= 100 && randomNum <= 150) {
+            password += "$"+ randomNum;
+
+        }else if(randomNum >150) {
+            password += "%"+ randomNum;
+        }
+        else {
+            password += randomNum +"&#";
+        }
+        return password;
     }
 
 
