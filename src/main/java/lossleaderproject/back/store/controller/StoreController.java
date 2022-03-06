@@ -30,6 +30,7 @@ import java.util.List;
 @RequestMapping("/store")
 public class StoreController {
 
+
     private final StoreService storeService;
     private final StoreDetailService storeDetailService;
     private final StoreFoodImageService storeFoodImageService;
@@ -38,7 +39,6 @@ public class StoreController {
 
     @PostMapping()
     public ResponseEntity<StoreResponse> newMember(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-
         Store store = storeService.save(storeRequest);
         StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
         StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
@@ -57,7 +57,6 @@ public class StoreController {
         StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
         return ResponseEntity.ok(storeResponse);
     }
-
 
 
     @GetMapping("list/silver/date")
