@@ -46,8 +46,10 @@ public class StoreFoodImageService {
         return storeFoodImageResponseList;
     }
 
-    public List<StoreFoodImageResponse> findOneByDetailId(Long storeDetailId) {
-        List<StoreFoodImage> storeFoodImageList = storeFoodImageRepository.findOneByDetailId(storeDetailId);
+    public List<StoreFoodImageResponse> findAllByStoreDetailId(Long storeDetailId) {
+        System.out.println("----------------------------");
+        System.out.println("storeDetailId = " + storeDetailId);
+        List<StoreFoodImage> storeFoodImageList = storeFoodImageRepository.findAllByStoreDetailId(storeDetailId);
         List<StoreFoodImageResponse> storeFoodImageResponseList = new ArrayList<>();
         for (StoreFoodImage storeFoodImage : storeFoodImageList) {
             storeFoodImageResponseList.add(new StoreFoodImageResponse(storeFoodImage.getId(),storeFoodImage.getImage(),storeFoodImage.getName()));

@@ -39,10 +39,6 @@ public class StoreController {
 
     @PostMapping()
     public ResponseEntity<StoreResponse> newMember(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-        System.out.println(" --------------------------------------");
-        System.out.println("storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList().get(0).getName() = " + storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList().get(0).getName());
-        System.out.println("storeRequest.getStoreDetailRequest().getStoreMenuRequestList().get(0).getName() = " + storeRequest.getStoreDetailRequest().getStoreMenuRequestList().get(0).getName());
-        System.out.println(" --------------------------------------999999999999");
         Store store = storeService.save(storeRequest);
         StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
         StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
@@ -62,33 +58,6 @@ public class StoreController {
         return ResponseEntity.ok(storeResponse);
     }
 
-    @GetMapping("/detail")
-    public ResponseEntity<StoreResponse> test(@RequestParam("storeId") Long storeId) {
-        Store store= storeService.findById(storeId);
-        StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
-        Long storeDetailId = storeDetail.getId();
-    
-        List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findOneByDetailId(storeDetailId);
-        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findOneByDetailId(storeDetailId);
-        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findOneByDetailId(storeDetailId);
-        StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
-                storeDetail.getId(),
-                storeDetail.getStorePhoneNumber(),
-                storeDetail.getOperatingTime(),
-                storeDetail.getOperatingPeriod(),
-                storeDetail.getRoadAddress(),
-                storeDetail.getLatitude(),
-                storeDetail.getLongitude(),
-                storeDetail.getStoreMenuImage(),
-                storeFoodImageResponseList,
-                storeMenuResponseList,
-                storeHashTagResponseList
-        );
-        StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
-
-        //storeDetailResponse.setStoreFoodImageResponseList(storeFoodImageService.findOneByDetailId(storeDetailId));
-        return ResponseEntity.ok(storeResponse);
-    }
 
     @GetMapping("list/silver/date")
     public ResponseEntity<Page<StoreListingResponse>> findAllSilverDate(@PageableDefault(page = 0, size = 20) Pageable pageable) {
