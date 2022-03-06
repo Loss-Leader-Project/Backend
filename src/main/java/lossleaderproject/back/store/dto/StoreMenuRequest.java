@@ -3,10 +3,11 @@ package lossleaderproject.back.store.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lossleaderproject.back.store.entitiy.StoreMenu;
 
 import javax.validation.constraints.NotNull;
-
+@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
