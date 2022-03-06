@@ -31,7 +31,7 @@ public class StoreService {
         String thumbnailImageIdentify = UUID.randomUUID().toString()+".jpg";
         storeRequest.setThumbnailImageIdentify(thumbnailImageIdentify);
         minioService.imageUpload(
-                "lossleader",
+                "store",
                 thumbnailImageIdentify,
                 storeRequest.getThumbnailImage().getInputStream());
         Store store = storeRequest.storeRequestToEntity();

@@ -31,8 +31,8 @@ public class StoreHashTagService {
         return storeHashTagResponseList;
     }
 
-    public List<StoreHashTagResponse> findOneByDetailId(Long storeDetailId) {
-        List<StoreHashTag> storeHashTagList = storeHashTagRepository.findOneByDetailId(storeDetailId);
+    public List<StoreHashTagResponse> findAllByStoreDetailId(Long storeDetailId) {
+        List<StoreHashTag> storeHashTagList = storeHashTagRepository.findAllByStoreDetailId(storeDetailId);
         List<StoreHashTagResponse> storeHashTagResponseList = new ArrayList<>();
         for (StoreHashTag storeHashTag : storeHashTagList) {
             storeHashTagResponseList.add(new StoreHashTagResponse(storeHashTag.getId(),storeHashTag.getName()));

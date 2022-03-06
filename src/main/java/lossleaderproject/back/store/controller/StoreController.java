@@ -1,25 +1,18 @@
 package lossleaderproject.back.store.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.minio.MinioClient;
+
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.minio.MinioService;
 import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.entitiy.StoreDetail;
 import lossleaderproject.back.store.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-//import java.io.IOException;
-//import java.security.InvalidKeyException;
-//import java.security.NoSuchAlgorithmException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -57,7 +50,33 @@ public class StoreController {
         StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
         return ResponseEntity.ok(storeResponse);
     }
+    @GetMapping("/detail")
+    public ResponseEntity<StoreResponse> test(@RequestParam("storeId") Long storeId) {
+        Store store= storeService.findById(storeId);
+        StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
+        Long storeDetailId = storeDetail.getId();
+    
+        List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findAllByStoreDetailId(storeDetailId);
+        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findAllByStoreDetailId(storeDetailId);
+        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findAllByStoreDetailId(storeDetailId);
+        StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
+                storeDetail.getId(),
+                storeDetail.getStorePhoneNumber(),
+                storeDetail.getOperatingTime(),
+                storeDetail.getOperatingPeriod(),
+                storeDetail.getRoadAddress(),
+                storeDetail.getLatitude(),
+                storeDetail.getLongitude(),
+                storeDetail.getStoreMenuImage(),
+                storeFoodImageResponseList,
+                storeMenuResponseList,
+                storeHashTagResponseList
+        );
+        StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
 
+        //storeDetailResponse.setStoreFoodImageResponseList(storeFoodImageService.findOneByDetailId(storeDetailId));
+        return ResponseEntity.ok(storeResponse);
+    }
 
     @GetMapping("list/silver/date")
     public ResponseEntity<Page<StoreListingResponse>> findAllSilverDate(@PageableDefault(page = 0, size = 20) Pageable pageable) {

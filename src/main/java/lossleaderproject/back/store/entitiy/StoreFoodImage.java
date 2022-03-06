@@ -3,12 +3,13 @@ package lossleaderproject.back.store.entitiy;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.user.entity.BaseEntity;
 
 import javax.persistence.*;
 @Entity
 @Getter
 @RequiredArgsConstructor
-public class StoreFoodImage {
+public class StoreFoodImage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

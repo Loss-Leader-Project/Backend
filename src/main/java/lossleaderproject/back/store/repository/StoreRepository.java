@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
+
+
+
     @Query(value = "select * from store where store.coupon_grade=0 order by store.create_date",nativeQuery = true)
     Page<Store> findAllSilverDate(Pageable pageable);
 
