@@ -32,10 +32,6 @@ public class StoreController {
 
     @PostMapping()
     public ResponseEntity<StoreResponse> newMember(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-        System.out.println(" --------------------------------------");
-        System.out.println("storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList().get(0).getName() = " + storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList().get(0).getName());
-        System.out.println("storeRequest.getStoreDetailRequest().getStoreMenuRequestList().get(0).getName() = " + storeRequest.getStoreDetailRequest().getStoreMenuRequestList().get(0).getName());
-        System.out.println(" --------------------------------------999999999999");
         Store store = storeService.save(storeRequest);
         StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
         StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
@@ -54,7 +50,6 @@ public class StoreController {
         StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
         return ResponseEntity.ok(storeResponse);
     }
-
     @GetMapping("/detail")
     public ResponseEntity<StoreResponse> test(@RequestParam("storeId") Long storeId) {
         Store store= storeService.findById(storeId);
