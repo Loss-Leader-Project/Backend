@@ -22,9 +22,9 @@ public class ReviewImageService {
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
 
-    public void save(Long reviewId,List<ReviewImageRequest.reviewImagePost> reviewImagePostList) {
+    public void save(Long reviewId,List<ReviewImageRequest.ReviewImagePost> reviewImagePostList) {
         Review review = reviewRepository.findById(reviewId).get();
-        for (ReviewImageRequest.reviewImagePost reviewImagePost : reviewImagePostList) {
+        for (ReviewImageRequest.ReviewImagePost reviewImagePost : reviewImagePostList) {
             ReviewImage reviewImage = reviewImagePost.reviewImageRequestToEntity();
             reviewImage.setReview(review);
             reviewImageRepository.save(reviewImage);
