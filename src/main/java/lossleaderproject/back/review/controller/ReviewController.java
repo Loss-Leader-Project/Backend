@@ -47,5 +47,6 @@ public class ReviewController {
     @GetMapping("/listing-store/")
     public ResponseEntity<Page< ReviewResponse.ReviewListingByStoreId>> imageUpdate(@RequestParam(value = "storeId",required = false) Long storeId, Pageable pageable) {
         return ResponseEntity.ok(reviewService.test(storeId,pageable));
+
     }
 }

@@ -1,9 +1,7 @@
 package lossleaderproject.back.order.service;
 
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.order.dto.OrderHistory;
-import lossleaderproject.back.order.dto.OrderRequest;
-import lossleaderproject.back.order.dto.OrderResponse;
+import lossleaderproject.back.order.dto.*;
 import lossleaderproject.back.order.entity.Orders;
 import lossleaderproject.back.order.entity.StoreOrder;
 import lossleaderproject.back.order.repository.OrderRepository;
@@ -42,6 +40,7 @@ public class OrderService {
             return 0L;
         }
         Orders orders = orderRequest.toEntity();
+        orders.now();
         loginUser.restMileage(orders.getUsedMileage());
         storeOrderRepository.save(new StoreOrder(orders, store, loginUser));
         Orders savedOrder = orderRepository.save(orders);
@@ -61,10 +60,8 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Page<OrderHistory> orderHistory(Long userId, Pageable pageable) {
         Page<StoreOrder> pageStoreOrder = storeOrderRepository.findAllByUserId(userId, pageable);
-
-        System.out.println("pageStoreOrder.getContent() = " + pageStoreOrder.getContent());
         return pageStoreOrder.map(storeOrder -> new OrderHistory(
-                storeOrder.getUser().getUserName(), storeOrder.getUser().getMileage(), storeOrder.getStore().getCreateDate(),
+                storeOrder.getUser().getUserName(), storeOrder.getUser().getMileage(), storeOrder.getOrders().getOrderDate(),
                 storeOrder.getOrders().getOrderNumber(), storeOrder.getStore().getBriefAddress(),
                 storeOrder.getStore().getStoreName(), storeOrder.getStore().getCouponContent(),
                 storeOrder.getStore().getPriceOfCoupon()
@@ -81,5 +78,17 @@ public class OrderService {
         return new OrderResponse(user.getUserName(), user.getPhoneNumber(), orders.getVisitTime(), orders.getVisitCount());
     }
 
+    @Transactional(readOnly = true)
+    public PurchaseDetailsResponse purchaseDetails(Long userId, Long storeId, Long orderNumber) {
+        User user = userRepository.findById(userId).get();
+        Store store = storeRepository.findById(storeId).get();
+        Orders order = orderRepository.findByOrderNumber(orderNumber);
+        PurchaseHistory purchaseHistory = new PurchaseHistory(order.getOrderDate(), order.getOrderNumber(), store.getCouponContent(), store.getPriceOfCoupon());
+        PurchaseUserInfo purchaseUserInfo = new PurchaseUserInfo(user.getUserName(), user.getPhoneNumber(), order.getVisitTime(), order.getVisitCount());
+        PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse(purchaseHistory,purchaseUserInfo);
+
+        return purchaseDetailsResponse;
+
+    }
 
 }

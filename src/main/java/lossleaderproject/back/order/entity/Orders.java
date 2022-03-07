@@ -3,10 +3,9 @@ package lossleaderproject.back.order.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalTime;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
@@ -14,11 +13,14 @@ import java.time.LocalTime;
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ORDER_ID")
+    @Column(name = "orderId")
     private Long id;
 
-    private int orderNumber; // 주문번호
-    private LocalTime visitTime; // 방문시간*/
+
+    @Column(updatable = false)
+    private LocalDate orderDate;
+    private Long orderNumber; // 주문번호
+    private String visitTime; // 방문시간*/
     private Integer visitCount; // 방문 인원
     private int payPrice; // 결제 금액
     private int usedMileage; // 사용된 마일리지
@@ -27,10 +29,12 @@ public class Orders {
 
     private boolean orderAgree; // 동의 여부부
 
+    public void now() {
+        this.orderDate = LocalDate.now();
+    }
 
 
-
-    public Orders(int orderNumber, LocalTime visitTime, int visitCount, int payPrice, int usedMileage, int lastPrice, boolean allUseMileage, boolean orderAgree) {
+    public Orders(Long orderNumber, String visitTime, int visitCount, int payPrice, int usedMileage, int lastPrice, boolean allUseMileage, boolean orderAgree) {
         this.orderNumber = orderNumber;
         this.visitTime = visitTime;
         this.visitCount = visitCount;

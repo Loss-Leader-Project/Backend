@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
-@AllArgsConstructor
+
 @NoArgsConstructor
 public class UserRequest {
     @NotNull(message = "아이디를 필수로 입력하셔야됩니다.")
@@ -35,9 +35,6 @@ public class UserRequest {
     @Email(message = "이메일 형식에 맞게 입력하셔야 됩니다.")
     private String email;
 
-    @NotNull(message = "인증 번호를 입력해주셔야 됩니다.")
-    private int emailCertification;
-
     @NotNull(message = "우편번호를 입력하셔야 됩니다.")
     private String postalCode; // 우편번호
     @NotNull(message = "간략하게 주소를 입력하셔야 됩니다.")
@@ -51,8 +48,25 @@ public class UserRequest {
 
     private String recommendedPerson;
 
+    @NotNull(message = "인증 번호를 입력해주셔야 됩니다.")
+    private int emailCertification;
+
     private int mileage;
 
+    public UserRequest(String loginId, String password, String confirmPassword, String userName, String phoneNumber, String email, String postalCode, String briefAddress, String detailAddress, String birthDate, String recommendedPerson, int emailCertification) {
+        this.loginId = loginId;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.userName = userName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.postalCode = postalCode;
+        this.briefAddress = briefAddress;
+        this.detailAddress = detailAddress;
+        this.birthDate = birthDate;
+        this.recommendedPerson = recommendedPerson;
+        this.emailCertification = emailCertification;
+    }
 
     public User toEntity() {
         return new User(this.loginId, this.password, this.userName, this.phoneNumber, this.email, this.postalCode, this.briefAddress, this.detailAddress, this.birthDate, this.recommendedPerson);

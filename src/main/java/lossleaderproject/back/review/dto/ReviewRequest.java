@@ -23,7 +23,6 @@ public class ReviewRequest {
         private String title;
         @NotNull(message = "리뷰 내용은 필수로 입력 되어야 합니다")
         private String content;
-
         @NotNull(message = "이미지들의 식별자 정보는 필수로 있어야 합니다")
         private List<ReviewImageRequest.ReviewImagePost> imageIdentifyList;
 

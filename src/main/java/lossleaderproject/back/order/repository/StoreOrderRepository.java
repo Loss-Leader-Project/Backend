@@ -15,5 +15,5 @@ public interface StoreOrderRepository extends JpaRepository<StoreOrder, Long> {
     StoreOrder findByOrdersId(Long id);
 
     @Query("select so.store from StoreOrder so join Orders o on o.orderNumber = :orderNumber ")
-    Store findByStoreCouponContent(@Param("orderNumber") int orderNumber);
+    Store findByStoreCouponContent(@Param("orderNumber") Long orderNumber);
 }

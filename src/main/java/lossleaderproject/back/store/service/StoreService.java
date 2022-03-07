@@ -39,7 +39,6 @@ public class StoreService {
         tier = tier.toUpperCase();
         filter = filter.toUpperCase();
         sorting = sorting.toUpperCase();
-
         if(tier.equals("SILVER") || tier.equals("GOLD")) {
             // 티어 별 리스팅
             if(filter.equals("PRICE")) {
