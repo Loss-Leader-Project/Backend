@@ -6,6 +6,8 @@ import lossleaderproject.back.store.entitiy.Store;
 
 import javax.persistence.Embedded;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor
 public class StoreListingResponse {
@@ -47,11 +49,11 @@ public class StoreListingResponse {
     @NotNull(message = "총 쿠폰 수를 필수로 입력하셔야됩니다.")
     private Integer totalCoupon;
 
-    @NotNull(message = "쿠폰 등급을 필수로 입력하셔야 됩니다.")
-    private Integer couponGrade;
-
     @NotNull(message = "쿠폰 등급 이름을 필수로 입력하셔야 됩니다.")
     private String couponGradeName;
+
+    @NotNull(message = "쿠폰 등급 이름을 필수로 입력하셔야 됩니다.")
+    private LocalDateTime createDate;
 
     public StoreListingResponse(Store store) {
         this.id = store.getId();
@@ -69,7 +71,7 @@ public class StoreListingResponse {
         this.couponContent = store.getCouponContent();
         this.leftCoupon = store.getLeftCoupon();
         this.totalCoupon = store.getTotalCoupon();
-        this.couponGrade = store.getCouponGrade();
         this.couponGradeName = store.getCouponGradeName();
+        this.createDate = store.getCreateDate();
     }
 }

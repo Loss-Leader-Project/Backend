@@ -8,9 +8,10 @@ import lossleaderproject.back.order.entity.Orders;
 import lossleaderproject.back.store.entitiy.BaseEntity;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.user.entity.User;
-
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -21,30 +22,34 @@ public class Review extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "storeId")
     @JsonIgnore
     private Store store;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId")
     @JsonIgnore
     private Orders orders;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     @JsonIgnore
     private User user;
 
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewId")
+    private List<ReviewImage> reviewImages;
+
     private Float star;
-
-
     private String title;
-
     private String content;
+
+    public void setReviewImages(List<ReviewImage> reviewImages) {
+        this.reviewImages = reviewImages;
+    }
 
     public void setStore(Store store) {
         this.store = store;

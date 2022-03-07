@@ -8,31 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
-
-
-
-    @Query(value = "select * from store where store.coupon_grade=0 order by store.create_date",nativeQuery = true)
-    Page<Store> findAllSilverDate(Pageable pageable);
-
-    @Query(value = "select * from store where store.coupon_grade=0 order by store.avg_star",nativeQuery = true)
-    Page<Store> findAllSilverStar(Pageable pageable);
-
-    @Query(value = "select * from store where store.coupon_grade=0 order by store.price_of_coupon ASC",nativeQuery = true)
-    Page<Store> findAllSilverPriceASC(Pageable pageable);
-
-    @Query(value = "select * from store where store.coupon_grade=0 order by store.price_of_coupon DESC",nativeQuery = true)
-    Page<Store> findAllSilverPriceDESC(Pageable pageable);
-
-    @Query(value = "select * from store where store.coupon_grade=1 order by store.create_date",nativeQuery = true)
-    Page<Store> findAllGoldDate(Pageable pageable);
-
-    @Query(value = "select * from store where store.coupon_grade=1 order by store.avg_star",nativeQuery = true)
-    Page<Store> findAllGoldStar(Pageable pageable);
-
-    @Query(value = "select * from store where store.coupon_grade=1 order by store.price_of_coupon ASC",nativeQuery = true)
-    Page<Store> findAllGoldPriceASC(Pageable pageable);
-
-    @Query(value = "select * from store where store.coupon_grade=1 order by store.price_of_coupon DESC",nativeQuery = true)
-    Page<Store> findAllGoldPriceDESC(Pageable pageable);
-    //Store findById(Long storeId);
+    // JPA 쓰라고 하셔서 문서 보고 쿼리 지우고 변경 했습니다.
+    // 티어별 JPA 쿼리
+    Page<Store> findAllByCouponGradeNameOrderByPriceOfCouponDesc(String CouponGradeName,Pageable pageable);
+    Page<Store> findAllByCouponGradeNameOrderByPriceOfCouponAsc(String CouponGradeName,Pageable pageable);
+    Page<Store> findAllByCouponGradeNameOrderByCreateDateAsc(String CouponGradeName,Pageable pageable);
+    Page<Store> findAllByCouponGradeNameOrderByAvgStarDesc(String CouponGradeName,Pageable pageable);
+    // 전체 JPA 쿼리
+    Page<Store> findAllByOrderByPriceOfCouponDesc(Pageable pageable);
+    Page<Store> findAllByOrderByPriceOfCoupon(Pageable pageable);
+    Page<Store> findAllByOrderByCreateDateAsc(Pageable pageable);
+    Page<Store> findAllByOrderByAvgStarDesc(Pageable pageable);
+    // 핫 플레이스 API 여부는 보류하고 03.07 9시에 결정 하기로 했습니다.
 }

@@ -33,22 +33,22 @@ public class Store extends BaseEntity {
     private Boolean storeMeal; // 매장에서 식사
     private Boolean packaging; // 포장
     private Boolean delivery; // 배달
-//    private Coupon coupon;
-
-    //public void setStoreCoupon(Coupon coupon) {
-//        this.coupon = coupon;
-//    }
-
     private Integer priceOfCoupon; // 쿠폰 가격
     private String couponContent; // 쿠폰 설명
     private String benefitCondition; // 혜택 조건
     private Integer leftCoupon; // 남은 쿠폰
     private Integer totalCoupon; // 전체 쿠폰
-    private Integer couponGrade; // 쿠폰 등급
     private String couponGradeName;
 
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
+    }
 
-    public Store(String briefAddress, String storeName, String thumbnailImage, String content, Boolean storeMeal,Boolean packaging,Boolean delivery, Integer priceOfCoupon, String couponContent, String benefitCondition, Integer leftCoupon, Integer totalCoupon, Integer couponGrade, String couponGradeName) {
+    public void setAvgStar(Float avgStar) {
+        this.avgStar = avgStar;
+    }
+
+    public Store(String briefAddress, String storeName, String thumbnailImage, String content, Boolean storeMeal,Boolean packaging,Boolean delivery, Integer priceOfCoupon, String couponContent, String benefitCondition, Integer leftCoupon, Integer totalCoupon, String couponGradeName) {
         this.briefAddress = briefAddress;
         this.storeName = storeName;
         this.thumbnailImage = thumbnailImage;
@@ -61,7 +61,6 @@ public class Store extends BaseEntity {
         this.benefitCondition = benefitCondition;
         this.leftCoupon = leftCoupon;
         this.totalCoupon = totalCoupon;
-        this.couponGrade = couponGrade;
         this.couponGradeName = couponGradeName;
     }
 }

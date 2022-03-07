@@ -9,7 +9,6 @@ import lossleaderproject.back.store.entitiy.StoreMenu;
 import javax.validation.constraints.NotNull;
 @Setter
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class StoreMenuRequest {
