@@ -19,9 +19,9 @@ public class OrderRequest {
     @NotNull(message = "전화번호를 입력해주셔야 됩니다.")
     private String phoneNumber;
 
-    private int orderNumber;
+    private Long orderNumber;
     @NotNull(message = "방문시간을 입력해주셔야 됩니다.")
-    private LocalTime visitTime;
+    private String visitTime;
     @NotNull(message = "방문인원을 입력해주셔야 됩니다.")
     private Integer visitCount;
     private int payPrice;
@@ -42,7 +42,7 @@ public class OrderRequest {
         this.usedMileage = usedMileage;
     }
 
-    public OrderRequest(String userName, String phoneNumber, int orderNumber, LocalTime visitTime, Integer visitCount, int usedMileage, boolean allUseMileage, boolean orderAgree) {
+    public OrderRequest(String userName, String phoneNumber, Long orderNumber, String visitTime, Integer visitCount, int usedMileage, boolean allUseMileage, boolean orderAgree) {
         this.userName = userName;
         this.phoneNumber = phoneNumber;
         this.orderNumber = orderNumber;
