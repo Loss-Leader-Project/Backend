@@ -1,6 +1,7 @@
 package lossleaderproject.back.store.controller;
 
 
+import com.sun.istack.Nullable;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.Store;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
@@ -78,55 +80,16 @@ public class StoreController {
         return ResponseEntity.ok(storeResponse);
     }
 
-    @GetMapping("list/silver/date")
-    public ResponseEntity<Page<StoreListingResponse>> findAllSilverDate(@PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-        Page<StoreListingResponse> storeListingResponses = storeService.findAllSilverDate(pageable);
-        return ResponseEntity.ok(storeListingResponses);
-        //return ResponseEntity.ok(stores);
+    @GetMapping("list/")
+    public ResponseEntity<Page<StoreListingResponse>> findAllSilverPrice(@RequestParam(value = "filter",required = false,defaultValue = "PRICE") String filter,
+                                                                         @RequestParam(value = "tier",required = false,defaultValue = "ALL") String tier,
+                                                                         @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting,
+                                                                         @PageableDefault(page = 0, size = 20) Pageable pageable)
+    {
+        tier = tier.toUpperCase();
+        filter = filter.toUpperCase();
+        sorting = sorting.toUpperCase();
+        return ResponseEntity.ok(storeService.findAllListing(pageable,filter,tier,sorting));
     }
-
-    @GetMapping("list/silver/star")
-    public ResponseEntity<Page<StoreListingResponse>> findAllSilverStar(@PageableDefault(page = 0, size = 20) Pageable pageable) {
-
-        Page<StoreListingResponse> storeListingResponses = storeService.findAllSilverStar(pageable);
-        return ResponseEntity.ok(storeListingResponses);
-    }
-
-    @GetMapping("list/silver/price")
-    public ResponseEntity<Page<StoreListingResponse>> findAllSilverPrice(@RequestParam("sorting") String sorting, @PageableDefault(page = 0, size = 20) Pageable pageable) {
-        Page<StoreListingResponse> storeListingResponses;
-        if (sorting.equals("DESC")) {
-            storeListingResponses = storeService.findAllSilverPriceDESC(pageable);
-        } else {
-            storeListingResponses = storeService.findAllSilverPriceASC(pageable);
-        }
-        return ResponseEntity.ok(storeListingResponses);
-    }
-
-    @GetMapping("list/gold/date")
-    public ResponseEntity<Page<StoreListingResponse>> findAllGoldDate(@PageableDefault(page = 0, size = 20) Pageable pageable) {
-
-        Page<StoreListingResponse> storeListingResponses = storeService.findAllGoldDate(pageable);
-        return ResponseEntity.ok(storeListingResponses);
-    }
-
-    @GetMapping("list/gold/star")
-    public ResponseEntity<Page<StoreListingResponse>> findAllGoldStar(@PageableDefault(page = 0, size = 20) Pageable pageable) {
-
-        Page<StoreListingResponse> storeListingResponses = storeService.findAllGoldStar(pageable);
-        return ResponseEntity.ok(storeListingResponses);
-    }
-
-    @GetMapping("list/gold/price")
-    public ResponseEntity<Page<StoreListingResponse>> findAllGoldPrice(@RequestParam("sorting") String sorting, @PageableDefault(page = 0, size = 20) Pageable pageable) {
-        Page<StoreListingResponse> storeListingResponses;
-        if (sorting.equals("DESC")) {
-            storeListingResponses = storeService.findAllGoldPriceASC(pageable);
-        } else {
-            storeListingResponses = storeService.findAllGoldPriceDESC(pageable);
-        }
-        return ResponseEntity.ok(storeListingResponses);
-    }
-
 }

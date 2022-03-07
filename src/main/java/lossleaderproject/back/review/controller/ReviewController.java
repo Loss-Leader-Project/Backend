@@ -1,6 +1,7 @@
 package lossleaderproject.back.review.controller;
 
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.review.dto.ReviewImageRequest;
 import lossleaderproject.back.review.dto.ReviewRequest;
 import lossleaderproject.back.review.service.ReviewService;
 import org.springframework.http.HttpStatus;
@@ -25,17 +26,17 @@ public class ReviewController {
     }
 
     @PostMapping("/image-upload")
-    public ResponseEntity<String> imageUpload(ReviewRequest.ImageUpload imageUpload) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public ResponseEntity<String> imageUpload(ReviewImageRequest.ImageUpload imageUpload) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         return new ResponseEntity<>(reviewService.imageUpload(imageUpload),HttpStatus.OK);
     }
 
     @DeleteMapping("/image-delete")
-    public ResponseEntity<String> imageDelete(ReviewRequest.ImageRemove imageRemove) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public ResponseEntity<String> imageDelete(ReviewImageRequest.ImageRemove imageRemove) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         return  new ResponseEntity<>(reviewService.imageRemove(imageRemove),HttpStatus.OK);
     }
 
     @PutMapping("/image-update")
-    public ResponseEntity<String> imageUpdate(ReviewRequest.ImageUpdate imageUpdate) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-        return new ResponseEntity<>(reviewService.imageUpdate(imageUpdate),HttpStatus.CREATED);
+    public ResponseEntity<String> imageUpdate(ReviewImageRequest.ImageUpdate imageUpdate) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+        return new ResponseEntity<>(reviewService.imageUpdate(imageUpdate),HttpStatus.OK);
     }
 }

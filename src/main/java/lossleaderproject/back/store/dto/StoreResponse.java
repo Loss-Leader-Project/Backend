@@ -47,9 +47,6 @@ public class StoreResponse {
     @NotNull(message = "총 쿠폰 수를 필수로 입력하셔야됩니다.")
     private Integer totalCoupon;
 
-    @NotNull(message = "쿠폰 등급을 필수로 입력하셔야 됩니다.")
-    private Integer couponGrade;
-
     @NotNull(message = "쿠폰 등급 이름을 필수로 입력하셔야 됩니다.")
     private String couponGradeName;
 
@@ -71,7 +68,6 @@ public class StoreResponse {
         this.couponContent = store.getCouponContent();
         this.leftCoupon = store.getLeftCoupon();
         this.totalCoupon = store.getTotalCoupon();
-        this.couponGrade = store.getCouponGrade();
         this.couponGradeName = store.getCouponGradeName();
         this.storeDetailResponse = storeDetailResponse;
     }

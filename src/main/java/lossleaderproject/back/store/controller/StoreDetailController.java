@@ -30,8 +30,8 @@ public class StoreDetailController {
         Long storeDetailId = storeDetail.getId();
 
         List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findAllByStoreDetailId(storeDetailId);
-        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findOneByDetailId(storeDetailId);
-        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findOneByDetailId(storeDetailId);
+        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findAllByStoreDetailId(storeDetailId);
+        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findAllByStoreDetailId(storeDetailId);
         StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
                 storeDetail.getId(),
                 storeDetail.getStorePhoneNumber(),
