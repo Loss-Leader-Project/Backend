@@ -24,7 +24,7 @@ public class StoreOrder {
     private Store store;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORDER_ID")
+    @JoinColumn(name = "orderId")
     private Orders orders;
 
     public StoreOrder(Orders orders,Store store, User user) {
