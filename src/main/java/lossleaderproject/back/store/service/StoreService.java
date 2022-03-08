@@ -5,14 +5,11 @@ import lossleaderproject.back.minio.MinioService;
 import lossleaderproject.back.store.dto.StoreListingResponse;
 import lossleaderproject.back.store.dto.StoreRequest;
 import lossleaderproject.back.store.entitiy.Store;
-import lossleaderproject.back.store.repository.StoreFoodImageRepository;
 import lossleaderproject.back.store.repository.StoreRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -39,6 +36,9 @@ public class StoreService {
     }
     public Page<StoreListingResponse> findAllListing(Pageable pageable,String filter, String tier, String sorting) {
         Page<Store> stores = null;
+        tier = tier.toUpperCase();
+        filter = filter.toUpperCase();
+        sorting = sorting.toUpperCase();
         if(tier.equals("SILVER") || tier.equals("GOLD")) {
             // 티어 별 리스팅
             if(filter.equals("PRICE")) {

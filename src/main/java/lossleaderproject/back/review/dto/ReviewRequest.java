@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lossleaderproject.back.review.entity.Review;
+import lossleaderproject.back.review.entity.ReviewImage;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,10 +26,10 @@ public class ReviewRequest {
         @NotNull(message = "이미지들의 식별자 정보는 필수로 있어야 합니다")
         private List<ReviewImageRequest.ReviewImagePost> imageIdentifyList;
 
-
         public Review reviewRequestToEntity() {
             return new Review(star,title,content);
         }
+
     }
 
 }

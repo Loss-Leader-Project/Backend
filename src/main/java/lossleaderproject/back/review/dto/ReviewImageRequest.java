@@ -23,7 +23,7 @@ public class ReviewImageRequest {
         private String imageIdentify;
 
         public ReviewImage reviewImageRequestToEntity() {
-            return new ReviewImage(imageIdentify);
+            return new ReviewImage(this.imageIdentify);
         }
     }
 

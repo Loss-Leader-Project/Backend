@@ -87,9 +87,6 @@ public class StoreController {
                                                                          @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting,
                                                                          @PageableDefault(page = 0, size = 20) Pageable pageable)
     {
-        tier = tier.toUpperCase();
-        filter = filter.toUpperCase();
-        sorting = sorting.toUpperCase();
         return ResponseEntity.ok(storeService.findAllListing(pageable,filter,tier,sorting));
     }
 }

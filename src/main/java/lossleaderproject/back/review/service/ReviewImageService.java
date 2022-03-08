@@ -13,6 +13,7 @@ import lossleaderproject.back.user.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,12 +23,13 @@ public class ReviewImageService {
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
 
-    public void save(Long reviewId,List<ReviewImageRequest.ReviewImagePost> reviewImagePostList) {
-        Review review = reviewRepository.findById(reviewId).get();
+    public List<ReviewImage> save(List<ReviewImageRequest.ReviewImagePost> reviewImagePostList) {
+        List<ReviewImage> reviewImages = new ArrayList<>();
         for (ReviewImageRequest.ReviewImagePost reviewImagePost : reviewImagePostList) {
             ReviewImage reviewImage = reviewImagePost.reviewImageRequestToEntity();
-            reviewImage.setReview(review);
+            reviewImages.add(reviewImage);
             reviewImageRepository.save(reviewImage);
         }
+        return reviewImages;
     }
 }
