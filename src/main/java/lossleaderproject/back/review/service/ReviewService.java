@@ -37,7 +37,7 @@ public class ReviewService {
     private final StoreService storeService;
     private final MinioService minioService;
 
-    public void save(Long userId, int orderNumber, Long storeId, ReviewRequest.ReviewPost reviewPost) {
+    public void save(Long userId, Long orderNumber, Long storeId, ReviewRequest.ReviewPost reviewPost) {
         User user = userRepository.findById(userId).get();
         Orders orders = orderRepository.findByOrderNumber(orderNumber);
         Store store = storeRepository.findById(storeId).get();
@@ -87,8 +87,13 @@ public class ReviewService {
         return imageIdentify;
     }
 
-    public Page< ReviewResponse.ReviewListingByStoreId> test(Long storeId, Pageable pageable){
+    public Page< ReviewResponse.ReviewListing> findAllByStoreIdOrderByCreateDateAsc(Long storeId, Pageable pageable){
         Page<Review> reviews = reviewRepository.findAllByStoreIdOrderByCreateDateAsc(storeId,pageable);
-        return reviews.map(review -> new ReviewResponse.ReviewListingByStoreId(review));
+        return reviews.map(review -> new ReviewResponse.ReviewListing(review));
+    }
+
+    public Page< ReviewResponse.ReviewListing> findAllByUserIdOrderByCreateDateAsc(Long userId, Pageable pageable){
+        Page<Review> reviews = reviewRepository.findAllByUserIdOrderByCreateDateAsc(userId,pageable);
+        return reviews.map(review -> new ReviewResponse.ReviewListing(review));
     }
 }

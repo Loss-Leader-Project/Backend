@@ -14,7 +14,7 @@ public class ReviewResponse {
 
     @Getter
     @NoArgsConstructor
-    public static class ReviewListingByStoreId{
+    public static class ReviewListing{
         @NotNull(message = "리뷰 ID는 필수로 출력 되어야 합니다")
         private Long id;
         @NotNull(message = "리뷰 별점은 필수로 출력 되어야 합니다")
@@ -28,7 +28,7 @@ public class ReviewResponse {
         @NotNull(message = "이미지들의 식별자 정보는 필수로 있어야 합니다")
         private List<ReviewImageResponse.ReviewImageToListing> imageIdentifyList;
 
-        public ReviewListingByStoreId(Review review){
+        public ReviewListing(Review review){
             this.id = review.getId();
             this.star = review.getStar();
             this.title = review.getTitle();

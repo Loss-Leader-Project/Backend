@@ -24,7 +24,7 @@ public class ReviewController {
     public final ReviewService reviewService;
 
     @PostMapping("/{userId}/{orderNumber}/{storeId}")
-    public ResponseEntity<String> review(@PathVariable("userId") Long userId, @PathVariable("orderNumber") int orderNumber, @PathVariable("storeId") Long storeId,@RequestBody ReviewRequest.ReviewPost reviewRequest) {
+    public ResponseEntity<String> review(@PathVariable("userId") Long userId, @PathVariable("orderNumber") Long orderNumber, @PathVariable("storeId") Long storeId,@RequestBody ReviewRequest.ReviewPost reviewRequest) {
         reviewService.save(userId,orderNumber,storeId,reviewRequest);
         return new ResponseEntity<>("리뷰 작성 완료", HttpStatus.OK);
     }
@@ -45,8 +45,14 @@ public class ReviewController {
     }
 
     @GetMapping("/listing-store/")
-    public ResponseEntity<Page< ReviewResponse.ReviewListingByStoreId>> imageUpdate(@RequestParam(value = "storeId",required = false) Long storeId, Pageable pageable) {
-        return ResponseEntity.ok(reviewService.test(storeId,pageable));
+    public ResponseEntity<Page< ReviewResponse.ReviewListing>> findAllByStoreIdOrderByCreateDateAsc(@RequestParam(value = "storeId",required = false) Long storeId, Pageable pageable) {
+        return ResponseEntity.ok(reviewService.findAllByStoreIdOrderByCreateDateAsc(storeId,pageable));
+
+    }
+
+    @GetMapping("/listing-user/")
+    public ResponseEntity<Page< ReviewResponse.ReviewListing>> findAllByUserIdOrderByCreateDateAsc(@RequestParam(value = "userId",required = false) Long userId, Pageable pageable) {
+        return ResponseEntity.ok(reviewService.findAllByUserIdOrderByCreateDateAsc(userId,pageable));
 
     }
 }
