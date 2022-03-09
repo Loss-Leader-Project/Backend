@@ -32,7 +32,11 @@ public class User extends BaseEntity {
     private String recommendedPerson;
 
     private int mileage;
+    private String role;
 
+    public void encodePassword(String password) {
+        this.password = password;
+    }
     public void restMileage(int usedMileage) {
         this.mileage -= usedMileage;
     }
@@ -81,5 +85,6 @@ public class User extends BaseEntity {
         this.birthDate = birthDate;
         this.recommendedPerson = recommendedPerson;
         this.mileage = 3000;
+        this.role = "ROLE_USER";
     }
 }

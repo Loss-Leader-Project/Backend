@@ -1,6 +1,7 @@
 package lossleaderproject.back.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.entity.User;
 import lossleaderproject.back.user.exception.ErrorCode;
@@ -8,6 +9,7 @@ import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,52 +18,52 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final JavaMailSender javaMailSender;
-
+    private final BCryptPasswordEncoder encoder;
     @Transactional
     public Long save(UserRequest userRequest) {
+        String encoderPw = encoder.encode(userRequest.getPassword());
         User newUser = userRequest.toEntity();
         if(userRepository.existsByLoginId(userRequest.getLoginId())) {
             throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
+        if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
+            throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
+        }
         if (newUser.getRecommendedPerson() != null) {
+            if(userRepository.existsByLoginId(newUser.getRecommendedPerson()) == false) {
+                throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
+            }
             newUser.recommendedMileage();
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
         }
+        newUser.encodePassword(encoderPw);
         userRepository.save(newUser);
         return newUser.getId();
+
 
     }
 
     @Transactional(readOnly = true)
     public String checkLoginId(String loginId) {
-        if (userRepository.existsByLoginId(loginId)) {
+        if(userRepository.existsByLoginId(loginId) == false) {
             throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
-        return "사용가능한 아이디입니다.";
+        return "사용가능한 아이디 입니다.";
     }
 
-    @Transactional(readOnly = true) // 추천인 검사
-    public boolean checkRecommendedPerson(String recommendedPerson) {
-        if (recommendedPerson != null) {
-            return userRepository.existsByLoginId(recommendedPerson);
-        }
-        return true;
-    }
 
     @Transactional(readOnly = true)
-    public UserResponse userInfoDetail(Long userId) {
-        User user = userRepository.findById(userId).get();
+    public UserResponse userInfoDetail(PrincipalDetails principalDetails) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
         return new UserResponse(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson());
     }
 
     @Transactional
-    public Long userInfoEdit(Long userId, UserResponse userResponse) {
-        User user = userRepository.findById(userId).get();
-
+    public Long userInfoEdit(String loginId, UserResponse userResponse) {
+        User user = userRepository.findByLoginId(loginId);
         if (userResponse.getUserName() != null) {
             user.userInfoEditUserName(userResponse.getUserName());
-            System.out.println("userResponse.getUserName() = " + userResponse.getUserName());
         }
         if (userResponse.getEmail() != null) {
             user.userInfoEditEmail(userResponse.getEmail());
@@ -73,36 +75,24 @@ public class UserService {
             user.userInfoEditPhoneNumber(userResponse.getPhoneNumber());
         }
         if (userResponse.getRecommendedPerson() != null) {
+            if(userRepository.existsByLoginId(userResponse.getRecommendedPerson()) == false) {
+                throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
+            }
             user.userInfoRecommendPerson(userResponse.getRecommendedPerson());
 
         }
+        if (userResponse.getOldPassword() != null) {
+            if (encoder.matches(userResponse.getOldPassword(), user.getPassword()) == false) {
+                throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
+            }
+        }
         if (userResponse.getNewPassword() != null && userResponse.getNewPasswordConfirm() != null) {
-            user.changePassword(userResponse.getNewPassword());
+            if (userResponse.getNewPassword().equals(userResponse.getNewPasswordConfirm()) == false) {
+                throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
+            }
+            user.changePassword(encoder.encode(userResponse.getNewPassword()));
         }
-        System.out.println(user.getPassword());
         return user.getId();
-    }
-
-    @Transactional
-    public boolean userInfoRePasswordOldCheck(Long userId, String oldPassword) {
-        User user = userRepository.findById(userId).get();
-        if (oldPassword != null) {
-            if (user.getPassword().equals(oldPassword) == false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public boolean userInfoRePasswordNewCheck(Long userId, UserResponse userRePassword) {
-        if (userRePassword.getNewPassword() != null && userRePassword.getNewPasswordConfirm() != null) {
-            if (userRePassword.getNewPassword().equals(userRePassword.getNewPasswordConfirm()) == false) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public UserLoginIdResponse findLoginId(UserLoginIdFindRequest userLoginIdFindRequest) {
@@ -113,11 +103,9 @@ public class UserService {
             throw new UserCustomException(ErrorCode.NO_EXIST_USERNAME_BIRTHDATE_EMAIL);
         }
         String loginId = userRepository.findLoginId(userLoginIdFindRequest.getUserName(), userLoginIdFindRequest.getBirthDate(), userLoginIdFindRequest.getEmail());
-        System.out.println("loginId = " + loginId);
         String replaceLoginId = loginId.replace(loginId.substring(loginId.length() - 3), "***");
         return new UserLoginIdResponse(replaceLoginId);
     }
-
     @Transactional
     public String findPassword(UserFindPassword userFindPassword) {
 

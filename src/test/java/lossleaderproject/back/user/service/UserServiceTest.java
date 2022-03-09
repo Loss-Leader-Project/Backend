@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -17,14 +18,15 @@ class UserServiceTest {
     UserRepository userRepository;
     @Autowired
     UserService userService;
+    @Autowired
+    BCryptPasswordEncoder encoder;
 
     @Test
-    @DisplayName("사용자가 회원가입할때마다 i가 1씩 증가한다.") // 의미 없음
-    // 생성된 id는 1씩 증가한다.
+    @DisplayName("사용자가 회원가입할때마다 i가 1씩 증가한다.")
     public void 회원가입() throws Exception {
         // given
         UserRequest userRequest = new UserRequest("test1", "test1!", "test1!", "테스터", "01012341234", "abc@naver.com", "1234-123", "간략주소", "상세주소", "9810151", null, 1000);
-        UserRequest userRequest2 = new UserRequest("lossleader", "test1!", "test1!", "lossleader", "01012341234", "lossleader@naver.com", "1234-12223", "경기도", "부천시", "9201302", "test1", 1000);
+        UserRequest userRequest2 = new UserRequest("lossleader", "test1!", "test1!", "lossleader", "0101231234", "lossleader@naver.com", "1234-12223", "경기도", "부천시", "9201302", "test1", 1000);
 
         // when
         User saveUser = userRepository.save(userRequest.toEntity());
@@ -114,7 +116,7 @@ class UserServiceTest {
         User savedUser = userRepository.save(userRequest1.toEntity());
         // when
         UserResponse userResponse = new UserResponse(null,"bye",null,null,null,null);
-        userService.userInfoEdit(savedUser.getId(), userResponse);
+        userService.userInfoEdit(savedUser.getLoginId(), userResponse);
 
         // then
         Assertions.assertThat(savedUser.getUserName()).isEqualTo("bye");
@@ -135,7 +137,7 @@ class UserServiceTest {
         User savedUser1 = userRepository.findById(userId1).get();
         User savedUser2 = userRepository.findById(userId2).get();
         UserResponse userResponse = new UserResponse(null,null,null,null,null,"lossleader");
-        userService.userInfoEdit(userId1, userResponse);
+        userService.userInfoEdit(savedUser1.getLoginId(), userResponse);
         // then
         Assertions.assertThat(savedUser1.getRecommendedPerson()).isEqualTo("lossleader");
         Assertions.assertThat(savedUser1.getMileage()).isEqualTo(3500);
