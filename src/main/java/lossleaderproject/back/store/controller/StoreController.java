@@ -3,6 +3,7 @@ package lossleaderproject.back.store.controller;
 
 import com.sun.istack.Nullable;
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.review.dto.ReviewResponse;
 import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.entitiy.StoreDetail;
@@ -33,7 +34,7 @@ public class StoreController {
     private final StoreMenuService storeMenuService;
 
     @PostMapping()
-    public ResponseEntity<StoreResponse> newMember(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public ResponseEntity<StoreResponse.StoreRes> storePost(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         Store store = storeService.save(storeRequest);
         StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
         StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
@@ -49,11 +50,11 @@ public class StoreController {
                 storeMenuService.save(storeDetail.getId(),storeRequest.getStoreDetailRequest().getStoreMenuRequestList()),
                 storeHashTagService.save(storeDetail.getId(),storeRequest.getStoreDetailRequest().getStoreHashTagRequestList())
         );
-        StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
+        StoreResponse.StoreRes storeResponse = new StoreResponse.StoreRes(store,storeDetailResponse);
         return ResponseEntity.ok(storeResponse);
     }
     @GetMapping("/detail")
-    public ResponseEntity<StoreResponse> test(@RequestParam("storeId") Long storeId) {
+    public ResponseEntity<StoreResponse.StoreRes> getDetail(@RequestParam("storeId") Long storeId) {
         Store store= storeService.findById(storeId);
         StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
         Long storeDetailId = storeDetail.getId();
@@ -74,19 +75,24 @@ public class StoreController {
                 storeMenuResponseList,
                 storeHashTagResponseList
         );
-        StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
-
-        //storeDetailResponse.setStoreFoodImageResponseList(storeFoodImageService.findOneByDetailId(storeDetailId));
+        StoreResponse.StoreRes storeResponse = new StoreResponse.StoreRes(store,storeDetailResponse);
         return ResponseEntity.ok(storeResponse);
     }
 
 
     @GetMapping("list/")
-    public ResponseEntity<Page<StoreListingResponse>> findAllSilverPrice(@RequestParam(value = "filter",required = false,defaultValue = "PRICE") String filter,
-                                                                         @RequestParam(value = "tier",required = false,defaultValue = "ALL") String tier,
-                                                                         @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting,
-                                                                         @PageableDefault(page = 0, size = 20) Pageable pageable)
+    public ResponseEntity<Page<StoreListingResponse>> storeListing (@RequestParam(value = "filter",required = false,defaultValue = "PRICE") String filter,
+                                                                    @RequestParam(value = "tier",required = false,defaultValue = "ALL") String tier,
+                                                                    @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting,
+                                                                    @PageableDefault(page = 0, size = 20) Pageable pageable)
     {
         return ResponseEntity.ok(storeService.findAllListing(pageable,filter,tier,sorting));
+    }
+
+
+
+    @GetMapping("/listing-hot")
+    public ResponseEntity<List<StoreResponse.StoreHotplace>> findAllHotPlace() {
+        return ResponseEntity.ok(storeService.findTop20ByOrderByAvgStarDesc());
     }
 }

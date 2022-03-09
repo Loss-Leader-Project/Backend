@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.minio.MinioService;
 import lossleaderproject.back.store.dto.StoreListingResponse;
 import lossleaderproject.back.store.dto.StoreRequest;
+import lossleaderproject.back.store.dto.StoreResponse;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.repository.StoreRepository;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,7 +33,7 @@ public class StoreService {
         minioService.imageUpload(
                 "store",
                 thumbnailImageIdentify,
-                storeRequest.getThumbnailImage().getInputStream());
+                storeRequest.getStoreDetailRequest().getStoreFoodImageRequestList().get(0).getImage().getInputStream());
         Store store = storeRequest.storeRequestToEntity();
         return storeRepository.save(store);
     }
@@ -39,7 +42,10 @@ public class StoreService {
         tier = tier.toUpperCase();
         filter = filter.toUpperCase();
         sorting = sorting.toUpperCase();
-        if(tier.equals("SILVER") || tier.equals("GOLD")) {
+        if(tier.equals("HOTPLACE")){
+            stores = storeRepository.findTop20ByOrderByAvgStarDesc(pageable);
+        }
+        else if(tier.equals("SILVER") || tier.equals("GOLD")) {
             // 티어 별 리스팅
             if(filter.equals("PRICE")) {
                 if (sorting.equals("DESC")) {
@@ -90,6 +96,15 @@ public class StoreService {
         store.setReviewCount(newReviewCount);
         store.setAvgStar(newAvgStar);
         storeRepository.save(store);
+    }
+
+    public List< StoreResponse.StoreHotplace> findTop20ByOrderByAvgStarDesc(){
+        List<Store> stores = storeRepository.findTop20ByOrderByAvgStarDesc();
+        List<StoreResponse.StoreHotplace> storesToListing = new ArrayList<>();
+        for (Store store : stores) {
+            storesToListing.add(new StoreResponse.StoreHotplace(store));
+        }
+        return storesToListing;
     }
 
 

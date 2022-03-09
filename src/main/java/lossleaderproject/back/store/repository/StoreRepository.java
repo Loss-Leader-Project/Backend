@@ -6,10 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
     // JPA 쓰라고 하셔서 문서 보고 쿼리 지우고 변경 했습니다.
     // 티어별 JPA 쿼리
+    List<Store> findTop20ByOrderByAvgStarDesc();
+    Page<Store> findTop20ByOrderByAvgStarDesc(Pageable pageable);
     Page<Store> findAllByCouponGradeNameOrderByPriceOfCouponDesc(String CouponGradeName,Pageable pageable);
     Page<Store> findAllByCouponGradeNameOrderByPriceOfCouponAsc(String CouponGradeName,Pageable pageable);
     Page<Store> findAllByCouponGradeNameOrderByCreateDateAsc(String CouponGradeName,Pageable pageable);
