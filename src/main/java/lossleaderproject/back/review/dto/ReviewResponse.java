@@ -3,6 +3,7 @@ package lossleaderproject.back.review.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lossleaderproject.back.review.entity.Review;
 import lossleaderproject.back.review.entity.ReviewImage;
 
@@ -39,6 +40,25 @@ public class ReviewResponse {
                 imageIdentifies.add(new ReviewImageResponse.ReviewImageToListing(reviewImage));
             }
             this.imageIdentifyList = imageIdentifies;
+
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ReviewListingHotPlace{
+        private Long id;
+        private String userName;
+        private String reviewContent;
+        private String reviewImage;
+        private Float star;
+
+        public ReviewListingHotPlace(Review review){
+            this.id = review.getId();
+            this.star = review.getStar();
+            this.reviewContent = review.getContent();
+            this.userName = review.getUser().getUserName();
+            this.reviewImage = review.getReviewImages().get(0).getImageIdentify();
 
         }
     }
