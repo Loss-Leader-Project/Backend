@@ -32,6 +32,8 @@ public class StoreDetailRequest {
     @NotNull(message = "메뉴 이미지를 필수로 입력하셔야됩니다.")
     private MultipartFile storeMenuImage;
     private String storeMenuImageIdentify;
+
+
     private List<StoreFoodImageRequest> storeFoodImageRequestList;
     private List<StoreHashTagRequest> storeHashTagRequestList;
     private List<StoreMenuRequest> storeMenuRequestList;

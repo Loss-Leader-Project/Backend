@@ -15,7 +15,10 @@ public enum ErrorCode {
 
     NO_MATCH_NUMBER(HttpStatus.BAD_REQUEST,"인증이 실패하였습니다."),
     DUPLICATE_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
-    DISMATCH_PASSWORD(HttpStatus.BAD_REQUEST,"비밀번호가 일치하지않습니다.");
+
+
+    DISMATCH_PASSWORD(HttpStatus.BAD_REQUEST,"비밀번호가 일치하지않습니다."),
+    BAD_REQUEST_LOGINID_PASSWORD(HttpStatus.BAD_REQUEST,"아이디 또는 비밀번호가 틀리셨습니다");
 
 
 

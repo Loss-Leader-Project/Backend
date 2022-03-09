@@ -1,15 +1,15 @@
 package lossleaderproject.back.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.user.dto.*;
-import lossleaderproject.back.user.exception.ErrorCode;
-import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.mail.dto.EmailVerificationNumber;
 import lossleaderproject.back.user.mail.dto.SendEmail;
 import lossleaderproject.back.user.mail.service.MailService;
 import lossleaderproject.back.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -40,41 +40,21 @@ public class UserController {
     }
 
     @PostMapping("/lossleader-user")
-    public ResponseEntity<String> newMember(@Valid @RequestBody UserRequest userRequest) {
-
-        if (userService.checkRecommendedPerson(userRequest.getRecommendedPerson()) == false) {
-            throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
-        }
-
-        if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
-            throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
-        }
-        // 아이디 중복 안했을시 회원 저장
-
-        userService.save(userRequest);
-        return ResponseEntity.ok("회원가입 성공");
-        // { body: { id:5, message: '회원가입 성공' } }
+    public ResponseEntity<NewUserResponse> newMember(@Valid @RequestBody UserRequest userRequest) {
+        Long saveId = userService.save(userRequest);
+        return new ResponseEntity<>(new NewUserResponse(saveId, "회원가입 성공"), HttpStatus.OK);
     }
 
-    @GetMapping("/userinfo/{userId}")
-    public ResponseEntity<UserResponse> userInfoDetail(@PathVariable("userId") Long userId) {
+    @GetMapping("/user/info")
+    public ResponseEntity<UserResponse> userInfoDetail(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        return new ResponseEntity<UserResponse>(userService.userInfoDetail(userId), HttpStatus.OK);
+        return new ResponseEntity<>(userService.userInfoDetail(principalDetails), HttpStatus.OK);
     }
 
+    @PostMapping("/user/info")
+    public ResponseEntity<String> userInfo(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody UserResponse userResponse) {
 
-    @PostMapping("/userinfo/{userId}")
-    public ResponseEntity<String> userInfo(@PathVariable("userId") Long userId, @RequestBody UserResponse userResponse) {
-        if (userService.checkRecommendedPerson(userResponse.getRecommendedPerson()) == false) {
-            throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
-        }
-        if (userService.userInfoRePasswordOldCheck(userId, userResponse.getOldPassword()) == false
-                || userService.userInfoRePasswordNewCheck(userId, userResponse) == false) {
-            throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
-        }
-
-
-        userService.userInfoEdit(userId, userResponse);
+        userService.userInfoEdit(principalDetails.getUsername(), userResponse);
 
         return ResponseEntity.ok("회원수정완료");
     }
