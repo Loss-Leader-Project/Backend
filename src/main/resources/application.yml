@@ -31,15 +31,4 @@ spring:
           starttls :
             enable : true
             required : true
-  security:
-    oauth2:
-      client:
-        registration:
-          naver :
-            client-id : MrLhZGLeBYRF_Uy9YwY3
-            client-secret : UHa2lICTGf
-            scope :
-              - name
-              - email
-              - phonenumber
 
