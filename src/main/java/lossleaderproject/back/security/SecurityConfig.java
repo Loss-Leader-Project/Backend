@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.security.exception.JwtExceptionFilter;
 import lossleaderproject.back.security.jwt.JwtAuthenticationFilter;
 import lossleaderproject.back.security.jwt.JwtAuthorizationFilter;
+import lossleaderproject.back.security.oauth.provider.TokenProvider;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,9 +19,8 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final UserRepository userRepository;
-
+    private final TokenProvider tokenProvider;
     private final JwtExceptionFilter jwtExceptionFilter;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -31,16 +31,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(corsFilter)
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(),tokenProvider))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
                 .authorizeRequests()
                 .antMatchers("/user/**")
                 .access("hasRole('ROLE_USER')")
                 .anyRequest().permitAll()
-        .and()
-        .logout().logoutUrl("/logout")
-        .logoutSuccessUrl("/login").clearAuthentication(true);
-
-
+                .and()
+                .logout().logoutUrl("/logout")
+                .logoutSuccessUrl("/login").clearAuthentication(true)
+                .and()
+                .oauth2Login()
+                .loginPage("/login");
     }
 }
