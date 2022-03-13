@@ -10,9 +10,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Getter
-@AllArgsConstructor
 public class PrincipalDetails implements UserDetails {
     private User user;
+
+
+
+    public PrincipalDetails(User user) {
+        this.user = user;
+    }
 
 
     @Override

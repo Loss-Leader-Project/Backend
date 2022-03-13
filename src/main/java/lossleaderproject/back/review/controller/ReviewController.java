@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,7 +53,10 @@ public class ReviewController {
 
     @GetMapping("/listing-user/")
     public ResponseEntity<Page< ReviewResponse.ReviewListing>> findAllByUserIdOrderByCreateDateAsc(@RequestParam(value = "userId",required = false) Long userId, Pageable pageable) {
-        return ResponseEntity.ok(reviewService.findAllByUserIdOrderByCreateDateAsc(userId,pageable));
-
+        return ResponseEntity.ok(reviewService.findAllByUserIdOrderByCreateDateAsc(userId, pageable));
+    }
+    @GetMapping("/listing-hot")
+    public ResponseEntity<List<ReviewResponse.ReviewListingHotPlace>> findAllHotPlace() {
+        return ResponseEntity.ok(reviewService.findTop20ByOrderByStarDesc());
     }
 }
