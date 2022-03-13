@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,8 +93,16 @@ public class ReviewService {
         return reviews.map(review -> new ReviewResponse.ReviewListing(review));
     }
 
-    public Page< ReviewResponse.ReviewListing> findAllByUserIdOrderByCreateDateAsc(Long userId, Pageable pageable){
-        Page<Review> reviews = reviewRepository.findAllByUserIdOrderByCreateDateAsc(userId,pageable);
+    public Page< ReviewResponse.ReviewListing> findAllByUserIdOrderByCreateDateAsc(Long userId, Pageable pageable) {
+        Page<Review> reviews = reviewRepository.findAllByUserIdOrderByCreateDateAsc(userId, pageable);
         return reviews.map(review -> new ReviewResponse.ReviewListing(review));
+    }
+    public List<ReviewResponse.ReviewListingHotPlace> findTop20ByOrderByStarDesc(){
+        List<Review> reviews = reviewRepository.findTop20ByOrderByStarDesc();
+        List<ReviewResponse.ReviewListingHotPlace> reviewsToListing = new ArrayList<>();
+        for (Review review : reviews) {
+            reviewsToListing.add(new ReviewResponse.ReviewListingHotPlace(review));
+        }
+        return reviewsToListing;
     }
 }

@@ -24,7 +24,7 @@ public class StoreDetailController {
     private final StoreMenuService storeMenuService;
 
     @GetMapping()
-    public ResponseEntity<StoreResponse> test(@RequestParam("storeId") Long storeId) {
+    public ResponseEntity<StoreResponse.StoreRes> test(@RequestParam("storeId") Long storeId) {
         Store store= storeService.findById(storeId);
         StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
         Long storeDetailId = storeDetail.getId();
@@ -45,7 +45,7 @@ public class StoreDetailController {
                 storeMenuResponseList,
                 storeHashTagResponseList
         );
-        StoreResponse storeResponse = new StoreResponse(store,storeDetailResponse);
+        StoreResponse.StoreRes storeResponse = new StoreResponse.StoreRes(store,storeDetailResponse);
 
         return ResponseEntity.ok(storeResponse);
     }
