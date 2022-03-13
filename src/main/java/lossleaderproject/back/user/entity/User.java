@@ -34,6 +34,23 @@ public class User extends BaseEntity {
     private int mileage;
     private String role;
 
+    public User (String loginId,String userName,String password, String phoneNumber,String email) {
+        this.phoneNumber = phoneNumber;
+        this.loginId = loginId;
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.role = "ROLE_OAUTH";
+    }
+
+    public User(String loginId, String password, String userName, String email) {
+        this.loginId = loginId;
+        this.password = password;
+        this.userName = userName;
+        this.email = email;
+        this.role = "ROLE_OAUTH";
+    }
+
     public void encodePassword(String password) {
         this.password = password;
     }
