@@ -6,12 +6,16 @@ import lossleaderproject.back.order.entity.Orders;
 import lossleaderproject.back.order.entity.StoreOrder;
 import lossleaderproject.back.order.repository.OrderRepository;
 import lossleaderproject.back.order.repository.StoreOrderRepository;
+import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.repository.StoreRepository;
 import lossleaderproject.back.user.entity.User;
+import lossleaderproject.back.user.exception.ErrorCode;
+import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +41,12 @@ public class OrderService {
         }
         orderRequest.calcLastPrice(orderRequest.getPayPrice(), orderRequest.getUsedMileage());
         if (orderRequest.getLastPrice() != 0L) {
-            return 0L;
+            throw new UserCustomException(ErrorCode.NOT_SATISFY_MONEY);
         }
+        if (orderRequest.isOrderAgree() == false) {
+            throw new UserCustomException(ErrorCode.NOT_AGREE);
+        }
+
         Orders orders = orderRequest.toEntity();
         orders.now();
         loginUser.restMileage(orders.getUsedMileage());
@@ -48,8 +56,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderRequest order(Long userId, Long storeId, OrderRequest orderRequest) {
-        User user = userRepository.findById(userId).get();
+    public OrderRequest order(PrincipalDetails principalDetails, Long storeId, OrderRequest orderRequest) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
         Store store = storeRepository.findById(storeId).get();
         orderRequest.order(store.getBriefAddress(), store.getStoreName(), store.getCouponContent(), store.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
 
@@ -58,8 +66,9 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderHistory> orderHistory(Long userId, Pageable pageable) {
-        Page<StoreOrder> pageStoreOrder = storeOrderRepository.findAllByUserId(userId, pageable);
+    public Page<OrderHistory> orderHistory(PrincipalDetails principalDetails, Pageable pageable) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
+        Page<StoreOrder> pageStoreOrder = storeOrderRepository.findAllByUserId(user, pageable);
         return pageStoreOrder.map(storeOrder -> new OrderHistory(
                 storeOrder.getUser().getUserName(), storeOrder.getUser().getMileage(), storeOrder.getOrders().getOrderDate(),
                 storeOrder.getOrders().getOrderNumber(), storeOrder.getStore().getBriefAddress(),
@@ -79,8 +88,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public PurchaseDetailsResponse purchaseDetails(Long userId, Long storeId, Long orderNumber) {
-        User user = userRepository.findById(userId).get();
+    public PurchaseDetailsResponse purchaseDetails(PrincipalDetails principalDetails, Long storeId, Long orderNumber) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
         Store store = storeRepository.findById(storeId).get();
         Orders order = orderRepository.findByOrderNumber(orderNumber);
         PurchaseHistory purchaseHistory = new PurchaseHistory(order.getOrderDate(), order.getOrderNumber(), store.getCouponContent(), store.getPriceOfCoupon());

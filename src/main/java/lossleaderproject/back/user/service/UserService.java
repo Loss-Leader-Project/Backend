@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import javax.servlet.http.HttpSession;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,8 @@ public class UserService {
     private final JavaMailSender javaMailSender;
     private final BCryptPasswordEncoder encoder;
     @Transactional
-    public Long save(UserRequest userRequest) {
+    public Long save(UserRequest userRequest, HttpSession session) {
+        boolean emailNumber = false;
         String encoderPw = encoder.encode(userRequest.getPassword());
         User newUser = userRequest.toEntity();
         if(userRepository.existsByLoginId(userRequest.getLoginId())) {
@@ -36,6 +38,15 @@ public class UserService {
             newUser.recommendedMileage();
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
+        }
+        if(session.getAttribute("success") == null || session.getAttribute("success").equals(false)) {
+            throw new UserCustomException(ErrorCode.RECONFIRM_NUMBER);
+        }else {
+            emailNumber = true;
+            session.invalidate();
+        }
+        if(emailNumber == false) {
+            throw new UserCustomException(ErrorCode.RECONFIRM_NUMBER);
         }
         newUser.encodePassword(encoderPw);
         userRepository.save(newUser);

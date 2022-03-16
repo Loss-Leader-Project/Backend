@@ -8,9 +8,8 @@ import lossleaderproject.back.review.dto.ReviewImageRequest;
 import lossleaderproject.back.review.dto.ReviewRequest;
 import lossleaderproject.back.review.dto.ReviewResponse;
 import lossleaderproject.back.review.entity.Review;
-import lossleaderproject.back.review.entity.ReviewImage;
 import lossleaderproject.back.review.repository.ReviewRepository;
-import lossleaderproject.back.store.dto.StoreListingResponse;
+import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.repository.StoreRepository;
 import lossleaderproject.back.store.service.StoreService;
@@ -19,9 +18,11 @@ import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,8 +38,8 @@ public class ReviewService {
     private final StoreService storeService;
     private final MinioService minioService;
 
-    public void save(Long userId, Long orderNumber, Long storeId, ReviewRequest.ReviewPost reviewPost) {
-        User user = userRepository.findById(userId).get();
+    public void save(PrincipalDetails principalDetails, Long orderNumber, Long storeId, ReviewRequest.ReviewPost reviewPost) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
         Orders orders = orderRepository.findByOrderNumber(orderNumber);
         Store store = storeRepository.findById(storeId).get();
         Review review = reviewPost.reviewRequestToEntity();
@@ -92,8 +93,17 @@ public class ReviewService {
         return reviews.map(review -> new ReviewResponse.ReviewListing(review));
     }
 
-    public Page< ReviewResponse.ReviewListing> findAllByUserIdOrderByCreateDateAsc(Long userId, Pageable pageable){
-        Page<Review> reviews = reviewRepository.findAllByUserIdOrderByCreateDateAsc(userId,pageable);
+    public Page< ReviewResponse.ReviewListing> findAllByUserIdOrderByCreateDateAsc(PrincipalDetails principalDetails, Pageable pageable) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
+        Page<Review> reviews = reviewRepository.findAllByUserOrderByCreateDateAsc(user, pageable);
         return reviews.map(review -> new ReviewResponse.ReviewListing(review));
+    }
+    public List<ReviewResponse.ReviewListingHotPlace> findTop20ByOrderByStarDesc(){
+        List<Review> reviews = reviewRepository.findTop20ByOrderByStarDesc();
+        List<ReviewResponse.ReviewListingHotPlace> reviewsToListing = new ArrayList<>();
+        for (Review review : reviews) {
+            reviewsToListing.add(new ReviewResponse.ReviewListingHotPlace(review));
+        }
+        return reviewsToListing;
     }
 }
