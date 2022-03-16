@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class StoreFoodImageRequest {
 
