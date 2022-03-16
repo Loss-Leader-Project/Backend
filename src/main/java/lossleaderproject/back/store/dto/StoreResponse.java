@@ -2,9 +2,11 @@ package lossleaderproject.back.store.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lossleaderproject.back.store.entitiy.Store;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 public class StoreResponse {
@@ -31,6 +33,7 @@ public class StoreResponse {
 
         @NotNull(message = "리뷰 개수를 필수로 입력하셔야됩니다.")
         private Integer reviewCount;
+
         @NotNull(message = "평균 별점을 필수로 입력하셔야됩니다.")
         private Float avgStar;
 
@@ -52,9 +55,9 @@ public class StoreResponse {
         @NotNull(message = "쿠폰 등급 이름을 필수로 입력하셔야 됩니다.")
         private String couponGradeName;
 
-        private StoreDetailResponse storeDetailResponse;
+        private StoreDetailResponse.StoreDetailPosting storeDetailResponse;
 
-        public StoreRes(Store store, StoreDetailResponse storeDetailResponse) {
+        public StoreRes(Store store, StoreDetailResponse.StoreDetailPosting storeDetailResponse) {
             this.id = store.getId();
             this.briefAddress = store.getBriefAddress();
             this.storeName = store.getStoreName();
@@ -99,6 +102,49 @@ public class StoreResponse {
             this.storeName = store.getStoreName();
             this.couponContent = store.getCouponContent();
             this.imgUrl = store.getThumbnailImage();
+        }
+    }
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class StoreTopData {
+        private String briefAddress;
+        private String storeName;
+        private Float avgStar;
+        private Integer priceOfCoupon;
+        private String benefitCondition;
+        private String couponContent;
+        private Integer leftCoupon;
+        private Integer totalCoupon;
+        private String couponGradeName;
+        private List<StoreFoodImageResponse> storeFoodImageResponseList;
+        private List<StoreHashTagResponse> storeHashTagResponseList;
+        public StoreTopData(Store store,List<StoreFoodImageResponse> storeFoodImageResponseList, List<StoreHashTagResponse> storeHashTagResponseList) {
+            this.briefAddress = store.getBriefAddress();
+            this.storeName = store.getStoreName();
+            this.avgStar = store.getAvgStar();
+            this.priceOfCoupon = store.getPriceOfCoupon();
+            this.benefitCondition = store.getBenefitCondition();
+            this.couponContent = store.getCouponContent();
+            this.leftCoupon = store.getLeftCoupon();
+            this.totalCoupon = store.getTotalCoupon();
+            this.couponGradeName = store.getCouponGradeName();
+            this.storeFoodImageResponseList = storeFoodImageResponseList;
+            this.storeHashTagResponseList = storeHashTagResponseList;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class StoreDetailPageRes {
+        @NotNull(message = "아이디를 필수로 입력 하셔야 합니다.")
+        private Long id;
+        private StoreTopData storeTopData;
+        private StoreDetailResponse.StoreDetailForDetailPage storeDetailResponse;
+        public StoreDetailPageRes(Long id ,StoreTopData storeTopData, StoreDetailResponse.StoreDetailForDetailPage storeDetailResponse) {
+            this.id = id;
+            this.storeTopData = storeTopData;
+            this.storeDetailResponse = storeDetailResponse;
         }
     }
 }
