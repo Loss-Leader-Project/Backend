@@ -16,6 +16,7 @@ public class StoreResponse {
         @NotNull(message = "아이디를 필수로 입력 하셔야 합니다.")
         private Long id;
 
+
         @NotNull(message = "간략한 주소를 필수로 입력하셔야됩니다.")
         private String briefAddress;
 
@@ -33,7 +34,6 @@ public class StoreResponse {
 
         @NotNull(message = "리뷰 개수를 필수로 입력하셔야됩니다.")
         private Integer reviewCount;
-
         @NotNull(message = "평균 별점을 필수로 입력하셔야됩니다.")
         private Float avgStar;
 

@@ -91,7 +91,8 @@ public class StoreController {
     public ResponseEntity<Page<StoreListingResponse>> storeListing (@RequestParam(value = "filter",required = false,defaultValue = "PRICE") String filter,
                                                                     @RequestParam(value = "tier",required = false,defaultValue = "ALL") String tier,
                                                                     @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting,
-                                                                   @ApiIgnore @PageableDefault(page = 0, size = 20) Pageable pageable)
+                                                                    @ApiIgnore @PageableDefault(page = 0, size = 20) Pageable pageable)
+
 
     {
         return ResponseEntity.ok(storeService.findAllListing(pageable,filter,tier,sorting));
@@ -104,3 +105,4 @@ public class StoreController {
         return ResponseEntity.ok(storeService.findTop20ByOrderByAvgStarDesc());
     }
 }
+

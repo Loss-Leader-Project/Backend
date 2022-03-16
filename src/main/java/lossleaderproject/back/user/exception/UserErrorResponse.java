@@ -19,10 +19,10 @@ public class UserErrorResponse {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
                 .body(UserErrorResponse.builder()
-                .status(errorCode.getHttpStatus().value())
-                .error(errorCode.getHttpStatus().name())
-                .code(errorCode.name())
-                .message(errorCode.getDetail())
-                .build());
+                        .status(errorCode.getHttpStatus().value())
+                        .error(errorCode.getHttpStatus().name())
+                        .code(errorCode.name())
+                        .message(errorCode.getDetail())
+                        .build());
     }
 }

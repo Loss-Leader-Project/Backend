@@ -122,7 +122,8 @@ public class LoginService {
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(accessTokenResponse.getBody());
-            session.setAttribute("Authorization",  jsonObject.get("access_token"));
+            session.setAttribute("Authorization", jsonObject.get("access_token"));
+
             String header = "Bearer " + jsonObject.get("access_token");
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", header);
@@ -149,8 +150,8 @@ public class LoginService {
     }
 
     public void kakaoLogout(HttpSession session) throws IOException {
-        String access_token = (String)session.getAttribute("Authorization");
-        if(access_token != null && !"".equals(access_token)) {
+        String access_token = (String) session.getAttribute("Authorization");
+        if (access_token != null && !"".equals(access_token)) {
             HttpURLConnection connect = connect("https://kapi.kakao.com/v1/user/logout");
             connect.setRequestMethod("POST");
             connect.setRequestProperty("Authorization", "Bearer " + access_token);

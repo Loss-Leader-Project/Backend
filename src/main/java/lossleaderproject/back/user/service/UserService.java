@@ -39,13 +39,13 @@ public class UserService {
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
         }
-        if(session.getAttribute("success") == null || session.getAttribute("success").equals(false)) {
+        if (session.getAttribute("success") == null || session.getAttribute("success").equals(false)) {
             throw new UserCustomException(ErrorCode.RECONFIRM_NUMBER);
-        }else {
+        } else {
             emailNumber = true;
             session.invalidate();
         }
-        if(emailNumber == false) {
+        if (emailNumber == false) {
             throw new UserCustomException(ErrorCode.RECONFIRM_NUMBER);
         }
         newUser.encodePassword(encoderPw);
@@ -57,7 +57,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public String checkLoginId(String loginId) {
-        if(userRepository.existsByLoginId(loginId) == false) {
+        if (userRepository.existsByLoginId(loginId) == false) {
             throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
         return "사용가능한 아이디 입니다.";
@@ -86,7 +86,7 @@ public class UserService {
             user.userInfoEditPhoneNumber(userResponse.getPhoneNumber());
         }
         if (userResponse.getRecommendedPerson() != null) {
-            if(userRepository.existsByLoginId(userResponse.getRecommendedPerson()) == false) {
+            if (userRepository.existsByLoginId(userResponse.getRecommendedPerson()) == false) {
                 throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
             }
             user.userInfoRecommendPerson(userResponse.getRecommendedPerson());
@@ -142,18 +142,17 @@ public class UserService {
 
     public String randomPassword() {
         String password = "";
-        int randomNum = (int)(Math.random() * 200) + 1;
-        for(int i = 0; i < 11; i++) {
-            password += (char)((int)(Math.random() * 97)+40) ;
+        int randomNum = (int) (Math.random() * 200) + 1;
+        for (int i = 0; i < 11; i++) {
+            password += (char) ((int) (Math.random() * 97) + 40);
         }
-        if(randomNum >= 100 && randomNum <= 150) {
-            password += "$"+ randomNum;
+        if (randomNum >= 100 && randomNum <= 150) {
+            password += "$" + randomNum;
 
-        }else if(randomNum >150) {
-            password += "%"+ randomNum;
-        }
-        else {
-            password += randomNum +"&#";
+        } else if (randomNum > 150) {
+            password += "%" + randomNum;
+        } else {
+            password += randomNum + "&#";
         }
         return password;
     }
