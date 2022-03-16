@@ -40,7 +40,7 @@ public class StoreController {
     public ResponseEntity<StoreResponse.StoreRes> storePost(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         Store store = storeService.save(storeRequest);
         StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
-        StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
+        StoreDetailResponse.StoreDetailPosting storeDetailResponse = new StoreDetailResponse.StoreDetailPosting(
                 storeDetail.getId(),
                 storeDetail.getStorePhoneNumber(),
                 storeDetail.getOperatingTime(),
@@ -59,29 +59,31 @@ public class StoreController {
     @ApiOperation(value = "업체 정보 상세보기")
     @ApiImplicitParam(name = "storeId", value = "업체ID")
     @GetMapping("/detail")
-    public ResponseEntity<StoreResponse.StoreRes> getDetail(@RequestParam("storeId") Long storeId) {
+    public ResponseEntity<StoreResponse.StoreDetailPageRes> getDetail(@RequestParam("storeId") Long storeId) {
         Store store= storeService.findById(storeId);
         StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
         Long storeDetailId = storeDetail.getId();
-    
+
         List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findAllByStoreDetailId(storeDetailId);
         List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findAllByStoreDetailId(storeDetailId);
         List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findAllByStoreDetailId(storeDetailId);
-        StoreDetailResponse storeDetailResponse = new StoreDetailResponse(
-                storeDetail.getId(),
+        StoreResponse.StoreTopData storeTopData = new StoreResponse.StoreTopData(store,storeFoodImageResponseList,storeHashTagResponseList);
+        StoreDetailResponse.StoreDetailForDetailPage storeDetailResponse = new StoreDetailResponse.StoreDetailForDetailPage(
                 storeDetail.getStorePhoneNumber(),
-                storeDetail.getOperatingTime(),
                 storeDetail.getOperatingPeriod(),
                 storeDetail.getRoadAddress(),
+                storeDetail.getOperatingTime(),
+                store.getContent(),
+                store.getStoreMeal(),
+                store.getPackaging(),
+                store.getDelivery(),
                 storeDetail.getLatitude(),
                 storeDetail.getLongitude(),
                 storeDetail.getStoreMenuImage(),
-                storeFoodImageResponseList,
-                storeMenuResponseList,
-                storeHashTagResponseList
+                storeMenuResponseList
         );
-        StoreResponse.StoreRes storeResponse = new StoreResponse.StoreRes(store,storeDetailResponse);
-        return ResponseEntity.ok(storeResponse);
+        StoreResponse.StoreDetailPageRes storeDetailPageRes = new StoreResponse.StoreDetailPageRes(storeId,storeTopData,storeDetailResponse);
+        return ResponseEntity.ok(storeDetailPageRes);
     }
 
     @ApiOperation(value = "업체 리스팅", notes = "쿠폰 등급별로 정렬(실버, 골드)")
