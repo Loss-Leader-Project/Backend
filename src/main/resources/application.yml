@@ -2,6 +2,10 @@ server:
   port: 8000
 
 spring:
+  mvc:
+    pathmatch:
+      #swagger null point 'documentationPluginsBootstrapper' 에러 해결
+      matching-strategy: ant_path_matcher
   datasource:
     # 데이버 베이스 driver 이름
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -16,7 +20,7 @@ spring:
       # create-drop : 서버 실행할때 drop 및 생성을 실행하고 서버 종료시 drop 실행
       # update : 변경될 스키마 적용
       # create : 서버 실행 할때마다 생성된 데이터베이스를 다 삭제하고 새로 create
-      ddl-auto: create
+      ddl-auto: none
     generate-ddl: true
     show-sql: true
   mail:

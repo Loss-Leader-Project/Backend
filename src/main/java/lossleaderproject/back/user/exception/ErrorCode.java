@@ -12,7 +12,9 @@ public enum ErrorCode {
     NO_EXIST_USERNAME_BIRTHDATE_EMAIL(HttpStatus.NOT_FOUND,"사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다."),
     EMAIL_SESSION_INVALIDATE(HttpStatus.NOT_FOUND,"유효시간이 지났습니다. 인증번호를 다시 받으세요. "),
     NOT_EXIST_USER(HttpStatus.NOT_FOUND,"회원이 존재하지 않습니다."),
-
+    NOT_AGREE(HttpStatus.BAD_REQUEST,"동의를 하셔야합니다."),
+    NOT_SATISFY_MONEY(HttpStatus.BAD_REQUEST,"금액이 부족합니다."),
+    RECONFIRM_NUMBER(HttpStatus.BAD_REQUEST,"인증번호를 재확인하시기 바랍니다."),
     NO_MATCH_NUMBER(HttpStatus.BAD_REQUEST,"인증이 실패하였습니다."),
     DUPLICATE_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
 

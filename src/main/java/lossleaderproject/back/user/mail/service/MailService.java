@@ -6,7 +6,9 @@ import lossleaderproject.back.user.exception.UserCustomException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Service
@@ -15,19 +17,26 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
 
+    @Transactional
     public String emailVerification(HttpSession session, int inputCode) {
         try {
+
             int emailVerification = (int) session.getAttribute("emailVerification");
+            boolean verification = false;
             if (emailVerification == inputCode) {
                 System.out.println("session = " + session.getAttribute("emailVerification"));
-                session.invalidate();
+                verification = true;
+                session.setAttribute("success",verification);
+
                 return "인증 성공";
             }
+            session.setAttribute("success",verification);
             return "인증 실패";
         } catch (NullPointerException e) {
             throw new UserCustomException(ErrorCode.EMAIL_SESSION_INVALIDATE);
         }
     }
+
 
 
     public void sendMail(HttpSession session, String userEmail) {

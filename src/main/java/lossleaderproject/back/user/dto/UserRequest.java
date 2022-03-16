@@ -34,6 +34,9 @@ public class UserRequest {
     @Email(message = "이메일 형식에 맞게 입력하셔야 됩니다.")
     private String email;
 
+    @NotNull(message = "인증 번호를 입력해주셔야 됩니다.")
+    private Integer emailCertification;
+
     @NotNull(message = "우편번호를 입력하셔야 됩니다.")
     private String postalCode; // 우편번호
     @NotNull(message = "간략하게 주소를 입력하셔야 됩니다.")
@@ -42,29 +45,31 @@ public class UserRequest {
     private String detailAddress; // 상세주소
 
     @NotNull(message = "생년월일을 필수로 입력하셔야됩니다.")
-    @Length(message = "생년월일은 ")
     private String birthDate;
 
     private String recommendedPerson;
 
-    @NotNull(message = "인증 번호를 입력해주셔야 됩니다.")
-    private int emailCertification;
-
-    private int mileage;
-
-    public UserRequest(String loginId, String password, String confirmPassword, String userName, String phoneNumber, String email, String postalCode, String briefAddress, String detailAddress, String birthDate, String recommendedPerson, int emailCertification) {
+    public UserRequest(String loginId, String userName, String password, String email, String phoneNumber) {
         this.loginId = loginId;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
         this.userName = userName;
+        this.password = password;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.postalCode = postalCode;
-        this.briefAddress = briefAddress;
-        this.detailAddress = detailAddress;
-        this.birthDate = birthDate;
-        this.recommendedPerson = recommendedPerson;
-        this.emailCertification = emailCertification;
+    }
+
+    public UserRequest(String loginId, String password, String userName, String email) {
+        this.loginId = loginId;
+        this.password = password;
+        this.userName = userName;
+        this.email = email;
+    }
+
+    public User kakaoOAuthToEntity() {
+        return new User(this.loginId, this.password, this.userName, this.email);
+    }
+
+    public User naverOAuthToEntity() {
+        return new User(this.loginId, this.userName, this.password, this.phoneNumber, this.email);
     }
 
     public UserRequest(String loginId, String userName, String password, String email, String phoneNumber) {
