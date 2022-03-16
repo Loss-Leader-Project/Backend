@@ -72,6 +72,28 @@ public class UserRequest {
         return new User(this.loginId, this.userName, this.password, this.phoneNumber, this.email);
     }
 
+    public UserRequest(String loginId, String userName, String password, String email, String phoneNumber) {
+        this.loginId = loginId;
+        this.userName = userName;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
+    public UserRequest(String loginId, String password, String userName, String email) {
+        this.loginId = loginId;
+        this.password = password;
+        this.userName = userName;
+        this.email = email;
+    }
+
+    public User kakaoOAuthToEntity() {
+        return new User(this.loginId, this.password, this.userName, this.email);
+    }
+
+    public User naverOAuthToEntity() {
+        return new User(this.loginId, this.userName, this.password, this.phoneNumber, this.email);
+    }
     public User toEntity() {
         return new User(this.loginId, this.password, this.userName, this.phoneNumber, this.email, this.postalCode, this.briefAddress, this.detailAddress, this.birthDate, this.recommendedPerson);
     }

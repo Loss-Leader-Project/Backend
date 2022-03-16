@@ -29,10 +29,8 @@ public class LoginController {
     @ApiOperation(value = "카카오 로그인", notes = "카카오 로그인시 넘어오는 code값을 받은 뒤 jwt 토큰 생성과 동시에 회원가입 및 로그인")
     @GetMapping("/lossleader/callback/kakao")
     public void kakaoLogin(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse res,@ApiIgnore HttpSession session) throws IOException {
-
         loginService.kakaoToken(code, state, res, session);
     }
-
     @ApiOperation(value = "카카오 로그아웃", notes = "카카오에서 제공하는 accessToken값을 header에 넣고 로그아웃")
     @GetMapping("/logout/kakao")
     @ResponseBody

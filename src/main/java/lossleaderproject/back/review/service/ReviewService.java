@@ -96,6 +96,7 @@ public class ReviewService {
     public Page< ReviewResponse.ReviewListing> findAllByUserIdOrderByCreateDateAsc(PrincipalDetails principalDetails, Pageable pageable) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
         Page<Review> reviews = reviewRepository.findAllByUserOrderByCreateDateAsc(user, pageable);
+
         return reviews.map(review -> new ReviewResponse.ReviewListing(review));
     }
     public List<ReviewResponse.ReviewListingHotPlace> findTop20ByOrderByStarDesc(){
