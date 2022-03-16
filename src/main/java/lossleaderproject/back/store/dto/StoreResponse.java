@@ -16,8 +16,9 @@ public class StoreResponse {
         @NotNull(message = "아이디를 필수로 입력 하셔야 합니다.")
         private Long id;
 
-    @NotNull(message = "간략한 주소를 필수로 입력하셔야됩니다.")
-    private String briefAddress;
+
+        @NotNull(message = "간략한 주소를 필수로 입력하셔야됩니다.")
+        private String briefAddress;
 
         @NotNull(message = "가게 명을 필수로 입력 하셔야 합니다.")
         private String storeName;

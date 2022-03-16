@@ -48,6 +48,8 @@ public class UserRequest {
 
     private String recommendedPerson;
 
+  
+
     public UserRequest(String loginId, String userName, String password, String email, String phoneNumber) {
         this.loginId = loginId;
         this.userName = userName;
@@ -70,7 +72,6 @@ public class UserRequest {
     public User naverOAuthToEntity() {
         return new User(this.loginId, this.userName, this.password, this.phoneNumber, this.email);
     }
-
 
     public User toEntity() {
         return new User(this.loginId, this.password, this.userName, this.phoneNumber, this.email, this.postalCode, this.briefAddress, this.detailAddress, this.birthDate, this.recommendedPerson);

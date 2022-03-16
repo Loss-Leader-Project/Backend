@@ -123,6 +123,7 @@ public class LoginService {
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(accessTokenResponse.getBody());
             session.setAttribute("Authorization", jsonObject.get("access_token"));
+
             String header = "Bearer " + jsonObject.get("access_token");
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", header);
