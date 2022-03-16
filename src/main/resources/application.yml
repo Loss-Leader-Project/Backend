@@ -14,13 +14,13 @@ spring:
     # 데이터베이스 로그인 비밀번호
     password: lossleaderBack12!
     # 데이터베이스 url
-    url: jdbc:mysql://114.202.45.254:3306/lossleader
+    url: jdbc:mysql://127.0.0.1:3306/lossleader
   jpa:
     hibernate:
       # create-drop : 서버 실행할때 drop 및 생성을 실행하고 서버 종료시 drop 실행
       # update : 변경될 스키마 적용
       # create : 서버 실행 할때마다 생성된 데이터베이스를 다 삭제하고 새로 create
-      ddl-auto: none
+      ddl-auto: create
     generate-ddl: true
     show-sql: true
   mail:

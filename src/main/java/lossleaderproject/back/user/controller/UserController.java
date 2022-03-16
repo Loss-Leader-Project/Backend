@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.user.dto.*;
-import lossleaderproject.back.user.mail.dto.EmailVerificationNumber;
+import lossleaderproject.back.user.mail.dto.EmailVerification;
 import lossleaderproject.back.user.mail.dto.SendEmail;
 import lossleaderproject.back.user.mail.service.MailService;
 import lossleaderproject.back.user.service.UserService;
@@ -43,7 +43,7 @@ public class UserController {
 
     @ApiOperation(value = "인증번호 인증",notes = "이메일을 통해 보내진 인증번호가 맞는지 수행합니다.")
     @PutMapping("/lossleader-user")
-    public ResponseEntity<String> emailVerification(@Valid @RequestBody EmailVerificationNumber inputCode,@ApiIgnore HttpSession session) {
+    public ResponseEntity<String> emailVerification(@Valid @RequestBody EmailVerification inputCode, @ApiIgnore HttpSession session) {
         return new ResponseEntity<>(mailService.emailVerification(session, inputCode.getNumber()),HttpStatus.OK);
     }
 
@@ -70,13 +70,13 @@ public class UserController {
     }
 
     @ApiOperation(value = "아이디 찾기")
-    @PostMapping("/login-id")
+    @PostMapping("/login/id")
     public ResponseEntity<UserLoginIdResponse> userLoginIdFind(@Valid @RequestBody UserLoginIdFindRequest userLoginIdFindRequest) {
         return new ResponseEntity<>(userService.findLoginId(userLoginIdFindRequest), HttpStatus.OK);
     }
 
     @ApiOperation(value = "비밀번호 찾기")
-    @PostMapping("/login-password")
+    @PostMapping("/login/password")
     public ResponseEntity<String> userLoginPasswordFind(@Valid @RequestBody UserFindPassword userFindPassword) {
         return new ResponseEntity<>(userService.findPassword(userFindPassword),HttpStatus.OK);
     }

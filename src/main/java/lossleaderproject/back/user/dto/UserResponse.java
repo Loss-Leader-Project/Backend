@@ -2,10 +2,8 @@ package lossleaderproject.back.user.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lossleaderproject.back.user.entity.User;
 
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
