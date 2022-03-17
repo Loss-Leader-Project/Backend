@@ -68,8 +68,8 @@ public class StoreRequest {
                 this.packaging,
                 this.delivery,
                 this.priceOfCoupon,
-                this.benefitCondition,
                 this.couponContent,
+                this.benefitCondition,
                 this.leftCoupon,
                 this.totalCoupon,
                 this.couponGradeName);
