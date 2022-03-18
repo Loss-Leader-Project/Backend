@@ -10,12 +10,10 @@ import lossleaderproject.back.store.repository.StoreDetailRepository;
 import lossleaderproject.back.store.repository.StoreFoodImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 

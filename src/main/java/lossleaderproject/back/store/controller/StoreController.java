@@ -5,7 +5,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.review.dto.ReviewResponse;
 import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.entitiy.StoreDetail;
@@ -16,12 +15,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "업체에 대한 API")
