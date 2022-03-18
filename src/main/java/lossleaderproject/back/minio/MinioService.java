@@ -13,10 +13,11 @@ public class MinioService {
 
     public void imageUpload(String bucket,String objectName, InputStream stream) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         try {
+            InputStream newStream = ImageUtils.resize(stream,1200,900);
             MinioClient minioClient =
                     MinioClient.builder()
-                            .endpoint("http://114.202.45.254:9000")
-                            .credentials("lossleader", "lossleader123")
+                            .endpoint("http://114.202.45.254:9500")
+                            .credentials("lossleader-test", "lossleader-test123")
                             .build();
 
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
@@ -29,7 +30,7 @@ public class MinioService {
                     PutObjectArgs.builder()
                             .bucket(bucket)
                             .object(objectName)
-                            .stream(stream, -1, 10485760)
+                            .stream(newStream, -1, 10485760)
                     .contentType("image/jpg")
                     .build());
         } catch (MinioException e) {
@@ -41,8 +42,8 @@ public class MinioService {
         try {
             MinioClient minioClient =
                     MinioClient.builder()
-                            .endpoint("http://114.202.45.254:9000")
-                            .credentials("lossleader", "lossleader123")
+                            .endpoint("http://114.202.45.254:9500")
+                            .credentials("lossleader-test", "lossleader-test123")
                             .build();
 
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
