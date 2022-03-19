@@ -10,6 +10,7 @@ import java.util.List;
 
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
+    Store findByStoreName(String storeName);
     // JPA 쓰라고 하셔서 문서 보고 쿼리 지우고 변경 했습니다.
     // 티어별 JPA 쿼리
     List<Store> findTop20ByOrderByAvgStarDesc();

@@ -15,9 +15,11 @@ import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +30,9 @@ public class OrderService {
     private final StoreOrderRepository storeOrderRepository;
     private final StoreRepository storeRepository;
 
-    public Long productOrder(Long storeId, OrderRequest orderRequest) {
+    public Long productOrder(String storeName, OrderRequest orderRequest) {
         User loginUser = userRepository.findByUserName(orderRequest.getUserName());
-        Store store = storeRepository.findById(storeId).get();
+        Store store = storeRepository.findByStoreName(storeName);
         orderRequest.payPriceofCoupon(store.getPriceOfCoupon());
         if (orderRequest.isAllUseMileage() == true) {
             if (orderRequest.getPayPrice() > loginUser.getMileage()) {
@@ -46,9 +48,11 @@ public class OrderService {
         if (orderRequest.isOrderAgree() == false) {
             throw new UserCustomException(ErrorCode.NOT_AGREE);
         }
-
         Orders orders = orderRequest.toEntity();
         orders.now();
+        LocalDateTime now = LocalDateTime.now();
+        Long orderNumber = Long.parseLong(now.getYear() + "" + now.getMonthValue() + "" + now.getDayOfMonth() + "" + now.getHour() + "" + now.getMinute() + "" + now.getSecond());
+        orders.orderNumber(orderNumber);
         loginUser.restMileage(orders.getUsedMileage());
         storeOrderRepository.save(new StoreOrder(orders, store, loginUser));
         Orders savedOrder = orderRepository.save(orders);
@@ -56,10 +60,10 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderRequest order(PrincipalDetails principalDetails, Long storeId, OrderRequest orderRequest) {
+    public OrderRequest order(PrincipalDetails principalDetails, String storeName, OrderRequest orderRequest) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Store store = storeRepository.findById(storeId).get();
-        orderRequest.order(store.getBriefAddress(), store.getStoreName(), store.getCouponContent(), store.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
+        Store store = storeRepository.findByStoreName(storeName);
+        orderRequest.order(store.getThumbnailImage(), store.getBriefAddress(), store.getStoreName(), store.getCouponContent(), store.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
 
         return orderRequest;
 
@@ -68,7 +72,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Page<OrderHistory> orderHistory(PrincipalDetails principalDetails, Pageable pageable) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Page<StoreOrder> pageStoreOrder = storeOrderRepository.findAllByUserId(user, pageable);
+        Page<StoreOrder> pageStoreOrder = storeOrderRepository.findAllByUser(user, pageable);
         return pageStoreOrder.map(storeOrder -> new OrderHistory(
                 storeOrder.getUser().getUserName(), storeOrder.getUser().getMileage(), storeOrder.getOrders().getOrderDate(),
                 storeOrder.getOrders().getOrderNumber(), storeOrder.getStore().getBriefAddress(),
@@ -79,23 +83,20 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderResponse orderDetail(Long orderId) {
-        Orders orders = orderRepository.findById(orderId).get();
-        StoreOrder storeOrder = storeOrderRepository.findByOrdersId(orders.getId());
-        StoreOrder findStoreOrder = storeOrderRepository.findById(storeOrder.getId()).get();
-        User user = findStoreOrder.getUser();
+    public OrderResponse orderDetail(PrincipalDetails principalDetails,Long orderNumber) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
+        Orders orders = orderRepository.findByOrderNumber(orderNumber);
         return new OrderResponse(user.getUserName(), user.getPhoneNumber(), orders.getVisitTime(), orders.getVisitCount());
     }
 
     @Transactional(readOnly = true)
-    public PurchaseDetailsResponse purchaseDetails(PrincipalDetails principalDetails, Long storeId, Long orderNumber) {
+    public PurchaseDetailsResponse purchaseDetails(PrincipalDetails principalDetails, String storeName, Long orderNumber) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Store store = storeRepository.findById(storeId).get();
+        Store store = storeRepository.findByStoreName(storeName);
         Orders order = orderRepository.findByOrderNumber(orderNumber);
         PurchaseHistory purchaseHistory = new PurchaseHistory(order.getOrderDate(), order.getOrderNumber(), store.getCouponContent(), store.getPriceOfCoupon());
         PurchaseUserInfo purchaseUserInfo = new PurchaseUserInfo(user.getUserName(), user.getPhoneNumber(), order.getVisitTime(), order.getVisitCount());
-        PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse(purchaseHistory,purchaseUserInfo);
-
+        PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse(purchaseHistory, purchaseUserInfo);
         return purchaseDetailsResponse;
 
     }
