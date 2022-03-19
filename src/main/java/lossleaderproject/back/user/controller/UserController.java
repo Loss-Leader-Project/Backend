@@ -29,20 +29,20 @@ public class UserController {
 
     @ApiOperation(value = "아이디 중복검사",notes = "해당 아이디가 이미 존재하는지에 대한 여부를 수행합니다.")
     @ApiImplicitParam(name = "loginId",value = "아이디",required = true,dataType = "String")
-    @GetMapping("/lossleader-user")
+    @GetMapping("/lossleader-user/loginid")
     public ResponseEntity<String> duplicateLoginId(@RequestParam String loginId) {
         return new ResponseEntity<>(userService.checkLoginId(loginId),HttpStatus.OK);
     }
 
     @ApiOperation(value = "메일 발송",notes = "입력한 이메일로 인증번호가 발송이 됩니다.")
-    @PatchMapping("/lossleader-user")
+    @PostMapping("/lossleader-user/email")
     public ResponseEntity<String> mail(@Valid @RequestBody SendEmail eMail,@ApiIgnore HttpSession session) {
         mailService.sendMail(session, eMail.getEmail());
         return new ResponseEntity<>("메일 발송성공",HttpStatus.OK);
     }
 
     @ApiOperation(value = "인증번호 인증",notes = "이메일을 통해 보내진 인증번호가 맞는지 수행합니다.")
-    @PutMapping("/lossleader-user")
+    @PostMapping("/lossleader-user/number")
     public ResponseEntity<String> emailVerification(@Valid @RequestBody EmailVerification inputCode, @ApiIgnore HttpSession session) {
         return new ResponseEntity<>(mailService.emailVerification(session, inputCode.getNumber()),HttpStatus.OK);
     }
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "로그인 한 회원에 대한 정보수정")
-    @PostMapping("/user/info")
+    @PatchMapping("/user/info")
     public ResponseEntity<String> userInfo(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody UserResponse userResponse) {
 
         userService.userInfoEdit(principalDetails.getUsername(), userResponse);

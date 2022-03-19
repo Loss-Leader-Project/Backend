@@ -3,6 +3,7 @@ package lossleaderproject.back.user.mail.service;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.user.exception.ErrorCode;
 import lossleaderproject.back.user.exception.UserCustomException;
+import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpSession;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
+    private final UserRepository userRepository;
 
     @Transactional
     public String emailVerification(HttpSession session, int inputCode) {
@@ -39,7 +41,11 @@ public class MailService {
 
 
 
+    @Transactional
     public void sendMail(HttpSession session, String userEmail) {
+        if(userRepository.existsByEmail(userEmail)) {
+            throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
+        }
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(userEmail);
         int numVerification = (int) (Math.random() * 99999) + 1;

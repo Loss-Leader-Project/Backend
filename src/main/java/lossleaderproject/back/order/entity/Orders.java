@@ -32,7 +32,9 @@ public class Orders {
     public void now() {
         this.orderDate = LocalDate.now();
     }
-
+    public void orderNumber(Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
     public Orders(Long orderNumber, String visitTime, int visitCount, int payPrice, int usedMileage, int lastPrice, boolean allUseMileage, boolean orderAgree) {
         this.orderNumber = orderNumber;

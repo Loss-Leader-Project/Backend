@@ -93,7 +93,7 @@ public class LoginService {
             String email = (String) responseParse.get("email");
             String phoneNumber = (String) responseParse.get("mobile_e164");
             String userName = new String(encodeUserName.getBytes(StandardCharsets.UTF_8));
-            User user = new UserRequest("naver_" + loginId, userName, encode.encode("네이버"), email, phoneNumber).naverOAuthToEntity();
+            User user = new UserRequest("social_" + loginId, userName, encode.encode("네이버"), email, phoneNumber).naverOAuthToEntity();
             if (userRepository.existsByLoginId(user.getLoginId()) == false) {
                 userRepository.save(user);
             }
@@ -135,7 +135,7 @@ public class LoginService {
             Long loginId = (Long) profile.get("id");
             String email = (String) kakao_account.get("email");
             String userName = (String) properties.get("nickname");
-            User kakaoUser = new UserRequest("kakao_" + loginId, encode.encode("겟인데어"), userName, email).kakaoOAuthToEntity();
+            User kakaoUser = new UserRequest("social_" + loginId, encode.encode("겟인데어"), userName, email).kakaoOAuthToEntity();
             if (userRepository.existsByLoginId(kakaoUser.getLoginId()) == false) {
                 userRepository.save(kakaoUser);
             }

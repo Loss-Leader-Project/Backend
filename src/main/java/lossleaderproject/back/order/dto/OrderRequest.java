@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Getter
 public class OrderRequest {
+    private String thumbnailImage;
     private String briefAddress;
     private String storeName;
     private String couponContent;
@@ -53,7 +54,8 @@ public class OrderRequest {
         this.orderAgree = orderAgree;
     }
 
-    public void order(String briefAddress, String storeName, String couponContent, Integer priceOfCoupon, String userName, String phoneNumber) {
+    public void order(String thumbnailImage,String briefAddress, String storeName, String couponContent, Integer priceOfCoupon, String userName, String phoneNumber) {
+        this.thumbnailImage = thumbnailImage;
         this.briefAddress = briefAddress;
         this.storeName = storeName;
         this.couponContent = couponContent;

@@ -40,7 +40,7 @@ public class User extends BaseEntity {
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.role = "ROLE_OAUTH";
+        this.role = "ROLE_NAVER";
     }
 
     public User(String loginId, String password, String userName, String email) {
@@ -48,7 +48,7 @@ public class User extends BaseEntity {
         this.password = password;
         this.userName = userName;
         this.email = email;
-        this.role = "ROLE_OAUTH";
+        this.role = "ROLE_KAKAO";
     }
 
     public void encodePassword(String password) {

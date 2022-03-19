@@ -39,6 +39,9 @@ public class UserService {
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
         }
+        if(userRepository.existsByEmail(userRequest.getEmail())) {
+            throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
+        }
         if(session.getAttribute("success") == null || session.getAttribute("success").equals(false)) {
             throw new UserCustomException(ErrorCode.RECONFIRM_NUMBER);
         }else {
@@ -51,8 +54,6 @@ public class UserService {
         newUser.encodePassword(encoderPw);
         userRepository.save(newUser);
         return newUser.getId();
-
-
     }
 
     @Transactional(readOnly = true)
