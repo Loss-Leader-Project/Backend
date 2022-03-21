@@ -11,7 +11,7 @@ import java.util.Date;
 public class TokenProvider {
     public String create(PrincipalDetails principalDetails) {
         PrincipalDetails principal = principalDetails;
-        int sec = 60000 * 10;
+        int sec = 1800000;
         String token = JWT.create()
                 .withSubject("lossleader")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (sec)))

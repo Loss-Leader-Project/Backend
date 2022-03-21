@@ -2,6 +2,7 @@ package lossleaderproject.back.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.security.auth.PrincipalDetails;
+import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.entity.User;
 import lossleaderproject.back.user.exception.ErrorCode;
@@ -157,6 +158,15 @@ public class UserService {
             password += randomNum +"&#";
         }
         return password;
+    }
+    // 리뷰 등록에 따른 유저 별점 갱신
+    public void reviewPosting(Long userId, Float star){
+        User user = userRepository.findById(userId).get();
+        Integer newReviewCount = user.getReviewCount() + 1;
+        Float newAvgStar = (user.getAvgStar() * user.getReviewCount() + star) / newReviewCount;
+        user.setReviewCount(newReviewCount);
+        user.setAvgStar(newAvgStar);
+        userRepository.save(user);
     }
 
 

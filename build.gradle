@@ -38,8 +38,16 @@ dependencies {
     compileOnly group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+}
 
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
 
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources", "src/main/resources-${profile}"
+        }
+    }
 }
 
 tasks.named('test') {

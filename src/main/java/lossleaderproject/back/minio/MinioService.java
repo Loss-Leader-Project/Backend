@@ -1,6 +1,8 @@
 package lossleaderproject.back.minio;
 import io.minio.*;
 import io.minio.errors.MinioException;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -10,14 +12,21 @@ import java.security.NoSuchAlgorithmException;
 
 @Service
 public class MinioService {
-
+    @Value("${minio.end_point}")
+    private String endPoint;
+    @Value("${minio.access_key}")
+    private String accessKey;
+    @Value("${minio.secret_key}")
+    private String secretKey;
     public void imageUpload(String bucket,String objectName, InputStream stream) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         try {
             InputStream newStream = ImageUtils.resize(stream,1200,900);
+
+
             MinioClient minioClient =
                     MinioClient.builder()
-                            .endpoint("http://114.202.45.254:9500")
-                            .credentials("lossleader-test", "lossleader-test123")
+                            .endpoint(endPoint)
+                            .credentials(accessKey,secretKey)
                             .build();
 
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
@@ -42,8 +51,8 @@ public class MinioService {
         try {
             MinioClient minioClient =
                     MinioClient.builder()
-                            .endpoint("http://114.202.45.254:9500")
-                            .credentials("lossleader-test", "lossleader-test123")
+                            .endpoint(endPoint)
+                            .credentials(accessKey,secretKey)
                             .build();
 
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());

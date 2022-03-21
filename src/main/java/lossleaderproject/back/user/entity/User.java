@@ -2,11 +2,13 @@ package lossleaderproject.back.user.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@DynamicInsert
 @RequiredArgsConstructor
 public class User extends BaseEntity {
     @Id
@@ -26,6 +28,12 @@ public class User extends BaseEntity {
     private String briefAddress; // 간략주소
     private String detailAddress; // 상세주소
 
+    @Column(columnDefinition = "Float default 0")
+    private Float avgStar; // 평균 별점
+
+    @Column(columnDefinition = "Integer default 0")
+    private Integer reviewCount; // 리뷰 개수
+
     @Column(updatable = false)
     private String birthDate;
 
@@ -33,6 +41,14 @@ public class User extends BaseEntity {
 
     private int mileage;
     private String role;
+
+    public void setAvgStar(Float avgStar) {
+        this.avgStar = avgStar;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
+    }
 
     public User (String loginId,String userName,String password, String phoneNumber,String email) {
         this.phoneNumber = phoneNumber;

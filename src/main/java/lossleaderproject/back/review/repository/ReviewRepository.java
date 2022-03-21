@@ -12,5 +12,8 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     Page<Review> findAllByStoreIdOrderByCreateDateAsc(Long storeId, Pageable pageable);
     Page<Review> findAllByUserOrderByCreateDateAsc(User user, Pageable pageable);
+    Page<Review> findAllByUserOrderByCreateDateDesc(User user, Pageable pageable);
+    Page<Review> findAllByUserOrderByStarAsc(User user, Pageable pageable);
+    Page<Review> findAllByUserOrderByStarDesc(User user, Pageable pageable);
     List<Review> findTop20ByOrderByStarDesc();
 }
