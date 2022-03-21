@@ -21,7 +21,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Page<Store> findAllByCouponGradeNameOrderByAvgStarDesc(String CouponGradeName,Pageable pageable);
     // 전체 JPA 쿼리
     Page<Store> findAllByOrderByPriceOfCouponDesc(Pageable pageable);
-    Page<Store> findAllByOrderByPriceOfCoupon(Pageable pageable);
+    Page<Store> findAllByOrderByPriceOfCouponAsc(Pageable pageable);
     Page<Store> findAllByOrderByCreateDateAsc(Pageable pageable);
     Page<Store> findAllByOrderByAvgStarDesc(Pageable pageable);
     // 핫 플레이스 API 여부는 보류하고 03.07 9시에 결정 하기로 했습니다.

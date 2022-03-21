@@ -15,9 +15,11 @@ import lossleaderproject.back.store.repository.StoreRepository;
 import lossleaderproject.back.store.service.StoreService;
 import lossleaderproject.back.user.entity.User;
 import lossleaderproject.back.user.repository.UserRepository;
+import lossleaderproject.back.user.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -37,6 +39,7 @@ public class ReviewService {
     private final ReviewImageService reviewImageService;
     private final StoreService storeService;
     private final MinioService minioService;
+    private final UserService userService;
 
     public void save(PrincipalDetails principalDetails, Long orderNumber, Long storeId, ReviewRequest.ReviewPost reviewPost) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
@@ -48,6 +51,7 @@ public class ReviewService {
         review.setStore(store);
         // 업체 리뷰 평점 갱신
         storeService.review(storeId,reviewPost.getStar());
+        userService.reviewPosting(user.getId(),reviewPost.getStar());
         // 리뷰 이미지 식별자(uuid) 저장
         review.setReviewImages(reviewImageService.save(reviewPost.getImageIdentifyList()));
         // 리뷰 저장
@@ -93,11 +97,38 @@ public class ReviewService {
         return reviews.map(review -> new ReviewResponse.ReviewListing(review));
     }
 
-    public Page< ReviewResponse.ReviewListing> findAllByUserIdOrderByCreateDateAsc(PrincipalDetails principalDetails, Pageable pageable) {
+    public ReviewResponse.ReviewListingMyPage findAllByUserIdOrderByCreateDateAsc(PrincipalDetails principalDetails,
+                                                                                   Pageable pageable,
+                                                                                   String filter,
+                                                                                   String sorting) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Page<Review> reviews = reviewRepository.findAllByUserOrderByCreateDateAsc(user, pageable);
+        user.getAvgStar();
+        filter = filter.toUpperCase();
+        sorting = sorting.toUpperCase();
+        Page<Review> reviews = null;
+        if(filter.equals("DATE")){
+            if(sorting.equals("ASC")){
+                reviews = reviewRepository.findAllByUserOrderByCreateDateAsc(user, pageable);
+            }
+            else if(filter.equals("DESC")){
+                reviews = reviewRepository.findAllByUserOrderByCreateDateDesc(user, pageable);
+            }
+        }
+        else if(filter.equals("STAR")){
+            if(sorting.equals("ASC")){
+                reviews = reviewRepository.findAllByUserOrderByStarAsc(user, pageable);
+            }
+            else if(filter.equals("DESC")){
+                reviews = reviewRepository.findAllByUserOrderByStarDesc(user, pageable);
+            }
+        }
 
-        return reviews.map(review -> new ReviewResponse.ReviewListing(review));
+        if(reviews == null) {
+            reviews = reviewRepository.findAllByUserOrderByCreateDateDesc(user, pageable);
+        }
+        Page<ReviewResponse.ReviewListingUser> reviewPages = reviews.map(review -> new ReviewResponse.ReviewListingUser(review));
+        ReviewResponse.ReviewListingMyPage reviewListingMyPage = new ReviewResponse.ReviewListingMyPage(reviewPages,user.getAvgStar());
+        return reviewListingMyPage;
     }
     public List<ReviewResponse.ReviewListingHotPlace> findTop20ByOrderByStarDesc(){
         List<Review> reviews = reviewRepository.findTop20ByOrderByStarDesc();

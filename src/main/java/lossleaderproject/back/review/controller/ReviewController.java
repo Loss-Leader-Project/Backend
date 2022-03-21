@@ -28,46 +28,49 @@ import java.util.List;
 public class ReviewController {
 
     public final ReviewService reviewService;
-    @ApiOperation(value = "리뷰 등록")
-    @PostMapping("/{orderNumber}/{storeId}")
-    public ResponseEntity<String> review(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable("orderNumber") Long orderNumber, @PathVariable("storeId") Long storeId, @RequestBody ReviewRequest.ReviewPost reviewRequest) {
+    @ApiOperation(value = "리뷰 등록 (리뷰 작성 페이지)")
+    @PostMapping("")
+    public ResponseEntity<String> review(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam("orderNumber") Long orderNumber, @RequestParam("storeId") Long storeId, @RequestBody ReviewRequest.ReviewPost reviewRequest) {
         reviewService.save(principalDetails,orderNumber,storeId,reviewRequest);
         return new ResponseEntity<>("리뷰 작성 완료", HttpStatus.OK);
     }
 
-    @ApiOperation(value = "리뷰 이미지 업로드", notes = "리뷰 작성할때 이미지 업로드")
+    @ApiOperation(value = "리뷰 이미지 업로드 (리뷰 작성 페이지)", notes = "리뷰 작성할때 이미지 업로드 (리뷰 작성 페이지)")
     @PostMapping("/image-upload")
     public ResponseEntity<String> imageUpload(ReviewImageRequest.ImageUpload imageUpload) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         return new ResponseEntity<>(reviewService.imageUpload(imageUpload),HttpStatus.OK);
     }
 
 
-    @ApiOperation(value = "리뷰 이미지 삭제", notes = "리뷰 작성할때 이미지 삭제")
+    @ApiOperation(value = "리뷰 이미지 삭제 (리뷰 작성 페이지)", notes = "리뷰 작성할때 이미지 삭제 (리뷰 작성 페이지)")
     @DeleteMapping("/image-delete")
     public ResponseEntity<String> imageDelete(ReviewImageRequest.ImageRemove imageRemove) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         return  new ResponseEntity<>(reviewService.imageRemove(imageRemove),HttpStatus.OK);
     }
 
-    @ApiOperation(value = "리뷰 이미지 수정", notes = "리뷰 작성할때 이미지 수정")
+    @ApiOperation(value = "리뷰 이미지 수정 (리뷰 작성 페이지)", notes = "리뷰 작성할때 이미지 수정 (리뷰 작성 페이지)")
     @PutMapping("/image-update")
     public ResponseEntity<String> imageUpdate(ReviewImageRequest.ImageUpdate imageUpdate) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         return new ResponseEntity<>(reviewService.imageUpdate(imageUpdate),HttpStatus.OK);
     }
 
-    @ApiOperation(value = "리뷰 리스팅(업체)",notes = "업체 상세보기에서 해당 업체의 모든리뷰 리스팅" )
-    @GetMapping("/listing-store/")
+    @ApiOperation(value = "리뷰 리스팅 (업체 리스팅 페이지)",notes = "업체 상세보기에서 해당 업체의 모든리뷰 리스팅 (업체 리스팅 페이지)" )
+    @GetMapping("/listing-store")
     public ResponseEntity<Page< ReviewResponse.ReviewListing>> findAllByStoreIdOrderByCreateDateAsc(@RequestParam(value = "storeId",required = false) Long storeId, @ApiIgnore Pageable pageable) {
         return ResponseEntity.ok(reviewService.findAllByStoreIdOrderByCreateDateAsc(storeId,pageable));
 
     }
 
 
-    @ApiOperation(value = "리뷰 리스팅(마이페이지)",notes = "마이페이지 리뷰에서 사용자의 모든리뷰 리스팅" )
-    @GetMapping("/listing-user/")
-    public ResponseEntity<Page< ReviewResponse.ReviewListing>> findAllByUserIdOrderByCreateDateAsc(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails,@ApiIgnore Pageable pageable) {
-        return ResponseEntity.ok(reviewService.findAllByUserIdOrderByCreateDateAsc(principalDetails, pageable));
+    @ApiOperation(value = "리뷰 리스팅 (마이페이지) ",notes = "마이페이지 리뷰에서 사용자의 모든리뷰 리스팅 (마이 페이지)" )
+    @GetMapping("/listing-user")
+    public ResponseEntity<ReviewResponse.ReviewListingMyPage> findAllByUserIdOrderByCreateDateAsc(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                                                                   @ApiIgnore Pageable pageable,
+                                                                                                   @RequestParam(value = "filter",required = false,defaultValue = "Date") String filter,
+                                                                                                   @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting) {
+        return ResponseEntity.ok(reviewService.findAllByUserIdOrderByCreateDateAsc(principalDetails, pageable,filter,sorting));
     }
-    @ApiOperation(value = "좋은 리뷰 리스팅")
+    @ApiOperation(value = "핫 플레이스 리뷰 리스팅 (메인 페이지 핫 플레이스)")
     @GetMapping("/listing-hot")
     public ResponseEntity<List<ReviewResponse.ReviewListingHotPlace>> findAllHotPlace() {
         return ResponseEntity.ok(reviewService.findTop20ByOrderByStarDesc());

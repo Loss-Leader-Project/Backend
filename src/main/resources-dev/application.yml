@@ -16,7 +16,7 @@ spring:
     # 데이터베이스 로그인 비밀번호
     password: lossleaderBack12!
     # 데이터베이스 url
-    url: jdbc:mysql://127.0.0.1:3306/lossleader
+    url: jdbc:mysql://114.202.45.254:10000/lossleader
   jpa:
     hibernate:
       # create-drop : 서버 실행할때 drop 및 생성을 실행하고 서버 종료시 drop 실행
@@ -72,5 +72,9 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
 
+minio:
+  end_point: http://114.202.45.254:9500
+  access_key: lossleader-test
+  secret_key: lossleader-test123
 
 

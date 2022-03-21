@@ -8,6 +8,7 @@ import lossleaderproject.back.store.dto.StoreResponse;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.repository.StoreRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,14 +44,15 @@ public class StoreService {
         filter = filter.toUpperCase();
         sorting = sorting.toUpperCase();
         if(tier.equals("HOTPLACE")){
-            stores = storeRepository.findTop20ByOrderByAvgStarDesc(pageable);
+            Pageable anotherPageable = PageRequest.of(0, 20);
+            stores = storeRepository.findTop20ByOrderByAvgStarDesc(anotherPageable);
         }
         else if(tier.equals("SILVER") || tier.equals("GOLD")) {
             // 티어 별 리스팅
             if(filter.equals("PRICE")) {
                 if (sorting.equals("DESC")) {
                     stores = storeRepository.findAllByCouponGradeNameOrderByPriceOfCouponDesc(tier,pageable);
-                } else {
+                } else if(sorting.equals("ASC")) {
                     stores = storeRepository.findAllByCouponGradeNameOrderByPriceOfCouponAsc(tier,pageable);
                 }
             }
@@ -60,15 +62,14 @@ public class StoreService {
             else if(filter.equals("STAR")){
                 stores = storeRepository.findAllByCouponGradeNameOrderByAvgStarDesc(tier,pageable);
             }
-            return stores.map(store -> new StoreListingResponse(store));
         }
         else if(tier.equals("ALL")){
             // 전체 리스팅
             if(filter.equals("PRICE")) {
                 if (sorting.equals("DESC")) {
                     stores = storeRepository.findAllByOrderByPriceOfCouponDesc(pageable);
-                } else {
-                    stores = storeRepository.findAllByOrderByPriceOfCoupon(pageable);
+                } else if(sorting.equals("ASC")) {
+                    stores = storeRepository.findAllByOrderByPriceOfCouponAsc(pageable);
                 }
             }
             else if(filter.equals("DATE")) {
@@ -77,10 +78,11 @@ public class StoreService {
             else if(filter.equals("STAR")){
                 stores = storeRepository.findAllByOrderByAvgStarDesc(pageable);
             }
-            return stores.map(store -> new StoreListingResponse(store));
         }
         // 값 제대로 들어오지 않을 시에 default  프론트 분과 얘기 됐습니다.
-        stores = storeRepository.findAllByOrderByPriceOfCouponDesc(pageable);
+        if(stores == null) {
+            stores = storeRepository.findAllByOrderByPriceOfCouponDesc(pageable);
+        }
         return stores.map(store -> new StoreListingResponse(store));
     }
 

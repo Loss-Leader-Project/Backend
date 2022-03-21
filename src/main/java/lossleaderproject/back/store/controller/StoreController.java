@@ -32,8 +32,8 @@ public class StoreController {
     private final StoreHashTagService storeHashTagService;
     private final StoreMenuService storeMenuService;
 
-    @ApiOperation(value = "업체 등록")
-    @PostMapping
+    @ApiOperation(value = "업체 등록 (닫을 예정 관리자 페이지 생기면 다시)")
+    @PostMapping("")
     public ResponseEntity<StoreResponse.StoreRes> storePost(StoreRequest storeRequest) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         Store store = storeService.save(storeRequest);
         StoreDetail storeDetail= storeDetailService.save(store.getId(),storeRequest.getStoreDetailRequest());
@@ -53,7 +53,7 @@ public class StoreController {
         StoreResponse.StoreRes storeResponse = new StoreResponse.StoreRes(store,storeDetailResponse);
         return ResponseEntity.ok(storeResponse);
     }
-    @ApiOperation(value = "업체 정보 상세보기")
+    @ApiOperation(value = "업체 정보 상세보기 (업체 디테일 페이지)")
     @ApiImplicitParam(name = "storeId", value = "업체ID")
     @GetMapping("/detail")
     public ResponseEntity<StoreResponse.StoreDetailPageRes> getDetail(@RequestParam("storeId") Long storeId) {
@@ -83,8 +83,8 @@ public class StoreController {
         return ResponseEntity.ok(storeDetailPageRes);
     }
 
-    @ApiOperation(value = "업체 리스팅", notes = "쿠폰 등급별로 정렬(실버, 골드)")
-    @GetMapping("list/")
+    @ApiOperation(value = "업체 리스팅 (업체 리스팅 페이지)", notes = "쿠폰 등급별로 정렬(실버, 골드)")
+    @GetMapping("/list")
     public ResponseEntity<Page<StoreListingResponse>> storeListing (@RequestParam(value = "filter",required = false,defaultValue = "PRICE") String filter,
                                                                     @RequestParam(value = "tier",required = false,defaultValue = "ALL") String tier,
                                                                     @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting,
@@ -95,7 +95,7 @@ public class StoreController {
     }
 
 
-    @ApiOperation(value = "핫플레이스")
+    @ApiOperation(value = "핫플레이스 (메인 페이지 핫 플레이스)")
     @GetMapping("/listing-hot")
     public ResponseEntity<List<StoreResponse.StoreHotplace>> findAllHotPlace() {
         return ResponseEntity.ok(storeService.findTop20ByOrderByAvgStarDesc());
