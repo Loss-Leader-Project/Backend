@@ -30,9 +30,9 @@ public class OrderService {
     private final StoreOrderRepository storeOrderRepository;
     private final StoreRepository storeRepository;
 
-    public Long productOrder(String storeName, OrderRequest orderRequest) {
-        User loginUser = userRepository.findByUserName(orderRequest.getUserName());
-        Store store = storeRepository.findByStoreName(storeName);
+    public ProductOrder productOrder(PrincipalDetails principalDetails,Long storeId, OrderRequest orderRequest) {
+        User loginUser = userRepository.findByLoginId(principalDetails.getUsername());
+        Store store = storeRepository.findById(storeId).get();
         orderRequest.payPriceofCoupon(store.getPriceOfCoupon());
         if (orderRequest.isAllUseMileage() == true) {
             if (orderRequest.getPayPrice() > loginUser.getMileage()) {
@@ -56,13 +56,13 @@ public class OrderService {
         loginUser.restMileage(orders.getUsedMileage());
         storeOrderRepository.save(new StoreOrder(orders, store, loginUser));
         Orders savedOrder = orderRepository.save(orders);
-        return savedOrder.getId();
+        return new ProductOrder(storeId, savedOrder.getOrderNumber(),"주문성공");
     }
 
     @Transactional(readOnly = true)
-    public OrderRequest order(PrincipalDetails principalDetails, String storeName, OrderRequest orderRequest) {
+    public OrderRequest order(PrincipalDetails principalDetails, Long storeId, OrderRequest orderRequest) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Store store = storeRepository.findByStoreName(storeName);
+        Store store = storeRepository.findById(storeId).get();
         orderRequest.order(store.getThumbnailImage(), store.getBriefAddress(), store.getStoreName(), store.getCouponContent(), store.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
 
         return orderRequest;
@@ -90,9 +90,9 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public PurchaseDetailsResponse purchaseDetails(PrincipalDetails principalDetails, String storeName, Long orderNumber) {
+    public PurchaseDetailsResponse purchaseDetails(PrincipalDetails principalDetails, Long storeId, Long orderNumber) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Store store = storeRepository.findByStoreName(storeName);
+        Store store = storeRepository.findById(storeId).get();
         Orders order = orderRepository.findByOrderNumber(orderNumber);
         PurchaseHistory purchaseHistory = new PurchaseHistory(order.getOrderDate(), order.getOrderNumber(), store.getCouponContent(), store.getPriceOfCoupon());
         PurchaseUserInfo purchaseUserInfo = new PurchaseUserInfo(user.getUserName(), user.getPhoneNumber(), order.getVisitTime(), order.getVisitCount());

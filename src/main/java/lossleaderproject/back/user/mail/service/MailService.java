@@ -54,7 +54,7 @@ public class MailService {
         simpleMailMessage.setText("[인증 번호] : " + numVerification);
         javaMailSender.send(simpleMailMessage);
         session.setAttribute("emailVerification", numVerification);
-        session.setMaxInactiveInterval(3*60);
+        session.setMaxInactiveInterval(10*60);
 
     }
 }

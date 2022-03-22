@@ -59,7 +59,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public String checkLoginId(String loginId) {
-        if(userRepository.existsByLoginId(loginId) == false) {
+        if(userRepository.existsByLoginId(loginId)) {
             throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
         return "사용가능한 아이디 입니다.";
@@ -69,7 +69,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse userInfoDetail(PrincipalDetails principalDetails) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        return new UserResponse(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson());
+        return new UserResponse(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson(),user.getRole());
     }
 
     @Transactional
