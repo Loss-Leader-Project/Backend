@@ -73,6 +73,7 @@ public class LoginService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded");
         MultiValueMap<String, String> accessParams = accessTokenParams("authorization_code", NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, code, state);
+
         HttpEntity<MultiValueMap<String, String>> accessTokenRequest = new HttpEntity<>(accessParams, headers);
         ResponseEntity<String> accessTokenResponse = rt.exchange(
                 NAVER_TOKEN_URI,

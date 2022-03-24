@@ -35,7 +35,6 @@ public class ReviewImageRequest {
         @NotNull(message = "리뷰 이미지는 필수로 입력 되어야 합니다")
         private MultipartFile image;
 
-        private String imageIdentify;
     }
     @Setter
     @Getter

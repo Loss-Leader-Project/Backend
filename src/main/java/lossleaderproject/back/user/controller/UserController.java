@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.security.auth.PrincipalDetails;
+import lossleaderproject.back.store.dto.StoreResponse;
 import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.mail.dto.EmailVerification;
 import lossleaderproject.back.user.mail.dto.SendEmail;
@@ -23,7 +24,6 @@ import javax.validation.Valid;
 @Api(tags = {"회원에 대한 API"})
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
     private final MailService mailService;
 
@@ -53,21 +53,28 @@ public class UserController {
         Long saveId = userService.save(userRequest,session);
         return new ResponseEntity<>(new NewUserResponse(saveId, "회원가입 성공"), HttpStatus.OK);
     }
+
     @ApiOperation(value = "로그인 한 회원에 대한 정보")
     @GetMapping("/user/info")
-    public ResponseEntity<UserResponse> userInfoDetail(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<UserResponse.MyPageUserInfo> userInfoDetail(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         return new ResponseEntity<>(userService.userInfoDetail(principalDetails), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "마이 페이지 오더 리스팅 회원 정보 (마이 페이지의 오더 리스팅 페이지)")
+    @GetMapping("/user/info/order-listing")
+    public ResponseEntity<UserResponse.MyPageForOrderListing> userInfoOrderPaging(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return new ResponseEntity<>(userService.userInfoOrderPaging(principalDetails), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "로그인 한 회원에 대한 정보수정")
     @PatchMapping("/user/info")
-    public ResponseEntity<String> userInfo(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody UserResponse userResponse) {
-
+    public ResponseEntity<String> userInfo(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody UserResponse.MyPageUserInfo userResponse) {
         userService.userInfoEdit(principalDetails.getUsername(), userResponse);
-
         return ResponseEntity.ok("회원수정완료");
     }
+
+
 
     @ApiOperation(value = "아이디 찾기")
     @PostMapping("/login/id")

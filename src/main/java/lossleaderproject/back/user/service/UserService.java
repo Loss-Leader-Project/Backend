@@ -67,13 +67,19 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public UserResponse userInfoDetail(PrincipalDetails principalDetails) {
+    public UserResponse.MyPageUserInfo userInfoDetail(PrincipalDetails principalDetails) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        return new UserResponse(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson(),user.getRole());
+        return new UserResponse.MyPageUserInfo(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson(),user.getRole());
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse.MyPageForOrderListing userInfoOrderPaging(PrincipalDetails principalDetails) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
+        return new UserResponse.MyPageForOrderListing(user.getLoginId(), user.getUserName(), user.getMileage());
     }
 
     @Transactional
-    public Long userInfoEdit(String loginId, UserResponse userResponse) {
+    public Long userInfoEdit(String loginId, UserResponse.MyPageUserInfo userResponse) {
         User user = userRepository.findByLoginId(loginId);
         if (userResponse.getUserName() != null) {
             user.userInfoEditUserName(userResponse.getUserName());
