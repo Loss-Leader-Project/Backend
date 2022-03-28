@@ -11,11 +11,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderHistory {
-    private String userName;
-    private int mileage;
     private LocalDate orderDate;
     private Long orderNumber;
     private String briefAddress;
+    private Long storeId;
     private String storeName;
     private String couponContent;
     private Integer priceOfCoupon;

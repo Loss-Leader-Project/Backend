@@ -45,6 +45,8 @@ public class Review extends BaseEntity {
 
     private Float star;
     private String title;
+
+    @Column(length = 1500)
     private String content;
 
     public void setReviewImages(List<ReviewImage> reviewImages) {

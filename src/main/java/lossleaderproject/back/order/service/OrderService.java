@@ -74,9 +74,12 @@ public class OrderService {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
         Page<StoreOrder> pageStoreOrder = storeOrderRepository.findAllByUser(user, pageable);
         return pageStoreOrder.map(storeOrder -> new OrderHistory(
-                storeOrder.getUser().getUserName(), storeOrder.getUser().getMileage(), storeOrder.getOrders().getOrderDate(),
-                storeOrder.getOrders().getOrderNumber(), storeOrder.getStore().getBriefAddress(),
-                storeOrder.getStore().getStoreName(), storeOrder.getStore().getCouponContent(),
+                storeOrder.getOrders().getOrderDate(),
+                storeOrder.getOrders().getOrderNumber(),
+                storeOrder.getStore().getBriefAddress(),
+                storeOrder.getStore().getId(),
+                storeOrder.getStore().getStoreName(),
+                storeOrder.getStore().getCouponContent(),
                 storeOrder.getStore().getPriceOfCoupon()
         ));
 
@@ -98,7 +101,12 @@ public class OrderService {
         PurchaseUserInfo purchaseUserInfo = new PurchaseUserInfo(user.getUserName(), user.getPhoneNumber(), order.getVisitTime(), order.getVisitCount());
         PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse(purchaseHistory, purchaseUserInfo);
         return purchaseDetailsResponse;
+    }
 
+    public void reviewPost(Long orderNumber){
+        Orders order = orderRepository.findByOrderNumber(orderNumber);
+        order.setReview(true);
+        orderRepository.save(order);
     }
 
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.minio.MinioService;
 import lossleaderproject.back.order.entity.Orders;
 import lossleaderproject.back.order.repository.OrderRepository;
+import lossleaderproject.back.order.service.OrderService;
 import lossleaderproject.back.review.dto.ReviewImageRequest;
 import lossleaderproject.back.review.dto.ReviewRequest;
 import lossleaderproject.back.review.dto.ReviewResponse;
@@ -40,6 +41,7 @@ public class ReviewService {
     private final StoreService storeService;
     private final MinioService minioService;
     private final UserService userService;
+    private final OrderService orderService;
 
     public void save(PrincipalDetails principalDetails, Long orderNumber, Long storeId, ReviewRequest.ReviewPost reviewPost) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
@@ -56,11 +58,11 @@ public class ReviewService {
         review.setReviewImages(reviewImageService.save(reviewPost.getImageIdentifyList()));
         // 리뷰 저장
         reviewRepository.save(review);
+        orderService.reviewPost(orderNumber);
     }
 
     public String imageUpload(ReviewImageRequest.ImageUpload imageUpload ) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         String imageIdentify = UUID.randomUUID().toString()+".jpg";
-        imageUpload.setImageIdentify(imageIdentify);
         minioService.imageUpload(
                 "review",
                 imageIdentify,
@@ -79,7 +81,6 @@ public class ReviewService {
 
     public String imageUpdate(ReviewImageRequest.ImageUpdate imageUpdate) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         String imageIdentify = UUID.randomUUID().toString()+".jpg";
-        imageUpdate.getImageUpload().setImageIdentify(imageIdentify);
         minioService.imageRemove(
                 "review",
                 imageUpdate.getImageRemove().getImageIdentify());

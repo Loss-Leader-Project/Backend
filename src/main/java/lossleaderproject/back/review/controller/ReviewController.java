@@ -10,6 +10,7 @@ import lossleaderproject.back.review.service.ReviewService;
 import lossleaderproject.back.security.auth.PrincipalDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -56,7 +57,7 @@ public class ReviewController {
 
     @ApiOperation(value = "리뷰 리스팅 (업체 리스팅 페이지)",notes = "업체 상세보기에서 해당 업체의 모든리뷰 리스팅 (업체 리스팅 페이지)" )
     @GetMapping("/listing-store")
-    public ResponseEntity<Page< ReviewResponse.ReviewListing>> findAllByStoreIdOrderByCreateDateAsc(@RequestParam(value = "storeId",required = false) Long storeId, @ApiIgnore Pageable pageable) {
+    public ResponseEntity<Page< ReviewResponse.ReviewListing>> findAllByStoreIdOrderByCreateDateAsc(@RequestParam(value = "storeId",required = false) Long storeId, @ApiIgnore @PageableDefault(page = 0, size = 5) Pageable pageable) {
         return ResponseEntity.ok(reviewService.findAllByStoreIdOrderByCreateDateAsc(storeId,pageable));
 
     }
@@ -65,7 +66,7 @@ public class ReviewController {
     @ApiOperation(value = "리뷰 리스팅 (마이페이지) ",notes = "마이페이지 리뷰에서 사용자의 모든리뷰 리스팅 (마이 페이지)" )
     @GetMapping("/listing-user")
     public ResponseEntity<ReviewResponse.ReviewListingMyPage> findAllByUserIdOrderByCreateDateAsc(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                                                                   @ApiIgnore Pageable pageable,
+                                                                                                   @ApiIgnore @PageableDefault(page = 0, size = 5) Pageable pageable,
                                                                                                    @RequestParam(value = "filter",required = false,defaultValue = "Date") String filter,
                                                                                                    @RequestParam(value = "sorting",required = false,defaultValue = "DESC") String sorting) {
         return ResponseEntity.ok(reviewService.findAllByUserIdOrderByCreateDateAsc(principalDetails, pageable,filter,sorting));
