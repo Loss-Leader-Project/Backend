@@ -100,6 +100,7 @@ public class ReviewResponse {
     public static class ReviewListingHotPlace{
         private Long id;
         private Long storeId;
+        private String reviewTitle;
         private String userName;
         private String reviewContent;
         private String reviewImage;
@@ -109,6 +110,7 @@ public class ReviewResponse {
         public ReviewListingHotPlace(Review review){
             this.id = review.getId();
             this.storeId = review.getStore().getId();
+            this.reviewTitle = review.getTitle();
             this.star = review.getStar();
             this.reviewContent = review.getContent();
             this.userName = review.getUser().getUserName();
