@@ -133,10 +133,10 @@ public class LoginService {
 
     @Transactional
     public void logout(PrincipalDetails principalDetails, HttpServletRequest request, HttpSession session) throws IOException {
+        System.out.println("로그아웃 준비");
         String role = userRepository.findByLoginId(principalDetails.getUsername()).getRole();
         System.out.println("role = " + role);
         String authorization = request.getHeader("Authorization");
-        System.out.println("로그아웃 준비");
         if(role.equals("ROLE_KAKAO")) {
             System.out.println("카카오 로그아웃");
             String access_token = (String) session.getAttribute("Authorization");
