@@ -59,7 +59,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public String checkLoginId(String loginId) {
-        if(userRepository.existsByLoginId(loginId) == false) {
+        if(userRepository.existsByLoginId(loginId)) {
             throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
         return "사용가능한 아이디 입니다.";
@@ -67,13 +67,19 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public UserResponse userInfoDetail(PrincipalDetails principalDetails) {
+    public UserResponse.MyPageUserInfo userInfoDetail(PrincipalDetails principalDetails) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        return new UserResponse(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson());
+        return new UserResponse.MyPageUserInfo(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson(),user.getRole());
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse.MyPageForOrderListing userInfoOrderPaging(PrincipalDetails principalDetails) {
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
+        return new UserResponse.MyPageForOrderListing(user.getLoginId(), user.getUserName(), user.getMileage());
     }
 
     @Transactional
-    public Long userInfoEdit(String loginId, UserResponse userResponse) {
+    public Long userInfoEdit(String loginId, UserResponse.MyPageUserInfo userResponse) {
         User user = userRepository.findByLoginId(loginId);
         if (userResponse.getUserName() != null) {
             user.userInfoEditUserName(userResponse.getUserName());

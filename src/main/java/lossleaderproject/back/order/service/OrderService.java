@@ -15,7 +15,6 @@ import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +29,9 @@ public class OrderService {
     private final StoreOrderRepository storeOrderRepository;
     private final StoreRepository storeRepository;
 
-    public Long productOrder(String storeName, OrderRequest orderRequest) {
-        User loginUser = userRepository.findByUserName(orderRequest.getUserName());
-        Store store = storeRepository.findByStoreName(storeName);
+    public ProductOrder productOrder(PrincipalDetails principalDetails,Long storeId, OrderRequest orderRequest) {
+        User loginUser = userRepository.findByLoginId(principalDetails.getUsername());
+        Store store = storeRepository.findById(storeId).get();
         orderRequest.payPriceofCoupon(store.getPriceOfCoupon());
         if (orderRequest.isAllUseMileage() == true) {
             if (orderRequest.getPayPrice() > loginUser.getMileage()) {
@@ -56,14 +55,13 @@ public class OrderService {
         loginUser.restMileage(orders.getUsedMileage());
         storeOrderRepository.save(new StoreOrder(orders, store, loginUser));
         Orders savedOrder = orderRepository.save(orders);
-        return savedOrder.getId();
+        return new ProductOrder(orders.getId(), savedOrder.getOrderNumber(),"주문성공");
     }
 
     @Transactional(readOnly = true)
-    public OrderRequest order(PrincipalDetails principalDetails, String storeName, OrderRequest orderRequest) {
-        User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Store store = storeRepository.findByStoreName(storeName);
-        orderRequest.order(store.getThumbnailImage(), store.getBriefAddress(), store.getStoreName(), store.getCouponContent(), store.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
+    public OrderRequest order( Long storeId, OrderRequest orderRequest) {
+        Store store = storeRepository.findById(storeId).get();
+        orderRequest.order(store.getThumbnailImage(), store.getBriefAddress(), store.getStoreName(), store.getBenefitCondition(),store.getCouponContent(), store.getPriceOfCoupon());
 
         return orderRequest;
 
@@ -74,9 +72,12 @@ public class OrderService {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
         Page<StoreOrder> pageStoreOrder = storeOrderRepository.findAllByUser(user, pageable);
         return pageStoreOrder.map(storeOrder -> new OrderHistory(
-                storeOrder.getUser().getUserName(), storeOrder.getUser().getMileage(), storeOrder.getOrders().getOrderDate(),
-                storeOrder.getOrders().getOrderNumber(), storeOrder.getStore().getBriefAddress(),
-                storeOrder.getStore().getStoreName(), storeOrder.getStore().getCouponContent(),
+                storeOrder.getOrders().getOrderDate(),
+                storeOrder.getOrders().getOrderNumber(),
+                storeOrder.getStore().getBriefAddress(),
+                storeOrder.getStore().getId(),
+                storeOrder.getStore().getStoreName(),
+                storeOrder.getStore().getCouponContent(),
                 storeOrder.getStore().getPriceOfCoupon()
         ));
 
@@ -86,19 +87,28 @@ public class OrderService {
     public OrderResponse orderDetail(PrincipalDetails principalDetails,Long orderNumber) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
         Orders orders = orderRepository.findByOrderNumber(orderNumber);
-        return new OrderResponse(user.getUserName(), user.getPhoneNumber(), orders.getVisitTime(), orders.getVisitCount());
+        StoreOrder storeOrder = storeOrderRepository.findByOrdersId(orders.getId());
+        Store store = storeRepository.findByStoreName(storeOrder.getStore().getStoreName());
+        return new OrderResponse(orders.getId(),store.getThumbnailImage(),store.getBriefAddress(),
+                store.getStoreName(),store.getBenefitCondition(),
+                store.getCouponContent(),store.getPriceOfCoupon(),user.getMileage(),user.getId(),user.getUserName(), user.getPhoneNumber(), orders.getVisitTime(), orders.getVisitCount());
     }
 
     @Transactional(readOnly = true)
-    public PurchaseDetailsResponse purchaseDetails(PrincipalDetails principalDetails, String storeName, Long orderNumber) {
+    public PurchaseDetailsResponse purchaseDetails(PrincipalDetails principalDetails, Long storeId, Long orderNumber) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        Store store = storeRepository.findByStoreName(storeName);
+        Store store = storeRepository.findById(storeId).get();
         Orders order = orderRepository.findByOrderNumber(orderNumber);
         PurchaseHistory purchaseHistory = new PurchaseHistory(order.getOrderDate(), order.getOrderNumber(), store.getCouponContent(), store.getPriceOfCoupon());
         PurchaseUserInfo purchaseUserInfo = new PurchaseUserInfo(user.getUserName(), user.getPhoneNumber(), order.getVisitTime(), order.getVisitCount());
         PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse(purchaseHistory, purchaseUserInfo);
         return purchaseDetailsResponse;
+    }
 
+    public void reviewPost(Long orderNumber){
+        Orders order = orderRepository.findByOrderNumber(orderNumber);
+        order.setReview(true);
+        orderRepository.save(order);
     }
 
 }

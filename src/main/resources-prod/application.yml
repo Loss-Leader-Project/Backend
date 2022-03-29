@@ -49,17 +49,16 @@ spring:
               - email
             client-name: Naver
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8000/lossleader/callback/naver
+            redirect-uri: http://localhost:3000/login
           kakao:
             client-id: 066cdaa50bdaebd7e266d0ca6d6c4b2c
             client-secret: RMKwFgHIgi7sYJG6Jbu5uKB8jZTXVN8B
             client-name: Kakao
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8000/lossleader/callback/kakao
+            redirect-uri: http://localhost:3000/login
             scope:
               - profile_nickname
               - account_email
-
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
@@ -77,4 +76,6 @@ minio:
   access_key: lossleader
   secret_key: lossleader123
 
+logout:
+  uri : http://localhost:3000/login/
 

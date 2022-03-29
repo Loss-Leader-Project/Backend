@@ -4,15 +4,11 @@ package lossleaderproject.back.order.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import lossleaderproject.back.order.dto.OrderHistory;
-import lossleaderproject.back.order.dto.OrderRequest;
-import lossleaderproject.back.order.dto.OrderResponse;
-import lossleaderproject.back.order.dto.PurchaseDetailsResponse;
+import lossleaderproject.back.order.dto.*;
 import lossleaderproject.back.order.service.OrderService;
 import lossleaderproject.back.security.auth.PrincipalDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,18 +27,15 @@ public class OrderController {
 
 
     @ApiOperation(value = "주문하기")
-    @PostMapping("/store/{storeName}")
-    public ResponseEntity<String> orderProduct(@PathVariable("storeName") String storeName, @Valid @RequestBody OrderRequest orderRequest) {
-
-        orderService.productOrder(storeName, orderRequest);
-
-        return ResponseEntity.ok("주문 성공");
+    @PostMapping("/store")
+    public ResponseEntity<ProductOrder> orderProduct(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails , @RequestParam Long storeId, @Valid @RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.ok(orderService.productOrder(principalDetails,storeId, orderRequest));
     }
 
     @ApiOperation("주문")
-    @GetMapping("/store/{storeName}")
-    public ResponseEntity<OrderRequest> order(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable("storeName")String storeName,@ApiIgnore OrderRequest orderRequest) {
-        return new ResponseEntity<>(orderService.order(principalDetails, storeName, orderRequest), HttpStatus.OK);
+    @GetMapping("/store")
+    public ResponseEntity<OrderRequest> order(@RequestParam Long storeId,@ApiIgnore OrderRequest orderRequest) {
+        return new ResponseEntity<>(orderService.order(storeId, orderRequest), HttpStatus.OK);
 
     }
 
@@ -64,11 +57,11 @@ public class OrderController {
 
 
     @ApiOperation(value = "단건 주문내역")
-    @GetMapping("/purchase/{storeName}/{orderNumber}")
+    @GetMapping("/purchase/{orderNumber}")
     public ResponseEntity<PurchaseDetailsResponse> purchaseDetails(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                                   @PathVariable("storeName") String storeName,
+                                                                   @RequestParam("storeId") Long storeId,
                                                                    @PathVariable("orderNumber") Long orderNumber) {
-        return new ResponseEntity<>(orderService.purchaseDetails(principalDetails,storeName,orderNumber),HttpStatus.OK);
+        return new ResponseEntity<>(orderService.purchaseDetails(principalDetails,storeId,orderNumber),HttpStatus.OK);
     }
 
 }

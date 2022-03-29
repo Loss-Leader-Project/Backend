@@ -21,5 +21,14 @@ public class TokenProvider {
         return token;
     }
 
+    public String emailCreate(int num) {
+        int sec = 60000 * 3 + 30000;
+        String token = JWT.create()
+                .withSubject("lossleader")
+                .withExpiresAt(new Date(System.currentTimeMillis() + (sec)))
+                .withClaim("emailNumber",num)
+                .sign(Algorithm.HMAC512("lossleader"));
+        return token;
+    }
 
 }

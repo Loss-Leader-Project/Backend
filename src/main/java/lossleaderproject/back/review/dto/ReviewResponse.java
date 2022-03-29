@@ -99,17 +99,22 @@ public class ReviewResponse {
     @AllArgsConstructor
     public static class ReviewListingHotPlace{
         private Long id;
+        private Long storeId;
         private String userName;
         private String reviewContent;
         private String reviewImage;
         private Float star;
 
+
         public ReviewListingHotPlace(Review review){
             this.id = review.getId();
+            this.storeId = review.getStore().getId();
             this.star = review.getStar();
             this.reviewContent = review.getContent();
             this.userName = review.getUser().getUserName();
-            this.reviewImage = review.getReviewImages().get(0).getImageIdentify();
+            if(review.getReviewImages().size()>0) {
+                this.reviewImage = review.getReviewImages().get(0).getImageIdentify();
+            }
 
         }
     }
