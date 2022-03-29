@@ -111,7 +111,7 @@ public class ReviewService {
             if(sorting.equals("ASC")){
                 reviews = reviewRepository.findAllByUserOrderByCreateDateAsc(user, pageable);
             }
-            else if(filter.equals("DESC")){
+            else if(sorting.equals("DESC")){
                 reviews = reviewRepository.findAllByUserOrderByCreateDateDesc(user, pageable);
             }
         }
@@ -119,7 +119,7 @@ public class ReviewService {
             if(sorting.equals("ASC")){
                 reviews = reviewRepository.findAllByUserOrderByStarAsc(user, pageable);
             }
-            else if(filter.equals("DESC")){
+            else if(sorting.equals("DESC")){
                 reviews = reviewRepository.findAllByUserOrderByStarDesc(user, pageable);
             }
         }
