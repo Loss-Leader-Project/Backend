@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                         }
                                 ).and()
                         .oauth2Login()
-                        .loginPage("/login").and().logout().logoutUrl("/oauth/logout");
+                        .loginPage("/login");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
