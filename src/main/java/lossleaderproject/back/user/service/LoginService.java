@@ -65,6 +65,7 @@ public class LoginService {
     @Transactional
     public void naverToken(String code, HttpServletResponse response) throws IOException {
         try {
+            System.out.println("code = " + code);
             JSONParser jsonParser = new JSONParser();
             String header = "Bearer " + code;
             Map<String, String> requestHeaders = new HashMap<>();
