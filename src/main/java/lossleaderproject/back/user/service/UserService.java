@@ -41,7 +41,7 @@ public class UserService {
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
         }
-        if (userRepository.findByRoleAndEmailExists("ROLE_USER", newUser.getEmail())) {
+        if (userRepository.existsByEmail( newUser.getEmail())) {
             throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
         }
         newUser.encodePassword(encoderPw);

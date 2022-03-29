@@ -48,7 +48,7 @@ public class MailService {
 
     @Transactional
     public void sendMail(HttpServletResponse response, String userEmail) {
-        if (userRepository.findByRoleAndEmailExists("ROLE_USER",userEmail)) {
+        if (userRepository.existsByEmail(userEmail)) {
             throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
         }
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
