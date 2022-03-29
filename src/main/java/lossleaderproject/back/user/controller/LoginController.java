@@ -40,7 +40,9 @@ public class LoginController {
     @GetMapping("/logout")
     @ResponseBody
     public String kakaoLogout(@AuthenticationPrincipal PrincipalDetails principalDetails, HttpServletRequest request, @ApiIgnore HttpSession session) throws IOException {
+        System.out.println("제발");
         loginService.logout(principalDetails,request,session);
+        System.out.println("로그아웃제바랍랍랍ㅈ라밥랍랍라바");
         return "로그아웃";
     }
 
