@@ -25,7 +25,7 @@ public class LoginController {
 
     @ApiOperation(value = "네이버 로그인", notes = "네이버 로그인시 넘어오는 code값을 받은 뒤 jwt 토큰을 생성과 동시에 로그인 및 회원가입")
     @GetMapping("/lossleader/callback/naver")
-    public void naverLogin(@RequestParam("code") String code, @RequestParam("state") String state,HttpServletResponse res) throws IOException {
+    public void naverLogin(@RequestParam("code") String code,HttpServletResponse res) throws IOException {
 
         loginService.naverToken(code, res);
     }
