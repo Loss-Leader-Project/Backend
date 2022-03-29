@@ -136,6 +136,7 @@ public class LoginService {
         String role = userRepository.findByLoginId(principalDetails.getUsername()).getRole();
         String authorization = request.getHeader("Authorization");
         if(role.equals("ROLE_KAKAO")) {
+            System.out.println("카카오 로그아웃");
             String access_token = (String) session.getAttribute("Authorization");
             if (access_token != null && !"".equals(access_token)) {
                 HttpURLConnection connect = connect("https://kapi.kakao.com/v1/user/logout");
@@ -145,6 +146,7 @@ public class LoginService {
                 session.removeAttribute("access_token");
             }
         }else if(role.equals("ROLE_NAVER")) {
+            System.out.println("네이버 로그아웃");
             HttpURLConnection connect = connect("https://nid.naver.com/nidlogin.logout");
             connect.setRequestMethod("GET");
             connect.setRequestProperty("Authorization", "Bearer " + authorization);
