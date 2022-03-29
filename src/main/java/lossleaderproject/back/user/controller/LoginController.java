@@ -3,13 +3,16 @@ package lossleaderproject.back.user.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.user.service.LoginService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -34,10 +37,10 @@ public class LoginController {
     }
 
     @ApiOperation(value = "카카오 로그아웃", notes = "카카오에서 제공하는 accessToken값을 header에 넣고 로그아웃")
-    @GetMapping("/logout/kakao")
+    @GetMapping("/logout")
     @ResponseBody
-    public String kakaoLogout(@ApiIgnore HttpSession session) throws IOException {
-        loginService.kakaoLogout(session);
+    public String kakaoLogout(@AuthenticationPrincipal PrincipalDetails principalDetails, HttpServletRequest request, @ApiIgnore HttpSession session) throws IOException {
+        loginService.logout(principalDetails,request,session);
         return "로그아웃";
     }
 
