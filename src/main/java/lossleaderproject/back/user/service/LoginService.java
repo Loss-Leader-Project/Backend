@@ -134,7 +134,10 @@ public class LoginService {
     @Transactional
     public void logout(PrincipalDetails principalDetails, HttpServletRequest request, HttpSession session) throws IOException {
         System.out.println("로그아웃 준비");
-        String role = userRepository.findByLoginId(principalDetails.getUsername()).getRole();
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
+        System.out.println("user.toString() = " + user.toString());
+        System.out.println(user);
+        String role = user.getRole();
         System.out.println("role = " + role);
         String authorization = request.getHeader("Authorization");
         if(role.equals("ROLE_KAKAO")) {
