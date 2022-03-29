@@ -18,4 +18,5 @@ public class OrderHistory {
     private String storeName;
     private String couponContent;
     private Integer priceOfCoupon;
+    private Boolean isReview;
 }
