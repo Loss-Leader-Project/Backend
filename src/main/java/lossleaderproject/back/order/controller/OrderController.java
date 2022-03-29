@@ -48,8 +48,8 @@ public class OrderController {
 
 
     @ApiOperation(value = "주문 상세보기")
-    @GetMapping("/detail/{orderNumber}")
-    public ResponseEntity<OrderResponse> orderDetail(@AuthenticationPrincipal PrincipalDetails principalDetails,@PathVariable Long orderNumber) {
+    @GetMapping("/detail")
+    public ResponseEntity<OrderResponse> orderDetail(@AuthenticationPrincipal PrincipalDetails principalDetails,@RequestParam("orderNumber") Long orderNumber) {
         OrderResponse orderResponse = orderService.orderDetail(principalDetails,orderNumber);
         return new ResponseEntity<OrderResponse>(orderResponse, HttpStatus.OK);
 

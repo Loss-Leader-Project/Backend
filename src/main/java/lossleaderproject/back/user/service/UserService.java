@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpSession;
 
 @Service
@@ -21,9 +22,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final JavaMailSender javaMailSender;
     private final BCryptPasswordEncoder encoder;
+
     @Transactional
-    public Long save(UserRequest userRequest, HttpSession session) {
-        boolean emailNumber = false;
+    public Long save(UserRequest userRequest) {
         String encoderPw = encoder.encode(userRequest.getPassword());
         User newUser = userRequest.toEntity();
         if(userRepository.existsByLoginId(userRequest.getLoginId())) {
@@ -33,24 +34,15 @@ public class UserService {
             throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
         }
         if (newUser.getRecommendedPerson() != null) {
-            if(userRepository.existsByLoginId(newUser.getRecommendedPerson()) == false) {
+            if (userRepository.existsByLoginId(newUser.getRecommendedPerson()) == false) {
                 throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
             }
             newUser.recommendedMileage();
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
         }
-        if(userRepository.existsByEmail(userRequest.getEmail())) {
+        if (userRepository.findByRoleAndEmailExists("ROLE_USER", newUser.getEmail())) {
             throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
-        }
-        if(session.getAttribute("success") == null || session.getAttribute("success").equals(false)) {
-            throw new UserCustomException(ErrorCode.RECONFIRM_NUMBER);
-        }else {
-            emailNumber = true;
-            session.invalidate();
-        }
-        if(emailNumber == false) {
-            throw new UserCustomException(ErrorCode.RECONFIRM_NUMBER);
         }
         newUser.encodePassword(encoderPw);
         userRepository.save(newUser);
@@ -59,7 +51,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public String checkLoginId(String loginId) {
-        if(userRepository.existsByLoginId(loginId)) {
+        if (userRepository.existsByLoginId(loginId)) {
             throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
         return "사용가능한 아이디 입니다.";
@@ -69,7 +61,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse.MyPageUserInfo userInfoDetail(PrincipalDetails principalDetails) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
-        return new UserResponse.MyPageUserInfo(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson(),user.getRole());
+        return new UserResponse.MyPageUserInfo(user.getLoginId(), user.getUserName(), user.getEmail(), user.getPhoneNumber(), user.getBirthDate(), user.getRecommendedPerson(), user.getRole());
     }
 
     @Transactional(readOnly = true)
@@ -134,7 +126,7 @@ public class UserService {
         String password = randomPassword();
         User user = userRepository.findByLoginIdAndBirthDateAndEmail(userFindPassword.getLoginId(), userFindPassword.getBirthDate(), userFindPassword.getEmail());
         sendMail(userFindPassword.getEmail(),password);
-        user.changePassword(password);
+        user.changePassword(encoder.encode(password));
         return "임시 비밀번호 발송 완료";
     }
 
@@ -152,7 +144,7 @@ public class UserService {
         String password = "";
         int randomNum = (int)(Math.random() * 200) + 1;
         for(int i = 0; i < 11; i++) {
-            password += (char)((int)(Math.random() * 97)+40) ;
+            password += (char)((int)(Math.random() * 60 )+65) ;
         }
         if(randomNum >= 100 && randomNum <= 150) {
             password += "$"+ randomNum;
