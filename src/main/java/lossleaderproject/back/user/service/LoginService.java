@@ -131,6 +131,7 @@ public class LoginService {
         }
     }
 
+    @Transactional
     public void logout(PrincipalDetails principalDetails, HttpServletRequest request, HttpSession session) throws IOException {
         String role = userRepository.findByLoginId(principalDetails.getUsername()).getRole();
         String authorization = request.getHeader("Authorization");
