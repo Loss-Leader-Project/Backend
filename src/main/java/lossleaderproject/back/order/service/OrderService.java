@@ -78,7 +78,8 @@ public class OrderService {
                 storeOrder.getStore().getId(),
                 storeOrder.getStore().getStoreName(),
                 storeOrder.getStore().getCouponContent(),
-                storeOrder.getStore().getPriceOfCoupon()
+                storeOrder.getStore().getPriceOfCoupon(),
+                storeOrder.getOrders().getIsReview()
         ));
 
     }

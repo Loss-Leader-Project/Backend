@@ -31,7 +31,7 @@ public class Orders {
     private boolean orderAgree; // 동의 여부부
 
     @Column(columnDefinition = "boolean default false")
-    private boolean isReview; // 동의 여부부
+    private Boolean isReview; // 동의 여부부
 
     public void now() {
         this.orderDate = LocalDate.now();
@@ -39,7 +39,7 @@ public class Orders {
     public void orderNumber(Long orderNumber) {
         this.orderNumber = orderNumber;
     }
-    public void setReview(boolean isReview) {this.isReview = isReview;}
+    public void setReview(Boolean isReview) {this.isReview = isReview;}
     public Orders(Long orderNumber, String visitTime, int visitCount, int payPrice, int usedMileage, int lastPrice, boolean allUseMileage, boolean orderAgree) {
         this.orderNumber = orderNumber;
         this.visitTime = visitTime;
