@@ -34,8 +34,8 @@ public class OrderController {
 
     @ApiOperation("주문")
     @GetMapping("/store")
-    public ResponseEntity<OrderRequest> order(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam Long storeId,@ApiIgnore OrderRequest orderRequest) {
-        return new ResponseEntity<>(orderService.order(principalDetails, storeId, orderRequest), HttpStatus.OK);
+    public ResponseEntity<OrderRequest> order(@RequestParam Long storeId,@ApiIgnore OrderRequest orderRequest) {
+        return new ResponseEntity<>(orderService.order(storeId, orderRequest), HttpStatus.OK);
 
     }
 
