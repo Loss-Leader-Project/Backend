@@ -17,6 +17,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -27,30 +29,30 @@ public class UserController {
     private final UserService userService;
     private final MailService mailService;
 
-    @ApiOperation(value = "아이디 중복검사",notes = "해당 아이디가 이미 존재하는지에 대한 여부를 수행합니다.")
-    @ApiImplicitParam(name = "loginId",value = "아이디",required = true,dataType = "String")
+    @ApiOperation(value = "아이디 중복검사", notes = "해당 아이디가 이미 존재하는지에 대한 여부를 수행합니다.")
+    @ApiImplicitParam(name = "loginId", value = "아이디", required = true, dataType = "String")
     @GetMapping("/lossleader-user/loginid")
     public ResponseEntity<String> duplicateLoginId(@RequestParam String loginId) {
-        return new ResponseEntity<>(userService.checkLoginId(loginId),HttpStatus.OK);
+        return new ResponseEntity<>(userService.checkLoginId(loginId), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "메일 발송",notes = "입력한 이메일로 인증번호가 발송이 됩니다.")
+    @ApiOperation(value = "메일 발송", notes = "입력한 이메일로 인증번호가 발송이 됩니다.")
     @PostMapping("/lossleader-user/email")
-    public ResponseEntity<String> mail(@Valid @RequestBody SendEmail eMail,@ApiIgnore HttpSession session) {
-        mailService.sendMail(session, eMail.getEmail());
-        return new ResponseEntity<>("메일 발송성공",HttpStatus.OK);
+    public ResponseEntity<String> mail(@Valid @RequestBody SendEmail eMail, @ApiIgnore HttpServletResponse response) {
+        mailService.sendMail(response, eMail.getEmail());
+        return new ResponseEntity<>("메일 발송성공", HttpStatus.OK);
     }
 
-    @ApiOperation(value = "인증번호 인증",notes = "이메일을 통해 보내진 인증번호가 맞는지 수행합니다.")
+    @ApiOperation(value = "인증번호 인증", notes = "이메일을 통해 보내진 인증번호가 맞는지 수행합니다.")
     @PostMapping("/lossleader-user/number")
-    public ResponseEntity<String> emailVerification(@Valid @RequestBody EmailVerification inputCode, @ApiIgnore HttpSession session) {
-        return new ResponseEntity<>(mailService.emailVerification(session, inputCode.getNumber()),HttpStatus.OK);
+    public ResponseEntity<String> emailVerification(@Valid @RequestBody EmailVerification inputCode, @ApiIgnore HttpServletRequest request) {
+        return new ResponseEntity<>(mailService.emailVerification(request, inputCode.getNumber()), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "회원가입",notes = "회원가입을 수행합니다.")
+    @ApiOperation(value = "회원가입", notes = "회원가입을 수행합니다.")
     @PostMapping("/lossleader-user")
-    public ResponseEntity<NewUserResponse> newMember( @Valid @RequestBody UserRequest userRequest,@ApiIgnore HttpSession session) {
-        Long saveId = userService.save(userRequest,session);
+    public ResponseEntity<NewUserResponse> newMember(@Valid @RequestBody UserRequest userRequest, @ApiIgnore HttpSession session) {
+        Long saveId = userService.save(userRequest, session);
         return new ResponseEntity<>(new NewUserResponse(saveId, "회원가입 성공"), HttpStatus.OK);
     }
 
@@ -85,7 +87,7 @@ public class UserController {
     @ApiOperation(value = "비밀번호 찾기")
     @PostMapping("/login/password")
     public ResponseEntity<String> userLoginPasswordFind(@Valid @RequestBody UserFindPassword userFindPassword) {
-        return new ResponseEntity<>(userService.findPassword(userFindPassword),HttpStatus.OK);
+        return new ResponseEntity<>(userService.findPassword(userFindPassword), HttpStatus.OK);
     }
 
 

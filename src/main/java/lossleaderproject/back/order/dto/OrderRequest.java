@@ -13,6 +13,7 @@ public class OrderRequest {
     private String thumbnailImage;
     private String briefAddress;
     private String storeName;
+    private String benefitCondition;
     private String couponContent;
     private Integer priceOfCoupon;
     @NotNull(message = "구매자를 입력해주셔야 됩니다.")
@@ -43,25 +44,14 @@ public class OrderRequest {
         this.usedMileage = usedMileage;
     }
 
-    public OrderRequest(String userName, String phoneNumber, Long orderNumber, String visitTime, Integer visitCount, int usedMileage, boolean allUseMileage, boolean orderAgree) {
-        this.userName = userName;
-        this.phoneNumber = phoneNumber;
-        this.orderNumber = orderNumber;
-        this.visitTime = visitTime;
-        this.visitCount = visitCount;
-        this.usedMileage = usedMileage;
-        this.allUseMileage = allUseMileage;
-        this.orderAgree = orderAgree;
-    }
 
-    public void order(String thumbnailImage,String briefAddress, String storeName, String couponContent, Integer priceOfCoupon, String userName, String phoneNumber) {
+    public void order(String thumbnailImage,String briefAddress, String storeName,String benefitCondition, String couponContent, Integer priceOfCoupon) {
         this.thumbnailImage = thumbnailImage;
         this.briefAddress = briefAddress;
         this.storeName = storeName;
+        this.benefitCondition = benefitCondition;
         this.couponContent = couponContent;
         this.priceOfCoupon = priceOfCoupon;
-        this.userName = userName;
-        this.phoneNumber = phoneNumber;
     }
 
     public Orders toEntity() {

@@ -20,17 +20,19 @@ import java.io.IOException;
 public class LoginController {
     private final LoginService loginService;
 
-    @ApiOperation(value = "네이버 로그인",notes = "네이버 로그인시 넘어오는 code값을 받은 뒤 jwt 토큰을 생성과 동시에 로그인 및 회원가입")
+    @ApiOperation(value = "네이버 로그인", notes = "네이버 로그인시 넘어오는 code값을 받은 뒤 jwt 토큰을 생성과 동시에 로그인 및 회원가입")
     @GetMapping("/lossleader/callback/naver")
-    public void naverLogin(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse res) throws IOException {
+    public void naverLogin(@RequestParam("code") String code, HttpServletResponse res) throws IOException {
 
-        loginService.naverToken(code, state, res);
+        loginService.naverToken(code, res);
     }
+
     @ApiOperation(value = "카카오 로그인", notes = "카카오 로그인시 넘어오는 code값을 받은 뒤 jwt 토큰 생성과 동시에 회원가입 및 로그인")
     @GetMapping("/lossleader/callback/kakao")
-    public void kakaoLogin(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse res,@ApiIgnore HttpSession session) throws IOException {
-        loginService.kakaoToken(code, state, res, session);
+    public void kakaoLogin(@RequestParam("code") String code, HttpServletResponse res,@ApiIgnore HttpSession session) throws IOException {
+        loginService.kakaoToken(code, res, session);
     }
+
     @ApiOperation(value = "카카오 로그아웃", notes = "카카오에서 제공하는 accessToken값을 header에 넣고 로그아웃")
     @GetMapping("/logout/kakao")
     @ResponseBody

@@ -15,7 +15,6 @@ import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,14 +55,13 @@ public class OrderService {
         loginUser.restMileage(orders.getUsedMileage());
         storeOrderRepository.save(new StoreOrder(orders, store, loginUser));
         Orders savedOrder = orderRepository.save(orders);
-        return new ProductOrder(storeId, savedOrder.getOrderNumber(),"주문성공");
+        return new ProductOrder(orders.getId(), savedOrder.getOrderNumber(),"주문성공");
     }
 
     @Transactional(readOnly = true)
-    public OrderRequest order(PrincipalDetails principalDetails, Long storeId, OrderRequest orderRequest) {
-        User user = userRepository.findByLoginId(principalDetails.getUsername());
+    public OrderRequest order( Long storeId, OrderRequest orderRequest) {
         Store store = storeRepository.findById(storeId).get();
-        orderRequest.order(store.getThumbnailImage(), store.getBriefAddress(), store.getStoreName(), store.getCouponContent(), store.getPriceOfCoupon(), user.getUserName(), user.getPhoneNumber());
+        orderRequest.order(store.getThumbnailImage(), store.getBriefAddress(), store.getStoreName(), store.getBenefitCondition(),store.getCouponContent(), store.getPriceOfCoupon());
 
         return orderRequest;
 
@@ -89,7 +87,11 @@ public class OrderService {
     public OrderResponse orderDetail(PrincipalDetails principalDetails,Long orderNumber) {
         User user = userRepository.findByLoginId(principalDetails.getUsername());
         Orders orders = orderRepository.findByOrderNumber(orderNumber);
-        return new OrderResponse(user.getUserName(), user.getPhoneNumber(), orders.getVisitTime(), orders.getVisitCount());
+        StoreOrder storeOrder = storeOrderRepository.findByOrdersId(orders.getId());
+        Store store = storeRepository.findByStoreName(storeOrder.getStore().getStoreName());
+        return new OrderResponse(orders.getId(),store.getThumbnailImage(),store.getBriefAddress(),
+                store.getStoreName(),store.getBenefitCondition(),
+                store.getCouponContent(),store.getPriceOfCoupon(),user.getMileage(),user.getId(),user.getUserName(), user.getPhoneNumber(), orders.getVisitTime(), orders.getVisitCount());
     }
 
     @Transactional(readOnly = true)

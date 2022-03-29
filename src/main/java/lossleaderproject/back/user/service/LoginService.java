@@ -39,55 +39,38 @@ public class LoginService {
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder encode;
     private final UserRepository userRepository;
-    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
-    private String NAVER_CLIENT_ID;
-    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
-    private String NAVER_CLIENT_SECRET;
-    @Value("${spring.security.oauth2.client.provider.naver.token_uri}")
-    private String NAVER_TOKEN_URI;
     @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
     private String NAVER_USER_INFO_URI;
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String KAKAO_CLIENT_ID;
-    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
-    private String KAKAO_CLIENT_SECRET;
     @Value("${spring.security.oauth2.client.provider.kakao.token_uri}")
     private String KAKAO_TOKEN_URI;
     @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String KAKAO_USER_INFO_URI;
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String KAKAO_REDIRECT_URI;
 
-    public MultiValueMap<String, String> accessTokenParams(String grantType, String clientId, String clientSecret, String code, String state) {
+    public MultiValueMap<String, String> accessTokenParams(String grantType, String clientId,String code,String redirect_uri) {
         MultiValueMap<String, String> accessTokenParams = new LinkedMultiValueMap<>();
         accessTokenParams.add("grant_type", grantType);
         accessTokenParams.add("client_id", clientId);
-        accessTokenParams.add("client_secret", clientSecret);
+        // accessTokenParams.add("client_secret", clientSecret);
         accessTokenParams.add("code", code); // 응답으로 받은 코드
-        accessTokenParams.add("state", state);
+        accessTokenParams.add("redirect_uri", redirect_uri); // 응답으로 받은 코드
         return accessTokenParams;
     }
 
 
     @Transactional
-    public String naverToken(String code, String state, HttpServletResponse res) throws IOException {
-        RestTemplate rt = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded");
-        MultiValueMap<String, String> accessParams = accessTokenParams("authorization_code", NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, code, state);
-
-        HttpEntity<MultiValueMap<String, String>> accessTokenRequest = new HttpEntity<>(accessParams, headers);
-        ResponseEntity<String> accessTokenResponse = rt.exchange(
-                NAVER_TOKEN_URI,
-                HttpMethod.POST,
-                accessTokenRequest,
-                String.class);
+    public void naverToken(String code, HttpServletResponse response) throws IOException {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(accessTokenResponse.getBody());
-            String header = "Bearer " + jsonObject.get("access_token");
+            String header = "Bearer " + code;
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", header);
             String responseBody = get(NAVER_USER_INFO_URI, requestHeaders);
             JSONObject parse = (JSONObject) jsonParser.parse(responseBody);
+
             JSONObject responseParse = (JSONObject) parse.get("response");
             String encodeUserName = (String) responseParse.get("name");
             String loginId = (String) responseParse.get("id");
@@ -99,21 +82,19 @@ public class LoginService {
                 userRepository.save(user);
             }
             String access_token = tokenProvider.create(new PrincipalDetails(user));
-            res.setHeader("Authorization", access_token);
+            response.addHeader("Authorization","Bearer " + access_token);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return null;
     }
 
 
     @Transactional
-    public Object kakaoToken(String code, String state, HttpServletResponse res, HttpSession session) {
+    public void kakaoToken(String code, HttpServletResponse res, HttpSession session) {
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded");
-        MultiValueMap<String, String> accessTokenParams = accessTokenParams("authorization_code", KAKAO_CLIENT_ID, KAKAO_CLIENT_SECRET, code, state);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        MultiValueMap<String, String> accessTokenParams = accessTokenParams("authorization_code",KAKAO_CLIENT_ID ,code,KAKAO_REDIRECT_URI);
         HttpEntity<MultiValueMap<String, String>> accessTokenRequest = new HttpEntity<>(accessTokenParams, headers);
         ResponseEntity<String> accessTokenResponse = rt.exchange(
                 KAKAO_TOKEN_URI,
@@ -125,6 +106,7 @@ public class LoginService {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(accessTokenResponse.getBody());
             session.setAttribute("Authorization", jsonObject.get("access_token"));
             String header = "Bearer " + jsonObject.get("access_token");
+            System.out.println("header = " + header);
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", header);
             String responseBody = get(KAKAO_USER_INFO_URI, requestHeaders);
@@ -136,17 +118,15 @@ public class LoginService {
             Long loginId = (Long) profile.get("id");
             String email = (String) kakao_account.get("email");
             String userName = (String) properties.get("nickname");
-            User kakaoUser = new UserRequest("social_" + loginId, encode.encode("겟인데어"), userName, email).kakaoOAuthToEntity();
+            User kakaoUser = new UserRequest("social_" + loginId, encode.encode("카카오"), userName, email).kakaoOAuthToEntity();
             if (userRepository.existsByLoginId(kakaoUser.getLoginId()) == false) {
                 userRepository.save(kakaoUser);
             }
             String access_token = tokenProvider.create(new PrincipalDetails(kakaoUser));
-            res.setHeader("Authorization", access_token);
-            return responseBody;
+            res.setHeader("Authorization", "Bearer "+access_token);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
     public void kakaoLogout(HttpSession session) throws IOException {
@@ -193,6 +173,8 @@ public class LoginService {
             throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
         }
     }
+
+
 
     private static String readBody(InputStream body) {
         InputStreamReader streamReader = new InputStreamReader(body);
