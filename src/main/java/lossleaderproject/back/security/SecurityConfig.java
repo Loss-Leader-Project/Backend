@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.filter.CorsFilter;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -40,10 +42,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_KAKAO') or hasRole('ROLE_NAVER')")
                 .anyRequest().permitAll()
                 .and()
-                .logout().logoutUrl("/logout")
-                .logoutSuccessUrl("/login").clearAuthentication(true)
-                .and()
-                .oauth2Login()
-                .loginPage("/login");
+                .logout(logout -> {
+                    try {
+                        logout
+                                .permitAll()
+                                .logoutSuccessHandler((request, response, authentication) -> {
+                                            response.setStatus(HttpServletResponse.SC_OK);
+                                        }
+                                ).and()
+                        .oauth2Login()
+                        .loginPage("/login");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    });
     }
 }

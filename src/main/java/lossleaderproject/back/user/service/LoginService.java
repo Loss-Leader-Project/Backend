@@ -20,6 +20,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
@@ -129,16 +130,24 @@ public class LoginService {
         }
     }
 
-    public void kakaoLogout(HttpSession session) throws IOException {
-        String access_token = (String) session.getAttribute("Authorization");
-        if (access_token != null && !"".equals(access_token)) {
-            HttpURLConnection connect = connect("https://kapi.kakao.com/v1/user/logout");
-            connect.setRequestMethod("POST");
-            connect.setRequestProperty("Authorization", "Bearer " + access_token);
+    public void logout(PrincipalDetails principalDetails, HttpServletRequest request, HttpSession session) throws IOException {
+        String role = userRepository.findByLoginId(principalDetails.getUsername()).getRole();
+        String authorization = request.getHeader("Authorization");
+        if(role.equals("ROLE_KAKAO")) {
+            String access_token = (String) session.getAttribute("Authorization");
+            if (access_token != null && !"".equals(access_token)) {
+                HttpURLConnection connect = connect("https://kapi.kakao.com/v1/user/logout");
+                connect.setRequestMethod("POST");
+                connect.setRequestProperty("Authorization", "Bearer " + access_token);
+                readBody(connect.getInputStream());
+                session.removeAttribute("access_token");
+            }
+        }else if(role.equals("ROLE_NAVER")) {
+            HttpURLConnection connect = connect("https://nid.naver.com/nidlogin.logout");
+            connect.setRequestMethod("GET");
+            connect.setRequestProperty("Authorization", "Bearer " + authorization);
             readBody(connect.getInputStream());
-            session.removeAttribute("access_token");
         }
-
     }
 
     private static String get(String apiUrl, Map<String, String> requestHeaders) {

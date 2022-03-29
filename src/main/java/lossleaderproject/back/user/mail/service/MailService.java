@@ -25,23 +25,22 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
-    private final TokenProvider   tokenProvider;
+    private final TokenProvider tokenProvider;
 
     @Transactional
     public String emailVerification(HttpServletRequest request, int number) {
         String emailVerificationToken = request.getHeader("EmailVerification");
 
         try {
-        Jws<Claims> claimsJwts =  Jwts.parser().setSigningKey("lossleader".getBytes(StandardCharsets.UTF_8)).parseClaimsJws(emailVerificationToken);
+            Jws<Claims> claimsJwts = Jwts.parser().setSigningKey("lossleader".getBytes(StandardCharsets.UTF_8)).parseClaimsJws(emailVerificationToken);
             int emailNumber = (int) claimsJwts.getBody().get("emailNumber");
             if (emailNumber == number) {
                 return "인증 성공";
             }
             return "인증 실패";
         } catch (NullPointerException e) {
-            System.out.println("e.getMessage() = " + e);
             throw new UserCustomException(ErrorCode.EMAIL_SESSION_INVALIDATE);
-        }catch (TokenExpiredException e) {
+        } catch (TokenExpiredException e) {
             throw new JwtException("토큰 기한 만료");
         }
     }
@@ -49,7 +48,7 @@ public class MailService {
 
     @Transactional
     public void sendMail(HttpServletResponse response, String userEmail) {
-        if (userRepository.existsByEmail(userEmail)) {
+        if (userRepository.findByRoleAndEmailExists("ROLE_USER",userEmail)) {
             throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
         }
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();

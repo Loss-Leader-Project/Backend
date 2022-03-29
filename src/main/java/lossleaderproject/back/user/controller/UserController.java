@@ -51,9 +51,8 @@ public class UserController {
 
     @ApiOperation(value = "회원가입", notes = "회원가입을 수행합니다.")
     @PostMapping("/lossleader-user")
-    public ResponseEntity<NewUserResponse> newMember(@Valid @RequestBody UserRequest userRequest, @ApiIgnore HttpSession session) {
-        Long saveId = userService.save(userRequest, session);
-        return new ResponseEntity<>(new NewUserResponse(saveId, "회원가입 성공"), HttpStatus.OK);
+    public ResponseEntity<NewUserResponse> newMember(@Valid @RequestBody UserRequest userRequest) {
+        return new ResponseEntity<>(new NewUserResponse(userService.save(userRequest), "회원가입 성공"), HttpStatus.OK);
     }
 
     @ApiOperation(value = "로그인 한 회원에 대한 정보")
