@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 .logoutSuccessHandler((request, response, authentication) -> {
                                             response.setStatus(HttpServletResponse.SC_OK);
                                         }
-                                ).and()
+                                ).clearAuthentication(true).and()
                         .oauth2Login()
                         .loginPage("/login");
                     } catch (Exception e) {
