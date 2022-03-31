@@ -28,7 +28,7 @@ import java.util.List;
 @RequestMapping("/review")
 public class ReviewController {
 
-    public final ReviewService reviewService;
+    private final ReviewService reviewService;
     @ApiOperation(value = "리뷰 등록 (리뷰 작성 페이지)")
     @PostMapping("")
     public ResponseEntity<String> review(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam("orderNumber") Long orderNumber, @RequestParam("storeId") Long storeId, @RequestBody ReviewRequest.ReviewPost reviewRequest) {

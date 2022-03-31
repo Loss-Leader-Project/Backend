@@ -33,6 +33,11 @@ public class OrderService {
         User loginUser = userRepository.findByLoginId(principalDetails.getUsername());
         Store store = storeRepository.findById(storeId).get();
         orderRequest.payPriceofCoupon(store.getPriceOfCoupon());
+
+        if(!loginUser.getUserName().equals(orderRequest.getUserName())) {
+            throw new UserCustomException(ErrorCode.DISMATCH_USER);
+        }
+
         if (orderRequest.isAllUseMileage() == true) {
             if (orderRequest.getPayPrice() > loginUser.getMileage()) {
                 orderRequest.setUsedMileage(loginUser.getMileage());
