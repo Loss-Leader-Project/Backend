@@ -107,5 +107,5 @@ docker rmi -f $(docker images -f "dangling=true" -q) || true
 ```
 
 *참고 
-- 명령어는 Build - Excute shell에 작성
+- 3~7의 명령어는 Build - Excute shell에 작성
 
