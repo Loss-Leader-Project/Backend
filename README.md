@@ -42,6 +42,13 @@ services:
     volumes:
       - ./lossleader-mysql/origin-data:/var/lib/mysql
 ```
+
+- mysql 접근 방법 
+```
+ create user 'lossleaderback'@'%' identified by 'lossleaderBack12!';
+ grant all privileges on lossleader.* to 'lossleaderback'@'%' with grant option;
+```
+
 - minio 세팅 방법 : docker-compose.yml 파일
 ```
 version: '2'
@@ -73,29 +80,28 @@ services:
 ```
 
 ### 시작 방법
-1. 프로젝트를 git clone 명령어를 사용하여 내려받는다.
-2. 젠킨스 빌드 명령어
+1. 젠킨스 빌드 명령어
 ```
 ```
-3. git 연결
-4. 프로젝트 빌드 명령어
+2. git 연결
+3. 프로젝트 빌드 명령어
 ```
 ./gradlew clean build -x test -Pprofile=prod
 ```
-5. docker 파일 빌드 명령어
+4. docker 파일 빌드 명령어
 ```
 docker build -t jenkins/lossleader .
 ```
-6. 기존 컨테이너 삭제
+5. 기존 컨테이너 삭제
 ```
 docker ps -q --filter "name=jenkins-lossleader" && docker stop jenkins-lossleader && docker rm jenkins-lossleader | true
 ```
-7. 도커 컨테이너 실행
+6. 도커 컨테이너 실행
 ```
 docker run -p 8000:8000 -d --name=jenkins-lossleader jenkins/lossleader
 ```
 
-8. 필요없는 이미지 제거
+7. 필요없는 이미지 제거
 ```
 docker rmi -f $(docker images -f "dangling=true" -q) || true
 ```
