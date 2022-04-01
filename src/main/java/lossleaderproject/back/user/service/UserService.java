@@ -5,8 +5,8 @@ import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.entity.User;
-import lossleaderproject.back.user.exception.ErrorCode;
-import lossleaderproject.back.user.exception.UserCustomException;
+import lossleaderproject.back.error.userException.UserErrorCode;
+import lossleaderproject.back.error.userException.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,21 +28,21 @@ public class UserService {
         String encoderPw = encoder.encode(userRequest.getPassword());
         User newUser = userRequest.toEntity();
         if(userRepository.existsByLoginId(userRequest.getLoginId())) {
-            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
+            throw new UserCustomException(UserErrorCode.DUPLICATE_ID);
         }
         if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
-            throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
+            throw new UserCustomException(UserErrorCode.DISMATCH_PASSWORD);
         }
         if (newUser.getRecommendedPerson() != null) {
             if (userRepository.existsByLoginId(newUser.getRecommendedPerson()) == false) {
-                throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
+                throw new UserCustomException(UserErrorCode.RECOMMENDED_USER_NOT_FOUND);
             }
             newUser.recommendedMileage();
             User findRecommendLoginId = userRepository.findByLoginId(newUser.getRecommendedPerson());
             findRecommendLoginId.recommendedMileage();
         }
         if (userRepository.existsByEmailAndRole( newUser.getEmail(),"ROLE_USER")) {
-            throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
+            throw new UserCustomException(UserErrorCode.DUPLICATE_EMAIL);
         }
         newUser.encodePassword(encoderPw);
         userRepository.save(newUser);
@@ -52,7 +52,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public String checkLoginId(String loginId) {
         if (userRepository.existsByLoginId(loginId)) {
-            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
+            throw new UserCustomException(UserErrorCode.DUPLICATE_ID);
         }
         return "사용가능한 아이디 입니다.";
     }
@@ -87,19 +87,19 @@ public class UserService {
         }
         if (userResponse.getRecommendedPerson() != null) {
             if(userRepository.existsByLoginId(userResponse.getRecommendedPerson()) == false) {
-                throw new UserCustomException(ErrorCode.RECOMMENDED_USER_NOT_FOUND);
+                throw new UserCustomException(UserErrorCode.RECOMMENDED_USER_NOT_FOUND);
             }
             user.userInfoRecommendPerson(userResponse.getRecommendedPerson());
 
         }
         if (userResponse.getOldPassword() != null) {
             if (encoder.matches(userResponse.getOldPassword(), user.getPassword()) == false) {
-                throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
+                throw new UserCustomException(UserErrorCode.DISMATCH_PASSWORD);
             }
         }
         if (userResponse.getNewPassword() != null && userResponse.getNewPasswordConfirm() != null) {
             if (userResponse.getNewPassword().equals(userResponse.getNewPasswordConfirm()) == false) {
-                throw new UserCustomException(ErrorCode.DISMATCH_PASSWORD);
+                throw new UserCustomException(UserErrorCode.DISMATCH_PASSWORD);
             }
             user.changePassword(encoder.encode(userResponse.getNewPassword()));
         }
@@ -111,7 +111,7 @@ public class UserService {
         if (userRepository.existsByUserNameAndBirthDateAndEmail(userLoginIdFindRequest.getUserName()
                 , userLoginIdFindRequest.getBirthDate(),
                 userLoginIdFindRequest.getEmail()) == false) {
-            throw new UserCustomException(ErrorCode.NO_EXIST_USERNAME_BIRTHDATE_EMAIL);
+            throw new UserCustomException(UserErrorCode.NO_EXIST_USERNAME_BIRTHDATE_EMAIL);
         }
         String loginId = userRepository.findLoginId(userLoginIdFindRequest.getUserName(), userLoginIdFindRequest.getBirthDate(), userLoginIdFindRequest.getEmail());
         String replaceLoginId = loginId.replace(loginId.substring(loginId.length() - 3), "***");
@@ -121,7 +121,7 @@ public class UserService {
     public String findPassword(UserFindPassword userFindPassword) {
 
         if(userRepository.existsByLoginIdAndBirthDateAndEmail(userFindPassword.getLoginId(), userFindPassword.getBirthDate(), userFindPassword.getEmail())== false) {
-            throw new UserCustomException(ErrorCode.NOT_EXIST_USER);
+            throw new UserCustomException(UserErrorCode.NOT_EXIST_USER);
         }
         String password = randomPassword();
         User user = userRepository.findByLoginIdAndBirthDateAndEmail(userFindPassword.getLoginId(), userFindPassword.getBirthDate(), userFindPassword.getEmail());

@@ -6,8 +6,8 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import io.jsonwebtoken.JwtException;
 import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.user.entity.User;
-import lossleaderproject.back.user.exception.ErrorCode;
-import lossleaderproject.back.user.exception.UserCustomException;
+import lossleaderproject.back.error.userException.UserErrorCode;
+import lossleaderproject.back.error.userException.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,7 +54,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         } catch (TokenExpiredException e) {
             throw new JwtException("토큰 기한 만료");
         } catch (NullPointerException e) {
-            throw new UserCustomException(ErrorCode.BAD_REQUEST_LOGINID_PASSWORD);
+            throw new UserCustomException(UserErrorCode.BAD_REQUEST_LOGINID_PASSWORD);
         }
     }
 }

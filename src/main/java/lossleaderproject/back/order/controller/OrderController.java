@@ -25,7 +25,6 @@ import javax.validation.Valid;
 public class OrderController {
     private final OrderService orderService;
 
-
     @ApiOperation(value = "주문하기")
     @PostMapping("/store")
     public ResponseEntity<ProductOrder> orderProduct(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails , @RequestParam Long storeId, @Valid @RequestBody OrderRequest orderRequest) {
