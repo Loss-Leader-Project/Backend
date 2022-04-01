@@ -29,11 +29,12 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+
     @ApiOperation(value = "리뷰 등록 (리뷰 작성 페이지)")
     @PostMapping("")
-    public ResponseEntity<String> review(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam("orderNumber") Long orderNumber, @RequestParam("storeId") Long storeId, @RequestBody ReviewRequest.ReviewPost reviewRequest) {
-        reviewService.save(principalDetails,orderNumber,storeId,reviewRequest);
-        return new ResponseEntity<>("리뷰 작성 완료", HttpStatus.OK);
+    public ResponseEntity<ReviewResponse.ReviewPost> review(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam("orderNumber") Long orderNumber, @RequestParam("storeId") Long storeId, @RequestBody ReviewRequest.ReviewPost reviewRequest) {
+
+        return new ResponseEntity<>(new ReviewResponse.ReviewPost(reviewService.save(principalDetails,orderNumber,storeId,reviewRequest)), HttpStatus.OK);
     }
 
     @ApiOperation(value = "리뷰 이미지 업로드 (리뷰 작성 페이지)", notes = "리뷰 작성할때 이미지 업로드 (리뷰 작성 페이지)")

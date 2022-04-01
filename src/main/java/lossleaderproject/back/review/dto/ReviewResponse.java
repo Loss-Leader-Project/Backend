@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewResponse {
+    @Getter
+    @AllArgsConstructor
+    public static class ReviewPost{
+        private Long id;
+    }
 
     @Getter
     @NoArgsConstructor

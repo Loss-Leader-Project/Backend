@@ -10,8 +10,8 @@ import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.store.repository.StoreRepository;
 import lossleaderproject.back.user.entity.User;
-import lossleaderproject.back.user.exception.ErrorCode;
-import lossleaderproject.back.user.exception.UserCustomException;
+import lossleaderproject.back.error.userException.UserErrorCode;
+import lossleaderproject.back.error.userException.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,7 @@ public class OrderService {
         orderRequest.payPriceofCoupon(store.getPriceOfCoupon());
 
         if(!loginUser.getUserName().equals(orderRequest.getUserName())) {
-            throw new UserCustomException(ErrorCode.DISMATCH_USER);
+            throw new UserCustomException(UserErrorCode.DISMATCH_USER);
         }
 
         if (orderRequest.isAllUseMileage() == true) {
@@ -47,10 +47,10 @@ public class OrderService {
         }
         orderRequest.calcLastPrice(orderRequest.getPayPrice(), orderRequest.getUsedMileage());
         if (orderRequest.getLastPrice() != 0L) {
-            throw new UserCustomException(ErrorCode.NOT_SATISFY_MONEY);
+            throw new UserCustomException(UserErrorCode.NOT_SATISFY_MONEY);
         }
         if (orderRequest.isOrderAgree() == false) {
-            throw new UserCustomException(ErrorCode.NOT_AGREE);
+            throw new UserCustomException(UserErrorCode.NOT_AGREE);
         }
         Orders orders = orderRequest.toEntity();
         orders.now();

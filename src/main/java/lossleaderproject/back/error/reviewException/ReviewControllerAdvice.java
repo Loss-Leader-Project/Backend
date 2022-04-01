@@ -1,20 +1,14 @@
-package lossleaderproject.back;
+package lossleaderproject.back.error.reviewException;
 
-import lossleaderproject.back.user.exception.UserCustomException;
-import lossleaderproject.back.user.exception.UserErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
-public class UserControllerAdvice {
-
+public class ReviewControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException me) {
@@ -24,9 +18,8 @@ public class UserControllerAdvice {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    @ExceptionHandler(UserCustomException.class)
-    protected ResponseEntity<UserErrorResponse> handleUserCustomException(UserCustomException e) {
-        return UserErrorResponse.toResponseEntity(e.getErrorCode());
+    @ExceptionHandler(ReviewCustomException.class)
+    protected ResponseEntity<ReviewErrorResponse> handleReviewCustomException(ReviewCustomException e) {
+        return ReviewErrorResponse.toResponseEntity(e.getErrorCode());
     }
-
 }

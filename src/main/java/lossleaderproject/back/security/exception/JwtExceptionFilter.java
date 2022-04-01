@@ -3,7 +3,7 @@ package lossleaderproject.back.security.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import lossleaderproject.back.security.jwt.Token;
-import lossleaderproject.back.user.exception.ErrorCode;
+import lossleaderproject.back.error.userException.UserErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,7 +23,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         } catch (JwtException e) {
             setErrorResponse(HttpStatus.INSUFFICIENT_SPACE_ON_RESOURCE, response, e);
         } catch(NullPointerException e) {
-            setUserNullPointException(ErrorCode.BAD_REQUEST_LOGINID_PASSWORD.getHttpStatus(),response,ErrorCode.BAD_REQUEST_LOGINID_PASSWORD.getDetail());
+            setUserNullPointException(UserErrorCode.BAD_REQUEST_LOGINID_PASSWORD.getHttpStatus(),response, UserErrorCode.BAD_REQUEST_LOGINID_PASSWORD.getDetail());
         }
     }
 

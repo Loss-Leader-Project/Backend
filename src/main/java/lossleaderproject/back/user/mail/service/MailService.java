@@ -7,8 +7,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.security.oauth.provider.TokenProvider;
-import lossleaderproject.back.user.exception.ErrorCode;
-import lossleaderproject.back.user.exception.UserCustomException;
+import lossleaderproject.back.error.userException.UserErrorCode;
+import lossleaderproject.back.error.userException.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -39,7 +39,7 @@ public class MailService {
             }
             return "인증 실패";
         } catch (NullPointerException e) {
-            throw new UserCustomException(ErrorCode.EMAIL_SESSION_INVALIDATE);
+            throw new UserCustomException(UserErrorCode.EMAIL_SESSION_INVALIDATE);
         } catch (TokenExpiredException e) {
             throw new JwtException("토큰 기한 만료");
         }
@@ -49,7 +49,7 @@ public class MailService {
     @Transactional
     public void sendMail(HttpServletResponse response, String userEmail) {
         if (userRepository.existsByEmailAndRole(userEmail,"ROLE_USER")) {
-            throw new UserCustomException(ErrorCode.DUPLICATE_EMAIL);
+            throw new UserCustomException(UserErrorCode.DUPLICATE_EMAIL);
         }
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(userEmail);

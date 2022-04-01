@@ -1,4 +1,4 @@
-package lossleaderproject.back.user.exception;
+package lossleaderproject.back.error.userException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UserCustomException extends RuntimeException{
-    private final ErrorCode errorCode;
+    private final UserErrorCode errorCode;
 }

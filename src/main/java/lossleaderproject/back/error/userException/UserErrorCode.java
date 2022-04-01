@@ -1,4 +1,4 @@
-package lossleaderproject.back.user.exception;
+package lossleaderproject.back.error.userException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 
 @AllArgsConstructor
-public enum ErrorCode {
+public enum UserErrorCode {
     RECOMMENDED_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "추천인 아이디가 존재하지 않습니다."),
     NO_EXIST_USERNAME_BIRTHDATE_EMAIL(HttpStatus.NOT_FOUND, "사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다."),
     EMAIL_SESSION_INVALIDATE(HttpStatus.NOT_FOUND, "유효시간이 지났습니다. 인증번호를 다시 받으세요. "),
