@@ -34,7 +34,7 @@ public class OrderService {
         Store store = storeRepository.findById(storeId).get();
         orderRequest.payPriceofCoupon(store.getPriceOfCoupon());
 
-        if(!loginUser.getUserName().equals(orderRequest.getUserName())) {
+        if(!loginUser.getUserName().equals(orderRequest.getUserName()) || !loginUser.getPhoneNumber().equals(orderRequest.getPhoneNumber())) {
             throw new UserCustomException(UserErrorCode.DISMATCH_USER);
         }
 
@@ -52,6 +52,7 @@ public class OrderService {
         if (orderRequest.isOrderAgree() == false) {
             throw new UserCustomException(UserErrorCode.NOT_AGREE);
         }
+        store.minusLeftCoupon();
         Orders orders = orderRequest.toEntity();
         orders.now();
         LocalDateTime now = LocalDateTime.now();

@@ -76,5 +76,3 @@ minio:
   end_point: http://114.202.45.254:9500
   access_key: lossleader-test
   secret_key: lossleader-test123
-
-

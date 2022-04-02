@@ -18,7 +18,7 @@ public enum UserErrorCode {
     NOT_SATISFY_MONEY(HttpStatus.BAD_REQUEST, "금액이 부족합니다."),
     RECONFIRM_NUMBER(HttpStatus.BAD_REQUEST, "인증번호를 재확인하시기 바랍니다."),
     NO_MATCH_NUMBER(HttpStatus.BAD_REQUEST, "인증이 실패하였습니다."),
-    DISMATCH_USER(HttpStatus.BAD_REQUEST,"구매자의 이름과 사용자의 이름이 일치하지 않습니다."),
+    DISMATCH_USER(HttpStatus.BAD_REQUEST,"구매자의 정보와 사용자의 정보가 일치하지 않습니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     DUPLICATE_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
 
