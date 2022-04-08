@@ -75,7 +75,3 @@ minio:
   end_point: http://114.202.45.254:9000
   access_key: lossleader
   secret_key: lossleader123
-
-logout:
-  uri : http://localhost:3000/login/
-

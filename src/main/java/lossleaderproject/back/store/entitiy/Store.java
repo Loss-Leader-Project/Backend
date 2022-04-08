@@ -40,6 +40,10 @@ public class Store extends BaseEntity {
     private Integer totalCoupon; // 전체 쿠폰
     private String couponGradeName;
 
+    public void minusLeftCoupon() {
+        leftCoupon -=    1;
+    }
+
     public void setReviewCount(Integer reviewCount) {
         this.reviewCount = reviewCount;
     }
