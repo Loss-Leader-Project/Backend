@@ -1,6 +1,7 @@
 package lossleaderproject.back.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lossleaderproject.back.config.Config;
 import lossleaderproject.back.security.auth.PrincipalDetails;
 import lossleaderproject.back.security.oauth.provider.TokenProvider;
 import lossleaderproject.back.user.dto.UserRequest;
@@ -8,7 +9,6 @@ import lossleaderproject.back.user.entity.User;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -40,16 +40,8 @@ public class LoginService {
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder encode;
     private final UserRepository userRepository;
-    @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
-    private String NAVER_USER_INFO_URI;
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private String KAKAO_CLIENT_ID;
-    @Value("${spring.security.oauth2.client.provider.kakao.token_uri}")
-    private String KAKAO_TOKEN_URI;
-    @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
-    private String KAKAO_USER_INFO_URI;
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    private String KAKAO_REDIRECT_URI;
+    private final Config config;
+
 
     public MultiValueMap<String, String> accessTokenParams(String grantType, String clientId,String code,String redirect_uri) {
         MultiValueMap<String, String> accessTokenParams = new LinkedMultiValueMap<>();
@@ -69,7 +61,7 @@ public class LoginService {
             String header = "Bearer " + code;
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", header);
-            String responseBody = get(NAVER_USER_INFO_URI, requestHeaders);
+            String responseBody = get(config.getNAVER_USER_INFO_URI(), requestHeaders);
             JSONObject parse = (JSONObject) jsonParser.parse(responseBody);
 
             JSONObject responseParse = (JSONObject) parse.get("response");
@@ -95,10 +87,10 @@ public class LoginService {
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        MultiValueMap<String, String> accessTokenParams = accessTokenParams("authorization_code",KAKAO_CLIENT_ID ,code,KAKAO_REDIRECT_URI);
+        MultiValueMap<String, String> accessTokenParams = accessTokenParams("authorization_code",config.getKAKAO_CLIENT_ID() ,code,config.getKAKAO_REDIRECT_URI());
         HttpEntity<MultiValueMap<String, String>> accessTokenRequest = new HttpEntity<>(accessTokenParams, headers);
         ResponseEntity<String> accessTokenResponse = rt.exchange(
-                KAKAO_TOKEN_URI,
+                config.getKAKAO_TOKEN_URI(),
                 HttpMethod.POST,
                 accessTokenRequest,
                 String.class);
@@ -110,7 +102,7 @@ public class LoginService {
             System.out.println("header = " + header);
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("Authorization", header);
-            String responseBody = get(KAKAO_USER_INFO_URI, requestHeaders);
+            String responseBody = get(config.getKAKAO_USER_INFO_URI(), requestHeaders);
 
             JSONObject profile = (JSONObject) jsonParser.parse(responseBody);
             JSONObject properties = (JSONObject) profile.get("properties");
@@ -160,9 +152,9 @@ public class LoginService {
 
 
             int responseCode = con.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 return readBody(con.getInputStream());
-            } else { // 에러 발생
+            } else {
                 return readBody(con.getErrorStream());
             }
         } catch (IOException e) {
