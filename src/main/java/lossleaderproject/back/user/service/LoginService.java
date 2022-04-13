@@ -57,6 +57,7 @@ public class LoginService {
     @Transactional
     public void naverToken(String code, HttpServletResponse response) throws IOException {
         try {
+            System.out.println("code = " + code);
             JSONParser jsonParser = new JSONParser();
             String header = "Bearer " + code;
             Map<String, String> requestHeaders = new HashMap<>();
@@ -122,10 +123,17 @@ public class LoginService {
         }
     }
 
+    @Transactional
     public void logout(PrincipalDetails principalDetails, HttpServletRequest request, HttpSession session) throws IOException {
-        String role = userRepository.findByLoginId(principalDetails.getUsername()).getRole();
+        System.out.println("로그아웃 준비");
+        User user = userRepository.findByLoginId(principalDetails.getUsername());
+        System.out.println("user.toString() = " + user.toString());
+        System.out.println(user);
+        String role = user.getRole();
+        System.out.println("role = " + role);
         String authorization = request.getHeader("Authorization");
         if(role.equals("ROLE_KAKAO")) {
+            System.out.println("카카오 로그아웃");
             String access_token = (String) session.getAttribute("Authorization");
             if (access_token != null && !"".equals(access_token)) {
                 HttpURLConnection connect = connect("https://kapi.kakao.com/v1/user/logout");
@@ -135,6 +143,7 @@ public class LoginService {
                 session.removeAttribute("access_token");
             }
         }else if(role.equals("ROLE_NAVER")) {
+            System.out.println("네이버 로그아웃");
             HttpURLConnection connect = connect("https://nid.naver.com/nidlogin.logout");
             connect.setRequestMethod("GET");
             connect.setRequestProperty("Authorization", "Bearer " + authorization);

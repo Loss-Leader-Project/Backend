@@ -5,14 +5,19 @@ import lossleaderproject.back.config.Config;
 import lossleaderproject.back.error.userException.UserCustomException;
 import lossleaderproject.back.error.userException.UserErrorCode;
 import lossleaderproject.back.security.auth.PrincipalDetails;
+import lossleaderproject.back.store.entitiy.Store;
 import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.entity.User;
+import lossleaderproject.back.user.exception.ErrorCode;
+import lossleaderproject.back.user.exception.UserCustomException;
 import lossleaderproject.back.user.repository.UserRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpSession;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +59,7 @@ public class UserService {
         System.out.println("config.getNAVER_USER_INFO_URI() = " + config.getNAVER_USER_INFO_URI());
         System.out.println("config.getKAKAO_CLIENT_ID() = " + config.getKAKAO_CLIENT_ID());
         if (userRepository.existsByLoginId(loginId)) {
-            throw new UserCustomException(UserErrorCode.DUPLICATE_ID);
+            throw new UserCustomException(ErrorCode.DUPLICATE_ID);
         }
         return "사용가능한 아이디 입니다.";
     }
