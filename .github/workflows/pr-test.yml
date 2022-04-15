@@ -14,7 +14,6 @@ jobs:
         with:
           java-version: 11
 
-      # 추가
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
@@ -37,7 +36,6 @@ jobs:
         with:
           files: build/test-results/**/*.xml
 
-      # 추가
       - name: Cleanup Gradle Cache
           # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
           # Restoring these files from a GitHub Actions cache might cause problems for future builds.

@@ -18,6 +18,6 @@ public class SmokeTest {
     public void SmokeTest() throws Exception {
         Assertions.assertThat(1).isEqualTo(1);
 
-        
+
     }
 }
