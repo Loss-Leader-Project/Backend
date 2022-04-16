@@ -18,6 +18,13 @@ public class SmokeTest {
     public void SmokeTest() throws Exception {
         Assertions.assertThat(1).isEqualTo(1);
 
+    }
+
+    @Test
+    @DisplayName("Smoke Test")
+    @Transactional
+    public void SmokeTest2() throws Exception {
+        Assertions.assertThat(1).isEqualTo(1);
 
     }
 }
