@@ -21,9 +21,17 @@ public class SmokeTest {
     }
 
     @Test
-    @DisplayName("Smoke Test")
+    @DisplayName("Smoke Test2")
     @Transactional
     public void SmokeTest2() throws Exception {
+        Assertions.assertThat(1).isEqualTo(1);
+
+    }
+
+    @Test
+    @DisplayName("Smoke Test3")
+    @Transactional
+    public void SmokeTest3() throws Exception {
         Assertions.assertThat(1).isEqualTo(1);
 
     }
