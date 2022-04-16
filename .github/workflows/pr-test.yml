@@ -14,7 +14,6 @@ jobs:
         with:
           java-version: 11
 
-      # 추가
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
@@ -29,19 +28,17 @@ jobs:
         run: chmod +x gradlew
 
       - name: Test with Gradle
-        run: ./gradlew --info test
+        run: ./gradlew clean build --info -Pprofile=dev
 
-      - name: Publish Unit Test Results
+      - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: ${{ always() }}
         with:
           files: build/test-results/**/*.xml
 
-      # 추가
       - name: Cleanup Gradle Cache
-          # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
-          # Restoring these files from a GitHub Actions cache might cause problems for future builds.
-          if: ${{ always() }}
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
+
+
