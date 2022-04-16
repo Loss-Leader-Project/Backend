@@ -28,8 +28,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Test with Gradle
-        run: ./gradlew clean build -Pprofile=dev
-#
+        run: ./gradlew clean build --info -Pprofile=dev
+
 #      - name: Publish Unit Test Results
 #        uses: EnricoMi/publish-unit-test-result-action@v1
 #        if: ${{ always() }}
