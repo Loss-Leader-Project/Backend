@@ -72,6 +72,6 @@ spring:
             user_name_attribute: id
 
 minio:
-  end_point: http://localhost:9000
+  end_point: http://218.55.129.211:9000
   access_key: lossleader
   secret_key: lossleader123
