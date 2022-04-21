@@ -30,7 +30,6 @@ public class UserRequest {
 
     @NotNull(message = "핸드폰 번호를 필수로 입력하셔야됩니다.")
     private String phoneNumber;
-
     @NotNull
     @Email(message = "이메일 형식에 맞게 입력하셔야 됩니다.")
     private String email;
@@ -38,12 +37,9 @@ public class UserRequest {
     @NotNull(message = "인증 번호를 입력해주셔야 됩니다.")
     private Integer emailCertification;
 
-    @NotNull(message = "우편번호를 입력하셔야 됩니다.")
-    private String postalCode; // 우편번호
-    @NotNull(message = "간략하게 주소를 입력하셔야 됩니다.")
-    private String briefAddress; // 간략주소
-    @NotNull(message = "상세주소를 입력해주셔야 됩니다.")
-    private String detailAddress; // 상세주소
+    private String postalCode;
+    private String briefAddress;
+    private String detailAddress;
 
     @NotNull(message = "생년월일을 필수로 입력하셔야됩니다.")
     private String birthDate;

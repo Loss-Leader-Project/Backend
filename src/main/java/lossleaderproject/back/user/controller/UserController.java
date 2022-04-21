@@ -5,10 +5,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lossleaderproject.back.security.auth.PrincipalDetails;
-import lossleaderproject.back.store.dto.StoreResponse;
 import lossleaderproject.back.user.dto.*;
 import lossleaderproject.back.user.mail.dto.EmailVerification;
-import lossleaderproject.back.user.mail.dto.SendEmail;
+import lossleaderproject.back.user.mail.dto.SendEmailRequest;
 import lossleaderproject.back.user.mail.service.MailService;
 import lossleaderproject.back.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @RestController
@@ -38,7 +36,7 @@ public class UserController {
 
     @ApiOperation(value = "메일 발송", notes = "입력한 이메일로 인증번호가 발송이 됩니다.")
     @PostMapping("/lossleader-user/email")
-    public ResponseEntity<String> mail(@Valid @RequestBody SendEmail eMail, @ApiIgnore HttpServletResponse response) {
+    public ResponseEntity<String> mail(@Valid @RequestBody SendEmailRequest eMail, @ApiIgnore HttpServletResponse response) {
         mailService.sendMail(response, eMail.getEmail());
         return new ResponseEntity<>("메일 발송성공", HttpStatus.OK);
     }
