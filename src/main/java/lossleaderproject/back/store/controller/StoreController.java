@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "업체에 대한 API")
@@ -56,31 +58,31 @@ public class StoreController {
     @ApiOperation(value = "업체 정보 상세보기 (업체 디테일 페이지)")
     @ApiImplicitParam(name = "storeId", value = "업체ID")
     @GetMapping("/detail")
-    public ResponseEntity<StoreResponse.StoreDetailPageRes> getDetail(@RequestParam("storeId") Long storeId) {
-        Store store= storeService.findById(storeId);
+    public ResponseEntity<Long> getDetail(@RequestParam("storeId") Long storeId) {
+        Optional<Store> store= storeService.findById(storeId);
         StoreDetail storeDetail= storeDetailService.findByStoreId(storeId);
         Long storeDetailId = storeDetail.getId();
 
-        List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findAllByStoreDetailId(storeDetailId);
-        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findAllByStoreDetailId(storeDetailId);
-        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findAllByStoreDetailId(storeDetailId);
-        StoreResponse.StoreTopData storeTopData = new StoreResponse.StoreTopData(store,storeFoodImageResponseList,storeHashTagResponseList);
-        StoreDetailResponse.StoreDetailForDetailPage storeDetailResponse = new StoreDetailResponse.StoreDetailForDetailPage(
-                storeDetail.getStorePhoneNumber(),
-                storeDetail.getOperatingPeriod(),
-                storeDetail.getRoadAddress(),
-                storeDetail.getOperatingTime(),
-                store.getContent(),
-                store.getStoreMeal(),
-                store.getPackaging(),
-                store.getDelivery(),
-                storeDetail.getLatitude(),
-                storeDetail.getLongitude(),
-                storeDetail.getStoreMenuImage(),
-                storeMenuResponseList
-        );
-        StoreResponse.StoreDetailPageRes storeDetailPageRes = new StoreResponse.StoreDetailPageRes(storeId,storeTopData,storeDetailResponse);
-        return ResponseEntity.ok(storeDetailPageRes);
+//        List<StoreFoodImageResponse> storeFoodImageResponseList = storeFoodImageService.findAllByStoreDetailId(storeDetailId);
+//        List<StoreMenuResponse> storeMenuResponseList = storeMenuService.findAllByStoreDetailId(storeDetailId);
+//        List<StoreHashTagResponse> storeHashTagResponseList = storeHashTagService.findAllByStoreDetailId(storeDetailId);
+//        StoreResponse.StoreTopData storeTopData = new StoreResponse.StoreTopData(store,storeFoodImageResponseList,storeHashTagResponseList);
+//        StoreDetailResponse.StoreDetailForDetailPage storeDetailResponse = new StoreDetailResponse.StoreDetailForDetailPage(
+//                storeDetail.getStorePhoneNumber(),
+//                storeDetail.getOperatingPeriod(),
+//                storeDetail.getRoadAddress(),
+//                storeDetail.getOperatingTime(),
+//                store.getContent(),
+//                store.getStoreMeal(),
+//                store.getPackaging(),
+//                store.getDelivery(),
+//                storeDetail.getLatitude(),
+//                storeDetail.getLongitude(),
+//                storeDetail.getStoreMenuImage(),
+//                storeMenuResponseList
+//        );
+//        StoreResponse.StoreDetailPageRes storeDetailPageRes = new StoreResponse.StoreDetailPageRes(storeId,storeTopData,storeDetailResponse);
+        return ResponseEntity.ok(storeId);
     }
 
     @ApiOperation(value = "업체 리스팅 (업체 리스팅 페이지)", notes = "쿠폰 등급별로 정렬(실버, 골드)")
@@ -91,6 +93,11 @@ public class StoreController {
                                                                    @ApiIgnore @PageableDefault(page = 0, size = 20) Pageable pageable)
 
     {
+        String springVersion = org.springframework.core.SpringVersion.getVersion();
+
+        System.out.println("스프링 프레임워크 버전 : " + springVersion);
+
+
         return ResponseEntity.ok(storeService.findAllListing(pageable,filter,tier,sorting));
     }
 

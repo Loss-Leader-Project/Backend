@@ -9,7 +9,14 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
+import javax.transaction.Transactional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -28,7 +35,10 @@ class StoreControllerTest {
     @Autowired
     WebTestClient webTestClient;
 
+
+
     @Test
+    @Rollback
     void storePost() {
         // given
         Store store = storeRepository.save(new Store("성수동", "음식점 이름", "이미지 url", "가능한 서비스 방법들", Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, 1000, "~ 구매시", "10% 할인", 10, 10, "gold"));
@@ -50,7 +60,10 @@ class StoreControllerTest {
         storeHashTag.setStoreDetail(storeDetail);
         storeHashTagRepository.save(storeHashTag);
 
-
+        Store store3 = storeRepository.findById(store.getId()).get();
+        System.out.println("store ID IS");
+        System.out.println("store.getId() = " + store.getId());
+        System.out.println("store3.getStoreName() = " + store3.getStoreName());
         // when
         var response = webTestClient.get().uri(uriBuilder -> uriBuilder.path("/store/detail").queryParam("storeId", store.getId()).build()).exchange();
 //                .expectStatus()
@@ -62,5 +75,6 @@ class StoreControllerTest {
         // then
         var result = response.returnResult(ResponseEntity.class);
         Assertions.assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+
     }
 }

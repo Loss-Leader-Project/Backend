@@ -23,8 +23,7 @@ public class StoreFoodImage extends BaseEntity {
     @Column(updatable = false)
     private String image;
     private String name;
-
-    //private ModelMapper modelMapper = new ModelMapper();
+    ;
 
     public void setStoreDetail(StoreDetail storeDetail) {
         this.storeDetail = storeDetail;

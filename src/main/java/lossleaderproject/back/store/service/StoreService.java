@@ -17,6 +17,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -86,8 +87,8 @@ public class StoreService {
         return stores.map(store -> new StoreListingResponse(store));
     }
 
-    public Store findById(Long storeId){
-        return storeRepository.findById(storeId).get();
+    public Optional<Store> findById(Long storeId){
+        return storeRepository.findById(storeId);
     }
 
     // 리뷰시 업체 평균 별점 변경 입니다. review service 에서 사용 합니다.
