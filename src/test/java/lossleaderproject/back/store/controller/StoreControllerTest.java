@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 class StoreControllerTest {
@@ -28,13 +31,12 @@ class StoreControllerTest {
     @Autowired
     WebTestClient webTestClient;
 
-    @Test
-    void storePost() {
+    Long storePost() {
         // given
         Store store = storeRepository.save(new Store("성수동", "음식점 이름", "이미지 url", "가능한 서비스 방법들", Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, 1000, "~ 구매시", "10% 할인", 10, 10, "gold"));
 
-
         StoreDetail storeDetail = new StoreDetail("업체 전화 번호", "09:00 ~ 21:00", "연중 무휴", "도로명 주소", 123.123f, 123.123f, "이미지 url");
+
         storeDetail.setStoreDetailInStore(store);
         storeDetailRepository.save(storeDetail);
 
@@ -50,9 +52,24 @@ class StoreControllerTest {
         storeHashTag.setStoreDetail(storeDetail);
         storeHashTagRepository.save(storeHashTag);
 
+        return store.getId();
+    }
+
+    void storeDelete() {
+        storeHashTagRepository.deleteAll();
+        storeMenuRepository.deleteAll();
+        storeFoodImageRepository.deleteAll();
+        storeDetailRepository.deleteAll();
+        storeRepository.deleteAll();
+    }
+
+    @Test
+    void storeDetailTest() {
+        // given
+        Long storeId = storePost();
 
         // when
-        var response = webTestClient.get().uri(uriBuilder -> uriBuilder.path("/store/detail").queryParam("storeId", store.getId()).build()).exchange();
+        var response = webTestClient.get().uri(uriBuilder -> uriBuilder.path("/store/detail").queryParam("storeId", storeId).build()).exchange();
 //                .expectStatus()
 //                .isOk()
 //                .expectBody(String.class)
@@ -62,5 +79,8 @@ class StoreControllerTest {
         // then
         var result = response.returnResult(ResponseEntity.class);
         Assertions.assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+
+        // to initialize
+        storeDelete();
     }
 }
