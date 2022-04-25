@@ -1,12 +1,8 @@
 package lossleaderproject.back.e2e;
 
-
-
 import com.nimbusds.jose.shaded.json.parser.ParseException;
-import lossleaderproject.back.store.dto.StoreResponse;
 import lossleaderproject.back.store.entitiy.*;
 import lossleaderproject.back.store.repository.*;
-
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,10 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
 import java.io.*;
 import java.util.List;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -49,7 +43,7 @@ class StoreControllerTest {
         storeDetail.setStoreDetailInStore(store);
         storeDetailRepository.save(storeDetail);
 
-        StoreFoodImage storeFoodImage = new StoreFoodImage("식별자", "이미지 이름");
+        StoreFoodImage storeFoodImage = new StoreFoodImage("이미지 식별자", "이미지 이름");
         storeFoodImage.setStoreDetail(storeDetail);
         storeFoodImageRepository.save(storeFoodImage);
 
