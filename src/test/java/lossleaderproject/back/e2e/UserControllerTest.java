@@ -1,11 +1,12 @@
 package lossleaderproject.back.e2e;
 
+import lossleaderproject.back.error.userException.UserErrorResponse;
 import lossleaderproject.back.user.dto.UserLoginIdFindRequest;
 import lossleaderproject.back.user.entity.User;
 import lossleaderproject.back.user.repository.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,6 +49,24 @@ public class UserControllerTest {
         String userLoginId = (String)jsonObject.get("loginId");
 
         //then
-        Assertions.assertThat(userLoginId).isEqualTo("losslea***");
+        Assertions.assertEquals(userLoginId,"losslea***");
+    }
+    @Test
+    void 이름_이메일_주민번호_잘못작성() throws Exception {
+        //given
+        userSave();
+        String userName = "정화운";
+        String email = "cousim55@gmail.com";
+        String birthDate = "9812111";
+        //when
+        UserErrorResponse response = webTestClient.post().uri("/login/id")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .bodyValue(new UserLoginIdFindRequest(userName,birthDate,email))
+                .exchange().expectBody(UserErrorResponse.class).returnResult().getResponseBody();
+        //then
+        Assertions.assertEquals(response.getMessage(),"사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다.");
+        Assertions.assertEquals(response.getCode(),"NO_EXIST_USERNAME_BIRTHDATE_EMAIL");
+        Assertions.assertEquals(response.getStatus(),404);
+        Assertions.assertEquals(response.getError(),"NOT_FOUND");
     }
 }
