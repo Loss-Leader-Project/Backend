@@ -1,6 +1,8 @@
 package lossleaderproject.back.e2e;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.json.parser.ParseException;
+import lossleaderproject.back.store.dto.*;
 import lossleaderproject.back.store.entitiy.*;
 import lossleaderproject.back.store.repository.*;
 import org.assertj.core.api.Assertions;
@@ -67,8 +69,10 @@ class StoreControllerTest {
     }
 
 
+
+
     @Test
-    @DisplayName("업체 상세 정보 확인 정상 테스트")
+    @DisplayName("storeId와 일치하는 store가 존재할 때 /store/detail 에서 200의 상태 코드와 store-detail 페이지의 정보를 정상적으로 조회한다.")
     void storeDetailPossibleTest() throws IOException, ClassNotFoundException, ParseException, JSONException {
         // given
             Long storeId = storePost();
@@ -76,7 +80,10 @@ class StoreControllerTest {
         // when
             var response = webTestClient.get().uri(uriBuilder -> uriBuilder.path("/store/detail").queryParam("storeId", storeId).build()).accept(MediaType.APPLICATION_JSON_UTF8).exchange();
 
+
+
         // then
+
             // default로 처리해주는 값도 있어서 repository에서 직점 꺼냈습니다.
             Store store = storeRepository.findById(storeId).get();
             StoreDetail storeDetail = storeDetailRepository.findByStoreId(storeId);
@@ -84,60 +91,74 @@ class StoreControllerTest {
             List<StoreHashTag> storeHashTags = storeHashTagRepository.findAllByStoreDetailId(storeDetail.getId());
             List<StoreMenu> storeMenus = storeMenuRepository.findAllByStoreDetailId(storeDetail.getId());
 
+
+
             // 상태코드와 결과값(Json Object) 받음
             HttpStatus responseStatus = response.returnResult(ResponseEntity.class).getStatus();
-            JSONObject responseBodyObject = new JSONObject(new String(response.returnResult(ResponseEntity.class).getResponseBodyContent(), "UTF-8"));
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            StoreResponse.StoreDetailPageRes storeDetailPageRes = objectMapper.readValue(new String(response.returnResult(ResponseEntity.class).getResponseBodyContent(),"UTF-8"),StoreResponse.StoreDetailPageRes.class);
 
             // 상태 코드 확인
             Assertions.assertThat(responseStatus).isEqualTo(HttpStatus.OK);
 
             // Response Body 확인 시작
-            Assertions.assertThat(responseBodyObject.getLong("id")).isEqualTo((store.getId()));
+            Assertions.assertThat(storeDetailPageRes.getId()).isEqualTo((store.getId()));
 
             // StoreTopData DTO
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getString("briefAddress")).isEqualTo(store.getBriefAddress());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getString("storeName")).isEqualTo(store.getStoreName());
-            Assertions.assertThat(Float.valueOf(responseBodyObject.getJSONObject("storeTopData").getString("avgStar"))).isEqualTo(store.getAvgStar()); // Float 으로 받는게 없어서 형변환 직접 했습니다.
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getInt("priceOfCoupon")).isEqualTo(store.getPriceOfCoupon());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getString("benefitCondition")).isEqualTo(store.getBenefitCondition());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getString("couponContent")).isEqualTo(store.getCouponContent());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getInt("leftCoupon")).isEqualTo(store.getLeftCoupon());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getInt("totalCoupon")).isEqualTo(store.getTotalCoupon());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getString("couponGradeName")).isEqualTo(store.getCouponGradeName());
+            StoreResponse.StoreTopData storeTopDataRes = storeDetailPageRes.getStoreTopData();
+
+            Assertions.assertThat(storeTopDataRes.getBriefAddress()).isEqualTo(store.getBriefAddress());
+            Assertions.assertThat(storeTopDataRes.getStoreName()).isEqualTo(store.getStoreName());
+            Assertions.assertThat(storeTopDataRes.getAvgStar()).isEqualTo(store.getAvgStar()); // Float 으로 받는게 없어서 형변환 직접 했습니다.
+            Assertions.assertThat(storeTopDataRes.getPriceOfCoupon()).isEqualTo(store.getPriceOfCoupon());
+            Assertions.assertThat(storeTopDataRes.getBenefitCondition()).isEqualTo(store.getBenefitCondition());
+            Assertions.assertThat(storeTopDataRes.getCouponContent()).isEqualTo(store.getCouponContent());
+            Assertions.assertThat(storeTopDataRes.getLeftCoupon()).isEqualTo(store.getLeftCoupon());
+            Assertions.assertThat(storeTopDataRes.getTotalCoupon()).isEqualTo(store.getTotalCoupon());
+            Assertions.assertThat(storeTopDataRes.getCouponGradeName()).isEqualTo(store.getCouponGradeName());
 
             // Store Food Image 확인
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getJSONArray("storeFoodImageResponseList").getJSONObject(0).getLong("id")).isEqualTo(storeFoodImages.get(0).getId());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getJSONArray("storeFoodImageResponseList").getJSONObject(0).getString("image")).isEqualTo(storeFoodImages.get(0).getImage());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getJSONArray("storeFoodImageResponseList").getJSONObject(0).getString("name")).isEqualTo(storeFoodImages.get(0).getName());
+            List<StoreFoodImageResponse> storeFoodImagesRes = storeTopDataRes.getStoreFoodImageResponseList();
+
+            Assertions.assertThat(storeFoodImagesRes.get(0).getId()).isEqualTo(storeFoodImages.get(0).getId());
+            Assertions.assertThat(storeFoodImagesRes.get(0).getImage()).isEqualTo(storeFoodImages.get(0).getImage());
+            Assertions.assertThat(storeFoodImagesRes.get(0).getName()).isEqualTo(storeFoodImages.get(0).getName());
 
             // Store Hash Tag 확인
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getJSONArray("storeHashTagResponseList").getJSONObject(0).getLong("id")).isEqualTo(storeHashTags.get(0).getId());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeTopData").getJSONArray("storeHashTagResponseList").getJSONObject(0).getString("name")).isEqualTo(storeHashTags.get(0).getName());
+            List<StoreHashTagResponse> storeHashTagsRes = storeTopDataRes.getStoreHashTagResponseList();
 
-            // StoreDetailForDetailPage DTO
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getString("storePhoneNumber")).isEqualTo(storeDetail.getStorePhoneNumber());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getString("operatingPeriod")).isEqualTo(storeDetail.getOperatingPeriod());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getString("roadAddress")).isEqualTo(storeDetail.getRoadAddress());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getString("operatingTime")).isEqualTo(storeDetail.getOperatingTime());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getString("content")).isEqualTo(store.getContent());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getBoolean("storeMeal")).isEqualTo(store.getStoreMeal());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getBoolean("packaging")).isEqualTo(store.getPackaging());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getBoolean("delivery")).isEqualTo(store.getDelivery());
-            Assertions.assertThat(Float.valueOf(responseBodyObject.getJSONObject("storeDetailResponse").getString("latitude"))).isEqualTo(storeDetail.getLatitude());
-            Assertions.assertThat(Float.valueOf(responseBodyObject.getJSONObject("storeDetailResponse").getString("longitude"))).isEqualTo(storeDetail.getLongitude());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getString("storeMenuImage")).isEqualTo(storeDetail.getStoreMenuImage());
+            Assertions.assertThat(storeHashTagsRes.get(0).getId()).isEqualTo(storeHashTags.get(0).getId());
+            Assertions.assertThat(storeHashTagsRes.get(0).getName()).isEqualTo(storeHashTags.get(0).getName());
+
+            // storeDetailResponse DTO
+            StoreDetailResponse.StoreDetailForDetailPage storeDetailRes = storeDetailPageRes.getStoreDetailResponse();
+
+            Assertions.assertThat(storeDetailRes.getStorePhoneNumber()).isEqualTo(storeDetail.getStorePhoneNumber());
+            Assertions.assertThat(storeDetailRes.getOperatingPeriod()).isEqualTo(storeDetail.getOperatingPeriod());
+            Assertions.assertThat(storeDetailRes.getRoadAddress()).isEqualTo(storeDetail.getRoadAddress());
+            Assertions.assertThat(storeDetailRes.getOperatingTime()).isEqualTo(storeDetail.getOperatingTime());
+            Assertions.assertThat(storeDetailRes.getContent()).isEqualTo(store.getContent());
+            Assertions.assertThat(storeDetailRes.getStoreMeal()).isEqualTo(store.getStoreMeal());
+            Assertions.assertThat(storeDetailRes.getPackaging()).isEqualTo(store.getPackaging());
+            Assertions.assertThat(storeDetailRes.getDelivery()).isEqualTo(store.getDelivery());
+            Assertions.assertThat(storeDetailRes.getLatitude()).isEqualTo(storeDetail.getLatitude());
+            Assertions.assertThat(storeDetailRes.getLongitude()).isEqualTo(storeDetail.getLongitude());
+            Assertions.assertThat(storeDetailRes.getStoreMenuImage()).isEqualTo(storeDetail.getStoreMenuImage());
 
             // Store Menu 확인
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getJSONArray("storeMenuResponseList").getJSONObject(0).getLong("id")).isEqualTo(storeMenus.get(0).getId());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getJSONArray("storeMenuResponseList").getJSONObject(0).getString("name")).isEqualTo(storeMenus.get(0).getName());
-            Assertions.assertThat(responseBodyObject.getJSONObject("storeDetailResponse").getJSONArray("storeMenuResponseList").getJSONObject(0).getInt("price")).isEqualTo(storeMenus.get(0).getPrice());
+            List<StoreMenuResponse> storeMenusRes = storeDetailRes.getStoreMenuResponseList();
+
+            Assertions.assertThat(storeMenusRes.get(0).getId()).isEqualTo(storeMenus.get(0).getId());
+            Assertions.assertThat(storeMenusRes.get(0).getName()).isEqualTo(storeMenus.get(0).getName());
+            Assertions.assertThat(storeMenusRes.get(0).getPrice()).isEqualTo(storeMenus.get(0).getPrice());
 
         // to initialize
             storeDeleteAll();
     }
 
     @Test
-    @DisplayName("업체 상세 정보 확인 비 정상 테스트")
+    @DisplayName("storeId와 일치하는 store가 존재하지 않을 때 /store/detail 에서 500 상태 코드(SERVER_ERROR) 를 반환한다.")
     void storeDetailImpossibleTest() throws IOException, ClassNotFoundException, ParseException, JSONException {
         // given
             storeDeleteAll();

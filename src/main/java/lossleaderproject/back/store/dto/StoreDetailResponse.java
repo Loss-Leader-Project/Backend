@@ -40,6 +40,7 @@ public class StoreDetailResponse {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class StoreDetailForDetailPage{
         private String storePhoneNumber;
         private String operatingPeriod;
