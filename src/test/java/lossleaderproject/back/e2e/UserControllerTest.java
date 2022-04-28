@@ -14,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import javax.transaction.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -29,10 +32,12 @@ public class UserControllerTest {
 
     public void userSave() {
         userRepository.save(new User("lossleader", "asd123!", "정회운", "01011111111", "cousim55@gmail.com", null, null, null, "9812111", null));
+        userRepository.save(new User("test22", "asd23123!", "테스터", "01022222222", "wjdghldns5048@naver.com", null, null, null, "9812111", null));
 
     }
     @Test
     @DisplayName("이름, 주민번호, 이메일로 해당 아이디의 일부를 반환합니다.")
+    @Transactional()
     void 아이디찾기() throws Exception {
         //given
         userSave();
@@ -51,7 +56,12 @@ public class UserControllerTest {
         //then
         Assertions.assertEquals(userLoginId,"losslea***");
     }
+
     @Test
+    @DisplayName("이름, 주민번호, 이메일 중 하나라도 올바르지않을 경우 " +
+            "message : 사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다.', " +
+            "'status : 404'," +
+            "'Error : Not_Found'")
     void 이름_이메일_주민번호_잘못작성() throws Exception {
         //given
         userSave();
@@ -70,4 +80,6 @@ public class UserControllerTest {
         Assertions.assertEquals(response.getError(),"NOT_FOUND");
 
     }
+
+
 }
