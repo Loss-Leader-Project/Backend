@@ -68,5 +68,6 @@ public class UserControllerTest {
         Assertions.assertEquals(response.getCode(),"NO_EXIST_USERNAME_BIRTHDATE_EMAIL");
         Assertions.assertEquals(response.getStatus(),404);
         Assertions.assertEquals(response.getError(),"NOT_FOUND");
+
     }
 }
