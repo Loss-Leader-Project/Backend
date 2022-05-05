@@ -127,6 +127,7 @@ public class LoginService {
     @Transactional
     public void logout(PrincipalDetails principalDetails, HttpServletRequest request, HttpSession session) throws IOException {
         System.out.println("로그아웃 준비");
+        System.out.println("제발되라라라라라라라");
         User user = userRepository.findByLoginId(principalDetails.getUsername());
         System.out.println("user.toString() = " + user.toString());
         System.out.println(user);
