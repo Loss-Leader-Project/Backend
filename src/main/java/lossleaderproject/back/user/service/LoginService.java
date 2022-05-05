@@ -88,6 +88,7 @@ public class LoginService {
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        System.out.println("config.getKAKAO_REDIRECT_URI() = " + config.getKAKAO_REDIRECT_URI());
         MultiValueMap<String, String> accessTokenParams = accessTokenParams("authorization_code",config.getKAKAO_CLIENT_ID() ,code,config.getKAKAO_REDIRECT_URI());
         HttpEntity<MultiValueMap<String, String>> accessTokenRequest = new HttpEntity<>(accessTokenParams, headers);
         ResponseEntity<String> accessTokenResponse = rt.exchange(
