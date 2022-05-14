@@ -35,8 +35,9 @@ public class UserControllerTest {
         userRepository.save(new User("test22", "asd23123!", "테스터", "01022222222", "wjdghldns5048@naver.com", null, null, null, "9812111", null));
 
     }
+
     @Test
-    @DisplayName("이름, 주민번호, 이메일로 해당 아이디의 일부를 반환합니다.")
+    @DisplayName("이름, 주민번호 앞자리 6자리와 뒷자리 1자리, 이메일이 일치하면 아이디 뒤에 세자리를 *를 바꾼뒤 아이디를 반환합니다.")
     @Transactional()
     void 아이디찾기() throws Exception {
         //given
@@ -47,21 +48,18 @@ public class UserControllerTest {
         //when
         String loginId = webTestClient.post().uri("/login/id")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .bodyValue(new UserLoginIdFindRequest(userName,birthDate,email))
+                .bodyValue(new UserLoginIdFindRequest(userName, birthDate, email))
                 .exchange().expectBody(String.class).returnResult().getResponseBody();
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(loginId);
-        String userLoginId = (String)jsonObject.get("loginId");
+        String userLoginId = (String) jsonObject.get("loginId");
 
         //then
-        Assertions.assertEquals(userLoginId,"losslea***");
+        Assertions.assertEquals(userLoginId, "losslea***");
     }
 
     @Test
-    @DisplayName("이름, 주민번호, 이메일 중 하나라도 올바르지않을 경우 " +
-            "message : 사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다.', " +
-            "'status : 404'," +
-            "'Error : Not_Found'")
+    @DisplayName("이름, 주민번호, 이메일 중 하나라도 올바르지않을 경우 '사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다.'를 반환합니다. ")
     void 이름_이메일_주민번호_잘못작성() throws Exception {
         //given
         userSave();
@@ -71,13 +69,13 @@ public class UserControllerTest {
         //when
         UserErrorResponse response = webTestClient.post().uri("/login/id")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .bodyValue(new UserLoginIdFindRequest(userName,birthDate,email))
+                .bodyValue(new UserLoginIdFindRequest(userName, birthDate, email))
                 .exchange().expectBody(UserErrorResponse.class).returnResult().getResponseBody();
         //then
-        Assertions.assertEquals(response.getMessage(),"사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다.");
-        Assertions.assertEquals(response.getCode(),"NO_EXIST_USERNAME_BIRTHDATE_EMAIL");
-        Assertions.assertEquals(response.getStatus(),404);
-        Assertions.assertEquals(response.getError(),"NOT_FOUND");
+        Assertions.assertEquals(response.getMessage(), "사용자 이름, 생년월일, 이메일을 잘못입력하셨습니다.");
+        Assertions.assertEquals(response.getCode(), "NO_EXIST_USERNAME_BIRTHDATE_EMAIL");
+        Assertions.assertEquals(response.getStatus(), 404);
+        Assertions.assertEquals(response.getError(), "NOT_FOUND");
 
     }
 
