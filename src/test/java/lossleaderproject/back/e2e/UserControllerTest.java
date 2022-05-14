@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -29,38 +30,38 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("회원가입 된 아이디 없으면 '사용가능한 아이디입니다'를 반환합니다.'")
+    @DisplayName("아이디를 사용가능하면 '사용가능한 아이디입니다'를 반환합니다.'")
     void 사용가능_아이디() throws Exception {
         //given
         userSave();
         String loginId = "test21";
+        WebTestClient.ResponseSpec webClient = webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/lossleader-user/loginid")
+                        .queryParam("loginId", loginId).build())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange();
 
         //when
-        String response = webTestClient.get().uri(uriBuilder -> uriBuilder.path("/lossleader-user/loginid")
-                        .queryParam("loginId", loginId).build()).accept(MediaType.APPLICATION_JSON_UTF8)
-                .exchange().expectBody(String.class).returnResult().getResponseBody();
+        String response = webClient.expectBody(String.class)
+                        .returnResult().getResponseBody();
 
         //then
-        Assertions.assertEquals("사용가능한 아이디 입니다.",response);
+        Assertions.assertEquals("사용가능한 아이디 입니다.", response);
     }
 
     @Test
-    @DisplayName("회원가입 된 아이디 있으면 message : 이미 존재하는 아이디입니다.', " +
-            "'status : 409'," +
-                    "'Error : DUPLICATE_ID'를 반환합니다.")
+    @DisplayName("아이디가 중복되면 '이미 존재하는 아이디입니다'를 반환합니다.")
     void 중복_아이디() throws Exception {
         //given
         userSave();
         String loginId = "lossleader";
 
         //when
-        UserErrorResponse response = webTestClient.get().uri(uriBuilder -> uriBuilder.path("/lossleader-user/loginid")
-                        .queryParam("loginId", loginId).build()).accept(MediaType.APPLICATION_JSON_UTF8)
-                .exchange().expectBody(UserErrorResponse.class).returnResult().getResponseBody();
+        UserErrorResponse response = webTestClient.get().uri(uriBuilder -> uriBuilder.path("/lossleader-user/loginid").queryParam("loginId", loginId).build()).accept(MediaType.APPLICATION_JSON_UTF8).exchange().expectBody(UserErrorResponse.class).returnResult().getResponseBody();
 
         //then
-        Assertions.assertEquals("이미 존재하는 아이디입니다.",response.getMessage());
-        Assertions.assertEquals(409,response.getStatus());
-        Assertions.assertEquals("DUPLICATE_ID",response.getCode());
+        Assertions.assertEquals("이미 존재하는 아이디입니다.", response.getMessage());
+        Assertions.assertEquals(409, response.getStatus());
+        Assertions.assertEquals("DUPLICATE_ID", response.getCode());
     }
 }
